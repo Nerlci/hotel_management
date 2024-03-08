@@ -18,9 +18,7 @@ export default defineConfig({
           autogenerate: { directory: "design" },
         },
       ],
-      customCss: [
-        "./src/assets/katex/katex.min.css",
-      ]
+      customCss: ["./src/assets/katex/katex.min.css"],
     }),
   ],
 });
