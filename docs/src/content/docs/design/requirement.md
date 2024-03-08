@@ -71,7 +71,7 @@ $$P=\lambda\times \lvert T_{tar}-T_{now}\rvert + \alpha\times2000$$
 
 依据以上分析，绘制业务流程图如下：
 
-![Alt text](V8H0CJW5AXISOUE%7BR%5B%5B7_W4.png)
+![](../../../assets/homework_1_actions.png)
 
 #### 领域层
 
@@ -86,8 +86,8 @@ $$P=\lambda\times \lvert T_{tar}-T_{now}\rvert + \alpha\times2000$$
 
 依据以上分析，绘制业务背景UML类图如下：
 
-![Alt text](design_UML_class_graph.jpg)
+![](../../../assets/homework_1_UML.jpg)
 
 绘制人力资源架构图如下：
 
-![Alt text](<Q5N@)MLZQ90@{B49POT1DXH.jpg>)
+![](../../../assets/homework_1_people.png)
