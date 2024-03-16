@@ -1,32 +1,34 @@
-import resolve from "@rollup/plugin-node-resolve";
-import commonjs from "@rollup/plugin-commonjs";
+import { defineConfig } from "rollup";
 import typescript from "@rollup/plugin-typescript";
-import pkg from "./package.json" assert { type: "json" };
+import terser from "@rollup/plugin-terser";
 
-export default [
-  // browser-friendly UMD build
-  {
-    input: "src/index.ts",
-    output: {
-      name: "shared",
-      file: pkg.browser,
-      format: "umd",
-      sourcemap: true,
-    },
-    plugins: [
-      resolve(),
-      commonjs(),
-      typescript({ tsconfig: "./tsconfig.json" }),
-    ],
-  },
-
-  // CommonJS (for Node) and ES module (for bundlers) build.
+const config = defineConfig([
   {
     input: "src/index.ts",
     output: [
-      { file: pkg.main, format: "cjs", sourcemap: true },
-      { file: pkg.module, format: "es", sourcemap: true },
+      {
+        file: "./dist/index.js",
+        format: "umd",
+        name: "shared",
+      },
+      {
+        file: "./dist/index.min.js",
+        format: "umd",
+        name: "shared",
+        plugins: [terser()],
+      },
     ],
-    plugins: [typescript({ tsconfig: "./tsconfig.json" })],
+    plugins: [typescript()],
   },
-];
+  {
+    input: "src/index.ts",
+    output: {
+      file: "./dist/index.mjs",
+      format: "esm",
+      name: "shared",
+    },
+    plugins: [typescript()],
+  },
+]);
+
+export default config;
