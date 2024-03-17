@@ -46,9 +46,12 @@ const Login: React.FC<LoginProps> = ({ type }) => {
   return (
     <>
       <NavBar title="登录" />
-      <div className="justify-center ml-10 mr-10 mt-5">
+      <div className="justify-center ml-auto mr-auto mt-5 max-w-fit">
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="space-y-2 w-80"
+          >
             <FormField
               control={form.control}
               name="username"
@@ -68,7 +71,7 @@ const Login: React.FC<LoginProps> = ({ type }) => {
                 return (
                   <FormItem>
                     <FormControl>
-                      <Input placeholder="密码" {...field} />
+                      <Input placeholder="密码" {...field} type="password" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -76,9 +79,13 @@ const Login: React.FC<LoginProps> = ({ type }) => {
               }}
             />
             <div className="flex">
-              <Button type="submit">提交</Button>
+              <Button type="submit" className="h-8">
+                提交
+              </Button>
               <div className="grow"></div>
-              <Button type="button">注册</Button>
+              <Button type="button" className="h-8">
+                注册
+              </Button>
             </div>
           </form>
         </Form>
