@@ -11,21 +11,21 @@ function Root() {
         <Link to={`/login/${UserType.Customer}`}>
           <Card>
             <CardHeader>
-              <CardTitle>我是顾客</CardTitle>
+              <CardTitle className="text-lg">我是顾客</CardTitle>
             </CardHeader>
           </Card>
         </Link>
         <Link to={`/login/${UserType.Staff}`}>
           <Card>
             <CardHeader>
-              <CardTitle>我是服务员</CardTitle>
+              <CardTitle className="text-lg">我是服务员</CardTitle>
             </CardHeader>
           </Card>
         </Link>
         <Link to={`/login/${UserType.Admin}`}>
           <Card>
             <CardHeader>
-              <CardTitle>我是管理员</CardTitle>
+              <CardTitle className="text-lg">我是管理员</CardTitle>
             </CardHeader>
           </Card>
         </Link>
