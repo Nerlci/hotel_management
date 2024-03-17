@@ -1,32 +1,36 @@
 import { Link } from "react-router-dom";
-import { NAME } from "shared";
 import { UserType } from "./Login";
+import { NavBar } from "@/components/NavBar";
+import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 
 function Root() {
   return (
-    <div className="bg-white dark:bg-black h-screen">
-      <h1 className="dark:text-white font-bold underline">{NAME}</h1>
-      <div className="flex flex-row gap-10">
-        <Link
-          className="dark:text-gray-300 text-gray-800"
-          to={`login/${UserType.Customer}`}
-        >
-          我是顾客
+    <>
+      <NavBar />
+      <div className="flex flex-row gap-5 justify-center mt-10">
+        <Link to={`/login/${UserType.Customer}`}>
+          <Card>
+            <CardHeader>
+              <CardTitle>我是顾客</CardTitle>
+            </CardHeader>
+          </Card>
         </Link>
-        <Link
-          className="dark:text-gray-300 text-gray-800"
-          to={`login/${UserType.Staff}`}
-        >
-          我是服务员
+        <Link to={`/login/${UserType.Staff}`}>
+          <Card>
+            <CardHeader>
+              <CardTitle>我是服务员</CardTitle>
+            </CardHeader>
+          </Card>
         </Link>
-        <Link
-          className="dark:text-gray-300 text-gray-800"
-          to={`login/${UserType.Admin}`}
-        >
-          我是老板
+        <Link to={`/login/${UserType.Admin}`}>
+          <Card>
+            <CardHeader>
+              <CardTitle>我是管理员</CardTitle>
+            </CardHeader>
+          </Card>
         </Link>
       </div>
-    </div>
+    </>
   );
 }
 
