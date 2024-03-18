@@ -1,1 +1,1 @@
-export { SayHello } from "./helloWorld";
+export { NAME } from "./consts";
