@@ -12,7 +12,6 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { NavBar } from "@/components/NavBar";
-import { Link } from "react-router-dom";
 
 export enum UserType {
   Customer = "customer",
