@@ -59,8 +59,9 @@ export function AirconDrawer() {
                 <span className="sr-only">Decrease</span>
               </Button>
               <div className="flex-1 text-center">
-                <div className="text-7xl font-bold tracking-tighter">
+                <div className="text-7xl font-bold tracking-tighter flex justify-center items-center gap-1">
                   {tempreture}
+                  <div className="text-4xl">&deg;C</div>
                 </div>
                 <div className="text-[1.2rem] text-muted-foreground">
                   目标温度
