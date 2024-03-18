@@ -6,6 +6,7 @@ import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import ErrorPage from "./ErrorPage.tsx";
 import Login, { UserType } from "./routes/Login.tsx";
 import { ThemeProvider } from "./components/theme-provider.tsx";
+import { CustomerDashboard } from "./routes/CustomerDashboard.tsx";
 
 const router = createBrowserRouter([
   {
@@ -29,6 +30,10 @@ const router = createBrowserRouter([
         element: <Login type={UserType.Admin} />,
       },
     ],
+  },
+  {
+    path: "customer",
+    element: <CustomerDashboard />,
   },
 ]);
 

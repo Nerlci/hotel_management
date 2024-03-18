@@ -10,7 +10,7 @@ import { Link } from "react-router-dom";
 import { Separator } from "@/components/ui/separator";
 
 export interface NavBarProps {
-  title?: string;
+  title?: string | JSX.Element;
 }
 
 export const NavBar: React.FC<NavBarProps> = ({ title }) => {
