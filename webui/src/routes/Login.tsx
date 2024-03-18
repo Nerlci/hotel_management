@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { NavBar } from "@/components/NavBar";
+import { Link } from "react-router-dom";
 
 export enum UserType {
   Customer = "customer",
@@ -79,9 +80,11 @@ const Login: React.FC<LoginProps> = ({ type }) => {
               }}
             />
             <div className="flex">
+              <Link to="/customer">
               <Button type="submit" className="h-8">
                 提交
               </Button>
+              </Link>
               <div className="grow"></div>
               <Button type="button" className="h-8">
                 注册
