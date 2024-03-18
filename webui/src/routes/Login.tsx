@@ -80,11 +80,9 @@ const Login: React.FC<LoginProps> = ({ type }) => {
               }}
             />
             <div className="flex">
-              <Link to="/customer">
               <Button type="submit" className="h-8">
                 提交
               </Button>
-              </Link>
               <div className="grow"></div>
               <Button type="button" className="h-8">
                 注册
