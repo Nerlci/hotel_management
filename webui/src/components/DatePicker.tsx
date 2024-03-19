@@ -1,4 +1,3 @@
-import { format } from "date-fns";
 import { Calendar as CalendarIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -8,6 +7,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { ChineseDateFormat } from "shared";
 
 export type DatePickerProps = {
   date: Date | undefined;
@@ -26,7 +26,7 @@ export function DatePicker({ date, setDate }: DatePickerProps) {
           )}
         >
           <CalendarIcon className="mr-2 h-4 w-4" />
-          {date ? format(date, "PPP") : <span>Pick a date</span>}
+          {date ? ChineseDateFormat(date) : <span>选择日期</span>}
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0">

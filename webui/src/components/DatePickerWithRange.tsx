@@ -9,6 +9,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { ChineseDateFormat } from "shared";
 
 export type DatePickerWithRangeProps = {
   className?: string;
@@ -37,11 +38,10 @@ export function DatePickerWithRange({
             {date?.from ? (
               date.to ? (
                 <>
-                  {format(date.from, "LLL dd, y")} -{" "}
-                  {format(date.to, "LLL dd, y")}
+                  {ChineseDateFormat(date.from)} - {ChineseDateFormat(date.to)}
                 </>
               ) : (
-                format(date.from, "LLL dd, y")
+                ChineseDateFormat(date.from)
               )
             ) : (
               <span>Pick a date</span>
