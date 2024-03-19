@@ -1,6 +1,6 @@
-import { format } from "date-fns";
 import { Calendar as CalendarIcon } from "lucide-react";
 import { DateRange } from "react-day-picker";
+import { zhCN } from "date-fns/locale";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -9,6 +9,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { ChineseDateFormat } from "shared";
 
 export type DatePickerWithRangeProps = {
   className?: string;
@@ -37,11 +38,10 @@ export function DatePickerWithRange({
             {date?.from ? (
               date.to ? (
                 <>
-                  {format(date.from, "LLL dd, y")} -{" "}
-                  {format(date.to, "LLL dd, y")}
+                  {ChineseDateFormat(date.from)} - {ChineseDateFormat(date.to)}
                 </>
               ) : (
-                format(date.from, "LLL dd, y")
+                ChineseDateFormat(date.from)
               )
             ) : (
               <span>Pick a date</span>
@@ -56,6 +56,7 @@ export function DatePickerWithRange({
             selected={date}
             onSelect={setDate}
             numberOfMonths={2}
+            locale={zhCN}
           />
         </PopoverContent>
       </Popover>

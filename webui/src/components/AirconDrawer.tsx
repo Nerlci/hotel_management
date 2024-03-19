@@ -1,7 +1,6 @@
 import { Button } from "@/components/ui/button";
 import {
   Drawer,
-  DrawerClose,
   DrawerContent,
   DrawerDescription,
   DrawerFooter,
@@ -18,10 +17,12 @@ import {
   MIN_AIRCON_TEMP,
 } from "shared";
 import AirConditionerIcon from "../assets/aircon.svg";
+import { Switch } from "./ui/switch";
 
 export function AirconDrawer() {
   const [tempreture, settempreture] = useState(24);
   const [windspeed, setwindspeed] = useState(1);
+  const [start, setstart] = useState(false);
 
   return (
     <Drawer>
@@ -36,8 +37,21 @@ export function AirconDrawer() {
       <DrawerContent>
         <div className="mx-auto w-full max-w-sm">
           <DrawerHeader>
-            <DrawerTitle>控制空调</DrawerTitle>
-            <DrawerDescription>您的空调使用会产生额外计费</DrawerDescription>
+            <div className="flex flex-row">
+              <div className="flex flex-col gap-2">
+                <DrawerTitle className="text-left">控制空调</DrawerTitle>
+                <DrawerDescription>
+                  您的空调使用会产生额外计费
+                </DrawerDescription>
+              </div>
+              <div className="grow" />
+              启动
+              <Switch
+                className="ml-2"
+                checked={start}
+                onCheckedChange={setstart}
+              />
+            </div>
           </DrawerHeader>
           <div className="p-4 pb-0">
             <div className="flex items-center justify-center space-x-2">
@@ -53,17 +67,21 @@ export function AirconDrawer() {
                     ),
                   );
                 }}
-                disabled={tempreture <= MIN_AIRCON_TEMP}
+                disabled={tempreture <= MIN_AIRCON_TEMP || !start}
               >
                 <Minus className="h-4 w-4" />
                 <span className="sr-only">Decrease</span>
               </Button>
               <div className="flex-1 text-center">
-                <div className="text-7xl font-bold tracking-tighter flex justify-center items-center gap-1">
+                <div
+                  className={`text-7xl font-bold tracking-tighter flex justify-center items-center gap-1 ${start ? "" : "text-muted"}`}
+                >
                   {tempreture}
                   <div className="text-4xl">&deg;C</div>
                 </div>
-                <div className="text-[1.2rem] text-muted-foreground">
+                <div
+                  className={`text-[1.2rem] text-muted-foreground ${start ? "" : "text-zinc-700"}`}
+                >
                   目标温度
                 </div>
               </div>
@@ -79,7 +97,7 @@ export function AirconDrawer() {
                     ),
                   );
                 }}
-                disabled={tempreture >= MAX_AIRCON_TEMP}
+                disabled={tempreture >= MAX_AIRCON_TEMP || !start}
               >
                 <Plus className="h-4 w-4" />
                 <span className="sr-only">Increase</span>
@@ -99,16 +117,20 @@ export function AirconDrawer() {
                     ),
                   );
                 }}
-                disabled={windspeed <= MIN_AIRCON_SPEED}
+                disabled={windspeed <= MIN_AIRCON_SPEED || !start}
               >
                 <Minus className="h-4 w-4" />
                 <span className="sr-only">Decrease</span>
               </Button>
               <div className="flex-1 text-center">
-                <div className="text-7xl font-bold tracking-tighter">
+                <div
+                  className={`text-7xl font-bold tracking-tighter ${start ? "" : "text-muted"}`}
+                >
                   {windspeed}
                 </div>
-                <div className="text-[1.2rem] text-muted-foreground">
+                <div
+                  className={`text-[1.2rem] text-muted-foreground ${start ? "" : "text-zinc-700"}`}
+                >
                   目标风速
                 </div>
               </div>
@@ -124,7 +146,7 @@ export function AirconDrawer() {
                     ),
                   );
                 }}
-                disabled={windspeed >= MAX_AIRCON_SPEED}
+                disabled={windspeed >= MAX_AIRCON_SPEED || !start}
               >
                 <Plus className="h-4 w-4" />
                 <span className="sr-only">Increase</span>
@@ -133,9 +155,6 @@ export function AirconDrawer() {
           </div>
           <DrawerFooter>
             <Button>提交</Button>
-            <DrawerClose asChild>
-              <Button variant="outline">取消</Button>
-            </DrawerClose>
           </DrawerFooter>
         </div>
       </DrawerContent>
