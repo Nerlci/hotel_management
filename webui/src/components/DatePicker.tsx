@@ -8,6 +8,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { ChineseDateFormat } from "shared";
+import { zhCN } from "date-fns/locale";
 
 export type DatePickerProps = {
   date: Date | undefined;
@@ -34,7 +35,7 @@ export function DatePicker({ date, setDate }: DatePickerProps) {
           mode="single"
           selected={date}
           onSelect={setDate}
-          initialFocus
+          locale={zhCN}
         />
       </PopoverContent>
     </Popover>
