@@ -75,7 +75,7 @@ export function FoodDrawer() {
                 {Array.from({ length: 5 }).map((_, index) => (
                   <CarouselItem
                     key={index}
-                    className="md:basis-1/2 lg:basis-1/3"
+                    className="lg:basis-auto md:basis-auto sm:basis-auto xs:basis-auto"
                   >
                     <div className="p-1">
                       <Card>
