@@ -1,7 +1,6 @@
 import { Button } from "@/components/ui/button";
 import {
   Drawer,
-  DrawerClose,
   DrawerContent,
   DrawerDescription,
   DrawerFooter,
@@ -156,9 +155,6 @@ export function AirconDrawer() {
           </div>
           <DrawerFooter>
             <Button>提交</Button>
-            <DrawerClose asChild>
-              <Button variant="outline">取消</Button>
-            </DrawerClose>
           </DrawerFooter>
         </div>
       </DrawerContent>
