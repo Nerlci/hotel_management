@@ -80,7 +80,7 @@ export function AirconDrawer() {
                   <div className="text-4xl">&deg;C</div>
                 </div>
                 <div
-                  className={`text-[1.2rem] text-muted-foreground ${start ? "" : "text-muted"}`}
+                  className={`text-[1.2rem] text-muted-foreground ${start ? "" : "text-zinc-700"}`}
                 >
                   目标温度
                 </div>
@@ -129,7 +129,7 @@ export function AirconDrawer() {
                   {windspeed}
                 </div>
                 <div
-                  className={`text-[1.2rem] text-muted-foreground ${start ? "" : "text-muted"}`}
+                  className={`text-[1.2rem] text-muted-foreground ${start ? "" : "text-zinc-700"}`}
                 >
                   目标风速
                 </div>
