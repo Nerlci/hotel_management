@@ -2,7 +2,14 @@ import { DatePickerWithRange } from "@/components/DatePickerWithRange";
 import { NavBar } from "@/components/NavBar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { addDays } from "date-fns";
 import { useForm } from "react-hook-form";
@@ -13,6 +20,7 @@ const bookingFormSchema = z.object({
     from: z.date(),
     to: z.date(),
   }),
+  email: z.string().email(),
 });
 
 export const CustomerBooking = () => {
@@ -52,6 +60,7 @@ export const CustomerBooking = () => {
                       <DatePickerWithRange
                         date={field.value}
                         setDate={field.onChange}
+                        className="w-[300px]"
                       />
                     </FormControl>
                     {form.formState.errors.date !== undefined ? (
@@ -61,6 +70,23 @@ export const CustomerBooking = () => {
                     ) : (
                       <></>
                     )}
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        type="email"
+                        placeholder="邮箱"
+                        className="w-[300px]"
+                      />
+                    </FormControl>
+                    <FormMessage />
                   </FormItem>
                 )}
               />
