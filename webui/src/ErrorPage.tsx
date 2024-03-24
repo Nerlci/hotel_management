@@ -5,8 +5,8 @@ export default function ErrorPage() {
   console.error(error);
 
   return (
-    <div className="bg-white dark:bg-black h-screen flex items-center justify-center">
-      <div className="dark:text-white flex flex-col items-center">
+    <div className="flex h-screen items-center justify-center bg-white dark:bg-black">
+      <div className="flex flex-col items-center dark:text-white">
         <h1 className="text-3xl">Oops!</h1>
         <p className="text-xl">Sorry, an unexpected error has occurred.</p>
         <p className="">

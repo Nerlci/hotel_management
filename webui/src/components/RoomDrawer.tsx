@@ -24,7 +24,7 @@ export function RoomDrawer() {
       <DrawerTrigger asChild>
         <Button className="h-14 w-20" variant="outline">
           <img
-            className="w-10 invert-0 dark:invert select-none pointer-events-none"
+            className="pointer-events-none w-10 select-none invert-0 dark:invert"
             src={RoomIcon}
           />
         </Button>
@@ -35,7 +35,7 @@ export function RoomDrawer() {
             <DrawerTitle>续订房间</DrawerTitle>
             <DrawerDescription>您无需重新办理入住</DrawerDescription>
           </DrawerHeader>
-          <div className="p-4 pb-0 flex flex-row items-center">
+          <div className="flex flex-row items-center p-4 pb-0">
             <p>续订至</p>
             <div className="grow" />
             <div className="">

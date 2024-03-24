@@ -16,7 +16,7 @@ export interface NavBarProps {
 export const NavBar: React.FC<NavBarProps> = ({ title }) => {
   return (
     <>
-      <NavigationMenu className="mt-1 mb-1">
+      <NavigationMenu className="mb-1 mt-1">
         <NavigationMenuList className="flex items-center">
           <NavigationMenuItem className="ml-2">
             <Link to="/">{NAME}</Link>

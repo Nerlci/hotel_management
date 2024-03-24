@@ -60,7 +60,7 @@ export const CustomerDashboard: React.FC = () => {
   return (
     <>
       <NavBar title={<HomeIcon />} />
-      <Card className="w-11/12 ml-auto mr-auto mt-8">
+      <Card className="ml-auto mr-auto mt-8 w-11/12">
         <CardHeader>
           <CardTitle>欢迎您</CardTitle>
         </CardHeader>
@@ -72,7 +72,7 @@ export const CustomerDashboard: React.FC = () => {
           </div>
         </CardContent>
       </Card>
-      <Card className="w-11/12 ml-auto mr-auto mt-5">
+      <Card className="ml-auto mr-auto mt-5 w-11/12">
         <CardHeader>
           <div className="flex flex-row">
             <CardTitle className="text-base">消费</CardTitle>

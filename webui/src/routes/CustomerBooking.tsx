@@ -41,7 +41,7 @@ export const CustomerBooking = () => {
   return (
     <>
       <NavBar title={"预定"} />
-      <Card className="w-11/12 ml-auto mr-auto mt-10">
+      <Card className="ml-auto mr-auto mt-10 w-11/12">
         <CardHeader>
           <CardTitle>填写必要信息</CardTitle>
         </CardHeader>
@@ -49,7 +49,7 @@ export const CustomerBooking = () => {
           <Form {...form}>
             <form
               onSubmit={form.handleSubmit(onSubmit)}
-              className="space-y-2 w-80"
+              className="w-80 space-y-2"
             >
               <FormField
                 control={form.control}
