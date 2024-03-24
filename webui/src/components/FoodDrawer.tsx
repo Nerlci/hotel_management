@@ -52,7 +52,7 @@ export function FoodDrawer() {
       <DrawerTrigger asChild>
         <Button className="h-14 w-20" variant="outline">
           <img
-            className="w-10 invert-0 dark:invert select-none pointer-events-none"
+            className="pointer-events-none w-10 select-none invert-0 dark:invert"
             src={FoodIcon}
           />
         </Button>
@@ -74,13 +74,13 @@ export function FoodDrawer() {
                 {Array.from({ length: 5 }).map((_, index) => (
                   <CarouselItem
                     key={index}
-                    className="lg:basis-auto md:basis-auto sm:basis-auto xs:basis-auto"
+                    className="xs:basis-auto sm:basis-auto md:basis-auto lg:basis-auto"
                   >
                     <div className="p-1">
                       <Card>
-                        <CardContent className="flex flex-col aspect-square items-center justify-center p-3 gap-2">
+                        <CardContent className="flex aspect-square flex-col items-center justify-center gap-2 p-3">
                           <img
-                            className="object-cover h-64 w-64"
+                            className="h-64 w-64 object-cover"
                             src={images[index]}
                           />
                           <div className="flex flex-row items-center gap-2">

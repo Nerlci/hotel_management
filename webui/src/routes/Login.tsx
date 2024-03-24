@@ -46,11 +46,11 @@ const Login: React.FC<LoginProps> = ({ type }) => {
   return (
     <>
       <NavBar title="登录" />
-      <div className="justify-center ml-auto mr-auto mt-5 max-w-fit">
+      <div className="ml-auto mr-auto mt-5 max-w-fit justify-center">
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
-            className="space-y-2 w-80"
+            className="w-80 space-y-2"
           >
             <FormField
               control={form.control}

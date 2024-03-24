@@ -29,7 +29,7 @@ export function AirconDrawer() {
       <DrawerTrigger asChild>
         <Button className="h-14 w-20" variant="outline">
           <img
-            className="w-10 invert-0 dark:invert select-none pointer-events-none"
+            className="pointer-events-none w-10 select-none invert-0 dark:invert"
             src={AirConditionerIcon}
           />
         </Button>
@@ -74,7 +74,7 @@ export function AirconDrawer() {
               </Button>
               <div className="flex-1 text-center">
                 <div
-                  className={`text-7xl font-bold tracking-tighter flex justify-center items-center gap-1 ${start ? "" : "text-muted"}`}
+                  className={`flex items-center justify-center gap-1 text-7xl font-bold tracking-tighter ${start ? "" : "text-muted"}`}
                 >
                   {tempreture}
                   <div className="text-4xl">&deg;C</div>
