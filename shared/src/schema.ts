@@ -2,28 +2,32 @@ import { z } from "zod";
 
 export const DateRange = z
   .object({
-    start: z.date(),
-    end: z.date(),
+    startDate: z.date(),
+    endDate: z.date(),
   })
-  .refine((d) => d.end >= d.start, {
+  .refine((d) => d.endDate >= d.startDate, {
     message: "End date must be later than or equal to the start date",
   });
 
+export const StatusCode = z
+  .union([z.literal("200"), z.literal("400"), z.literal("500")])
+  .default("200");
+
+export const Error = z.object({
+  msg: z.string().default(""),
+});
+
 export const UserOrderResponse = z.object({
-  code: z.string().min(2, "A status code is required"),
-  error: z.object({
-    msg: z.string(),
-  }),
+  code: StatusCode,
+  error: Error,
   payload: z.object({
     roomId: z.string(),
   }),
 });
 
 export const UserAvailablityResponse = z.object({
-  code: z.string().min(2, "A status code is required"),
-  error: z.object({
-    msg: z.string(),
-  }),
+  code: StatusCode,
+  error: Error,
   payload: z.object({
     rooms: z.array(
       z.object({
@@ -36,10 +40,8 @@ export const UserAvailablityResponse = z.object({
 
 export const ReceptionAvailableResponse = z
   .object({
-    code: z.string().min(2, "A status code is required"),
-    error: z.object({
-      msg: z.string(),
-    }),
+    code: StatusCode,
+    error: Error,
     payload: z.object({
       recommended: z.string(),
       available: z.array(z.string()),
