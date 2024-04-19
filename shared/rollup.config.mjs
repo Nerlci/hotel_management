@@ -17,16 +17,11 @@ const config = defineConfig([
         name: "shared",
         plugins: [terser()],
       },
+      {
+        file: "./dist/index.mjs",
+        format: "esm",
+      },
     ],
-    plugins: [typescript()],
-  },
-  {
-    input: "src/index.ts",
-    output: {
-      file: "./dist/index.mjs",
-      format: "esm",
-      name: "shared",
-    },
     plugins: [typescript()],
   },
 ]);
