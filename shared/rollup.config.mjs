@@ -1,6 +1,7 @@
 import { defineConfig } from "rollup";
 import typescript from "@rollup/plugin-typescript";
 import terser from "@rollup/plugin-terser";
+import resolve from "rollup-plugin-node-resolve";
 
 const config = defineConfig([
   {
@@ -22,7 +23,7 @@ const config = defineConfig([
         format: "esm",
       },
     ],
-    plugins: [typescript()],
+    plugins: [typescript(), resolve()],
   },
 ]);
 

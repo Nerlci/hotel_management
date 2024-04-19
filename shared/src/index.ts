@@ -6,3 +6,4 @@ export {
   MIN_AIRCON_TEMP,
 } from "./consts";
 export { ChineseDateFormat } from "./utils";
+export * from "./schema";
