@@ -114,7 +114,7 @@ export const Register = () => {
           </div>
           <div className="mt-4 text-center text-sm">
             已经有帐号？{" "}
-            <Link to="/login/customer" className="underline">
+            <Link to="/login" className="underline">
               登录
             </Link>
           </div>
