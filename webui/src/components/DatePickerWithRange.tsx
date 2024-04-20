@@ -1,7 +1,7 @@
 import { Calendar as CalendarIcon } from "lucide-react";
-import { DateRange } from "react-day-picker";
+import { DateRange, Matcher } from "react-day-picker";
 import { zhCN } from "date-fns/locale";
-import { cn } from "@/lib/utils";
+import { cn, useWindowSize } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import {
@@ -15,13 +15,17 @@ export type DatePickerWithRangeProps = {
   className?: string;
   date: DateRange | undefined;
   setDate: React.Dispatch<React.SetStateAction<DateRange | undefined>>;
+  disabledDays: Matcher[];
 };
 
 export function DatePickerWithRange({
   className,
   date,
   setDate,
+  disabledDays,
 }: DatePickerWithRangeProps) {
+  const [width, _] = useWindowSize();
+
   return (
     <div className={cn("grid gap-2", className)}>
       <Popover>
@@ -55,7 +59,9 @@ export function DatePickerWithRange({
             defaultMonth={date?.from}
             selected={date}
             onSelect={setDate}
-            numberOfMonths={2}
+            numberOfMonths={width > 768 ? 2 : 1}
+            disabled={disabledDays}
+            // hidden={disabledDays}
             locale={zhCN}
           />
         </PopoverContent>
