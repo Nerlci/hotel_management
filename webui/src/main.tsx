@@ -10,6 +10,8 @@ import { CustomerDashboard } from "./routes/CustomerDashboard.tsx";
 import { CustomerBooking } from "./routes/CustomerBooking.tsx";
 import { Register } from "./routes/Register.tsx";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ProtectedRoute } from "./components/ProtectedRoute.tsx";
+import { AuthProvider } from "./components/AuthProvider.tsx";
 
 const router = createBrowserRouter([
   {
@@ -23,7 +25,13 @@ const router = createBrowserRouter([
   },
   {
     path: "customer",
-    element: <CustomerDashboard />,
+    element: (
+      <AuthProvider>
+        <ProtectedRoute>
+          <CustomerDashboard />
+        </ProtectedRoute>
+      </AuthProvider>
+    ),
   },
   {
     path: "register",
