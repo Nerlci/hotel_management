@@ -3,8 +3,9 @@ import { NavBar } from "@/components/NavBar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
+import { getRoomAvailability } from "@/lib/dataFetch";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { addDays } from "date-fns";
+import { useQuery } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { DateRange } from "shared";
 import { z } from "zod";
@@ -12,17 +13,16 @@ import { z } from "zod";
 const bookingFormSchema = z.object({
   date: z.object({
     from: z.date(),
-    to: z.date(),
+    to: z.date().optional(),
   }),
 });
 
 export const CustomerBooking = () => {
-  const disabledDays: Date[] = [
-    new Date(),
-    addDays(new Date(), 1),
-    new Date(2024, 4, 3),
-  ];
-  // TODO: fetch disabledDays from server
+  const { isLoading, error, data } = useQuery({
+    queryKey: ["disabledDays"],
+    queryFn: getRoomAvailability,
+  });
+  const disabledDays = data ?? [];
 
   function findFirstDisabledDay(from: Date, to: Date): Date | undefined {
     for (let i = 0; i < disabledDays.length; i++) {
@@ -49,7 +49,7 @@ export const CustomerBooking = () => {
   function onSubmit(values: z.infer<typeof bookingFormSchema>) {
     const dateRange = DateRange.parse({
       startDate: values.date.from,
-      endDate: values.date.to,
+      endDate: values.date.to ?? values.date.from,
     });
     console.log(JSON.stringify(dateRange));
     // TODO: post dateRange to server

@@ -18,12 +18,7 @@ export type UserOrderResponse = z.infer<typeof UserOrderResponse>;
 
 export const UserAvailablityResponse = responseBase.extend({
   payload: z.object({
-    rooms: z.array(
-      z.object({
-        type: z.string().min(1),
-        status: z.boolean(),
-      }),
-    ),
+    unavailableDates: z.array(z.string().datetime()),
   }),
 });
 export type UserAvailablityResponse = z.infer<typeof UserAvailablityResponse>;
