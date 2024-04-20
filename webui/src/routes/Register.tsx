@@ -106,7 +106,7 @@ export const Register = () => {
                 <Button type="submit" className="w-full">
                   创建账户
                 </Button>
-                <Button variant="outline" className="w-full">
+                <Button type="button" variant="outline" className="w-full">
                   使用微信登录
                 </Button>
               </form>
