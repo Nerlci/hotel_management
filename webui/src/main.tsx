@@ -8,6 +8,7 @@ import Login, { UserType } from "./routes/Login.tsx";
 import { ThemeProvider } from "./components/theme-provider.tsx";
 import { CustomerDashboard } from "./routes/CustomerDashboard.tsx";
 import { CustomerBooking } from "./routes/CustomerBooking.tsx";
+import { Register } from "./routes/Register.tsx";
 
 const router = createBrowserRouter([
   {
@@ -35,6 +36,10 @@ const router = createBrowserRouter([
   {
     path: "customer",
     element: <CustomerDashboard />,
+  },
+  {
+    path: "register",
+    element: <Register />,
   },
   {
     path: "booking",
