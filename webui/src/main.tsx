@@ -21,7 +21,11 @@ const router = createBrowserRouter([
   },
   {
     path: "login",
-    element: <Login />,
+    element: (
+      <AuthProvider>
+        <Login />
+      </AuthProvider>
+    ),
   },
   {
     path: "customer",
@@ -39,7 +43,13 @@ const router = createBrowserRouter([
   },
   {
     path: "booking",
-    element: <CustomerBooking />,
+    element: (
+      <AuthProvider>
+        <ProtectedRoute>
+          <CustomerBooking />
+        </ProtectedRoute>
+      </AuthProvider>
+    ),
   },
 ]);
 

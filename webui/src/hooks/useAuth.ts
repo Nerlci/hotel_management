@@ -1,8 +1,9 @@
+import { LoggedinUser } from "@/lib/types";
 import { createContext, useContext } from "react";
 
 type AuthContextType = {
-  user: any;
-  login: (data: any) => void;
+  user: LoggedinUser;
+  login: (data: LoggedinUser) => void;
   logout: () => void;
 };
 

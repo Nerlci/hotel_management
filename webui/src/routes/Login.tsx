@@ -13,6 +13,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Link } from "react-router-dom";
 import { ModeToggle } from "@/components/mode-toggle";
+import { useAuth } from "@/hooks/useAuth";
+import { useEffect } from "react";
 
 const loginFormSchema = z.object({
   username: z.string().min(3, "用户名至少3个字符"),
@@ -27,11 +29,21 @@ const Login = () => {
       password: "",
     },
   });
+  const { user, login, logout } = useAuth()!;
+
+  useEffect(() => {
+    if (user) {
+      logout();
+    }
+  });
 
   function onSubmit(values: z.infer<typeof loginFormSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
     console.log(`login with ${values.password} and ${values.username}`);
+    // mock login
+    if (values.password === "password" && values.username === "username") {
+      // TODO: do API call
+      login({ username: values.username, type: "customer" });
+    }
   }
 
   return (

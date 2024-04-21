@@ -1,18 +1,19 @@
 import { AuthContext } from "@/hooks/useAuth";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
+import { LoggedinUser } from "@/lib/types";
 import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-
 
 export function AuthProvider({ children }: { children: React.ReactElement }) {
   const [user, setUser] = useLocalStorage("user", null);
   const navigate = useNavigate();
 
-  // call this function when you want to authenticate the user
-  const login = async (data: any) => {
+  const login = async (data: LoggedinUser) => {
     setUser(data);
     // TODO redirect to different pages depend on usre type
-    navigate("/profile");
+    if (data.type === "customer") {
+      navigate("/customer");
+    }
   };
 
   // call this function to sign out logged in user
@@ -31,4 +32,3 @@ export function AuthProvider({ children }: { children: React.ReactElement }) {
   );
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
-
