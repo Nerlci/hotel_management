@@ -15,6 +15,20 @@ interface DataTableViewOptionsProps<TData> {
   table: Table<TData>;
 }
 
+function getChineseName(column: string) {
+  switch (column) {
+    case "temperature":
+      return "温度";
+    case "windspeed":
+      return "风速";
+    case "mode":
+      return "模式";
+    case "status":
+      return "状态";
+  }
+  return column;
+}
+
 export function DataTableViewOptions<TData>({
   table,
 }: DataTableViewOptionsProps<TData>) {
@@ -39,23 +53,6 @@ export function DataTableViewOptions<TData>({
               typeof column.accessorFn !== "undefined" && column.getCanHide(),
           )
           .map((column) => {
-            switch (column.id) {
-              case "temperature":
-                column.id = "温度";
-                break;
-              case "windspeed":
-                column.id = "风速";
-                break;
-              case "mode":
-                column.id = "模式";
-                break;
-              case "status":
-                column.id = "状态";
-                break;
-            }
-            return column;
-          })
-          .map((column) => {
             return (
               <DropdownMenuCheckboxItem
                 key={column.id}
@@ -63,7 +60,7 @@ export function DataTableViewOptions<TData>({
                 checked={column.getIsVisible()}
                 onCheckedChange={(value) => column.toggleVisibility(!!value)}
               >
-                {column.id}
+                {getChineseName(column.id)}
               </DropdownMenuCheckboxItem>
             );
           })}
