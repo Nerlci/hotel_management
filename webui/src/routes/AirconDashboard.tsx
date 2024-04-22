@@ -1,7 +1,7 @@
 import { AirconOverview } from "@/components/AirconOverview";
 import { NavBar } from "@/components/NavBar";
-import { columns } from "@/components/tasks-components/columns";
-import { DataTable } from "@/components/tasks-components/data-table";
+import { columns } from "@/components/aircon-datatable-components/columns";
+import { DataTable } from "@/components/aircon-datatable-components/data-table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const tasks = JSON.parse(`
