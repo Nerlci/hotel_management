@@ -1,3 +1,4 @@
+import { AirconOverview } from "@/components/AirconOverview";
 import { NavBar } from "@/components/NavBar";
 import { columns } from "@/components/tasks-components/columns";
 import { DataTable } from "@/components/tasks-components/data-table";
@@ -712,11 +713,7 @@ export const AirconDashboard = () => {
     <>
       <NavBar title={"空调管理员"} />
       <div className="mt-3 justify-center">
-        <Tabs
-          defaultValue="overview"
-          className="top-3 mx-auto w-10/12"
-          orientation="vertical"
-        >
+        <Tabs defaultValue="overview" className="top-3 mx-auto w-10/12">
           <TabsList className="overview">
             <TabsTrigger value="overview">概览</TabsTrigger>
             <TabsTrigger value="aircon">空调管理</TabsTrigger>
@@ -727,7 +724,9 @@ export const AirconDashboard = () => {
             </div>
           </TabsContent>
           <TabsContent value="overview">
-            <div>hahhahahaha</div>
+            <div className="mb-4 hidden h-full flex-1 flex-col md:flex">
+              <AirconOverview />
+            </div>
           </TabsContent>
         </Tabs>
       </div>
