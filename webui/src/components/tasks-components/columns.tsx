@@ -36,7 +36,7 @@ export const columns: ColumnDef<Task>[] = [
   {
     accessorKey: "id",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Task" />
+      <DataTableColumnHeader column={column} title="房间号" />
     ),
     cell: ({ row }) => <div className="w-[80px]">{row.getValue("id")}</div>,
     enableSorting: false,
@@ -78,9 +78,7 @@ export const columns: ColumnDef<Task>[] = [
       <DataTableColumnHeader column={column} title="模式" />
     ),
     cell: ({ row }) => {
-      const mode = modes.find(
-        (mode) => mode.value === row.getValue("mode"),
-      );
+      const mode = modes.find((mode) => mode.value === row.getValue("mode"));
 
       if (!mode) {
         return null;
@@ -89,7 +87,9 @@ export const columns: ColumnDef<Task>[] = [
       return (
         <div className="flex w-[100px] items-center">
           {mode.icon && (
-            <mode.icon className="mr-2 h-4 w-4 text-muted-foreground" />
+            <mode.icon
+              className={`mr-2 h-4 w-4 text-muted-foreground ${mode.iconClassName}`}
+            />
           )}
           <span>{mode.label}</span>
         </div>
@@ -116,7 +116,7 @@ export const columns: ColumnDef<Task>[] = [
       return (
         <div className="flex w-[100px] items-center">
           {status.icon && (
-            <status.icon className="mr-2 h-4 w-4 text-muted-foreground" />
+            <status.icon className={`mr-2 h-4 w-4 ${status.iconClassName}`} />
           )}
           <span>{status.label}</span>
         </div>
@@ -128,6 +128,10 @@ export const columns: ColumnDef<Task>[] = [
   },
   {
     id: "actions",
-    cell: ({ row }) => <DataTableRowActions row={row} />,
+    cell: ({ row }) => (
+      <div className="w-8">
+        <DataTableRowActions row={row} />
+      </div>
+    ),
   },
 ];

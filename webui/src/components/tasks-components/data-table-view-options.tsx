@@ -28,12 +28,11 @@ export function DataTableViewOptions<TData>({
           size="sm"
           className="ml-auto hidden h-8 lg:flex"
         >
-          <MixerHorizontalIcon className="mr-2 h-4 w-4" />
-          View
+          <MixerHorizontalIcon className="h-4 w-4" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-[150px]">
-        <DropdownMenuLabel>Toggle columns</DropdownMenuLabel>
+        <DropdownMenuLabel>显示或隐藏列</DropdownMenuLabel>
         <DropdownMenuSeparator />
         {table
           .getAllColumns()
@@ -41,6 +40,23 @@ export function DataTableViewOptions<TData>({
             (column) =>
               typeof column.accessorFn !== "undefined" && column.getCanHide(),
           )
+          .map((column) => {
+            switch (column.id) {
+              case "temperature":
+                column.id = "温度";
+                break;
+              case "windspeed":
+                column.id = "风速";
+                break;
+              case "mode":
+                column.id = "模式";
+                break;
+              case "status":
+                column.id = "状态";
+                break;
+            }
+            return column;
+          })
           .map((column) => {
             return (
               <DropdownMenuCheckboxItem
