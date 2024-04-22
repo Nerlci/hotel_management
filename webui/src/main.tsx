@@ -12,6 +12,7 @@ import { Register } from "./routes/Register.tsx";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ProtectedRoute } from "./components/ProtectedRoute.tsx";
 import { AuthProvider } from "./components/AuthProvider.tsx";
+import { AirconDashboard } from "./routes/AirconDashboard.tsx";
 
 const router = createBrowserRouter([
   {
@@ -36,6 +37,10 @@ const router = createBrowserRouter([
         </ProtectedRoute>
       </AuthProvider>
     ),
+  },
+  {
+    path: "airconmanager",
+    element: <AirconDashboard />,
   },
   {
     path: "register",
