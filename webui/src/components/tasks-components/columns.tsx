@@ -6,8 +6,7 @@ import { DataTableColumnHeader } from "./data-table-column-header";
 import { DataTableRowActions } from "./data-table-row-actions";
 import { Checkbox } from "../ui/checkbox";
 import { Task } from "@/lib/tasks-data/schema";
-import { Badge } from "../ui/badge";
-import { labels, priorities, statuses } from "@/lib/tasks-data/data";
+import { modes, statuses } from "@/lib/tasks-data/data";
 
 export const columns: ColumnDef<Task>[] = [
   {
@@ -44,27 +43,66 @@ export const columns: ColumnDef<Task>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: "title",
+    accessorKey: "temperature",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Title" />
+      <DataTableColumnHeader column={column} title="温度" />
     ),
     cell: ({ row }) => {
-      const label = labels.find((label) => label.value === row.original.label);
-
       return (
         <div className="flex space-x-2">
-          {label && <Badge variant="outline">{label.label}</Badge>}
           <span className="max-w-[500px] truncate font-medium">
-            {row.getValue("title")}
+            {row.getValue("temperature")}
           </span>
         </div>
       );
     },
   },
   {
+    accessorKey: "windspeed",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="风速" />
+    ),
+    cell: ({ row }) => {
+      return (
+        <div className="flex space-x-2">
+          <span className="max-w-[500px] truncate font-medium">
+            {row.getValue("windspeed")}
+          </span>
+        </div>
+      );
+    },
+  },
+  {
+    accessorKey: "mode",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="模式" />
+    ),
+    cell: ({ row }) => {
+      const mode = modes.find(
+        (mode) => mode.value === row.getValue("mode"),
+      );
+
+      if (!mode) {
+        return null;
+      }
+
+      return (
+        <div className="flex w-[100px] items-center">
+          {mode.icon && (
+            <mode.icon className="mr-2 h-4 w-4 text-muted-foreground" />
+          )}
+          <span>{mode.label}</span>
+        </div>
+      );
+    },
+    filterFn: (row, id, value) => {
+      return value.includes(row.getValue(id));
+    },
+  },
+  {
     accessorKey: "status",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Status" />
+      <DataTableColumnHeader column={column} title="状态" />
     ),
     cell: ({ row }) => {
       const status = statuses.find(
@@ -81,33 +119,6 @@ export const columns: ColumnDef<Task>[] = [
             <status.icon className="mr-2 h-4 w-4 text-muted-foreground" />
           )}
           <span>{status.label}</span>
-        </div>
-      );
-    },
-    filterFn: (row, id, value) => {
-      return value.includes(row.getValue(id));
-    },
-  },
-  {
-    accessorKey: "priority",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Priority" />
-    ),
-    cell: ({ row }) => {
-      const priority = priorities.find(
-        (priority) => priority.value === row.getValue("priority"),
-      );
-
-      if (!priority) {
-        return null;
-      }
-
-      return (
-        <div className="flex items-center">
-          {priority.icon && (
-            <priority.icon className="mr-2 h-4 w-4 text-muted-foreground" />
-          )}
-          <span>{priority.label}</span>
         </div>
       );
     },

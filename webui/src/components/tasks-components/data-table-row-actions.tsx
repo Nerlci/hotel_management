@@ -18,8 +18,8 @@ import {
 } from "../ui/dropdown-menu";
 
 import { Button } from "../ui/button";
-import { taskSchema } from "@/lib/tasks-data/schema";
-import { labels } from "@/lib/tasks-data/data";
+import { airconSchema } from "@/lib/tasks-data/schema";
+import { statuses } from "@/lib/tasks-data/data";
 
 interface DataTableRowActionsProps<TData> {
   row: Row<TData>;
@@ -28,7 +28,7 @@ interface DataTableRowActionsProps<TData> {
 export function DataTableRowActions<TData>({
   row,
 }: DataTableRowActionsProps<TData>) {
-  const task = taskSchema.parse(row.original);
+  const task = airconSchema.parse(row.original);
 
   return (
     <DropdownMenu>
@@ -49,10 +49,10 @@ export function DataTableRowActions<TData>({
         <DropdownMenuSub>
           <DropdownMenuSubTrigger>Labels</DropdownMenuSubTrigger>
           <DropdownMenuSubContent>
-            <DropdownMenuRadioGroup value={task.label}>
-              {labels.map((label) => (
-                <DropdownMenuRadioItem key={label.value} value={label.value}>
-                  {label.label}
+            <DropdownMenuRadioGroup value={task.status}>
+              {statuses.map((status) => (
+                <DropdownMenuRadioItem key={status.value} value={status.value}>
+                  {status.label}
                 </DropdownMenuRadioItem>
               ))}
             </DropdownMenuRadioGroup>

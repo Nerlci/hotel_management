@@ -1,71 +1,36 @@
 import {
-  ArrowDownIcon,
-  ArrowRightIcon,
-  ArrowUpIcon,
+  BlendingModeIcon,
   CheckCircledIcon,
-  CircleIcon,
   CrossCircledIcon,
-  QuestionMarkCircledIcon,
-  StopwatchIcon,
+  SunIcon,
 } from "@radix-ui/react-icons";
-
-export const labels = [
-  {
-    value: "bug",
-    label: "Bug",
-  },
-  {
-    value: "feature",
-    label: "Feature",
-  },
-  {
-    value: "documentation",
-    label: "Documentation",
-  },
-];
 
 export const statuses = [
   {
-    value: "backlog",
-    label: "Backlog",
-    icon: QuestionMarkCircledIcon,
-  },
-  {
-    value: "todo",
-    label: "Todo",
-    icon: CircleIcon,
-  },
-  {
-    value: "in progress",
-    label: "In Progress",
-    icon: StopwatchIcon,
-  },
-  {
-    value: "done",
-    label: "Done",
+    value: "on",
+    label: "打开",
     icon: CheckCircledIcon,
   },
   {
-    value: "canceled",
-    label: "Canceled",
+    value: "off",
+    label: "关闭",
     icon: CrossCircledIcon,
   },
 ];
 
-export const priorities = [
+export const modes = [
   {
-    label: "Low",
-    value: "low",
-    icon: ArrowDownIcon,
+    value: "cool",
+    label: "制冷",
+    icon: BlendingModeIcon,
   },
   {
-    label: "Medium",
-    value: "medium",
-    icon: ArrowRightIcon,
+    value: "heat",
+    label: "制热",
+    icon: SunIcon,
   },
   {
-    label: "High",
-    value: "high",
-    icon: ArrowUpIcon,
+    value: "-",
+    label: "-",
   },
 ];
