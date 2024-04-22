@@ -85,9 +85,7 @@ export const columns: ColumnDef<Task>[] = [
       return (
         <div className="flex w-[100px] items-center">
           {mode.icon && (
-            <mode.icon
-              className={`mr-2 h-4 w-4 ${mode.iconClassName}`}
-            />
+            <mode.icon className={`mr-2 h-4 w-4 ${mode.iconClassName}`} />
           )}
           <span>{mode.label}</span>
         </div>
