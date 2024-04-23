@@ -1,5 +1,4 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import React from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
@@ -14,23 +13,16 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Link } from "react-router-dom";
 import { ModeToggle } from "@/components/mode-toggle";
-
-export enum UserType {
-  Customer = "customer",
-  Staff = "staff",
-  Admin = "admin",
-}
-
-export interface LoginProps {
-  type: UserType;
-}
+import { useAuth } from "@/hooks/useAuth";
+import { useEffect } from "react";
+import XiaoDing from "../assets/xiaoding.jpg";
 
 const loginFormSchema = z.object({
   username: z.string().min(3, "用户名至少3个字符"),
   password: z.string().min(6, "密码至少6个字符"),
 });
 
-const Login: React.FC<LoginProps> = ({ type }) => {
+const Login = () => {
   const form = useForm<z.infer<typeof loginFormSchema>>({
     resolver: zodResolver(loginFormSchema),
     defaultValues: {
@@ -38,11 +30,21 @@ const Login: React.FC<LoginProps> = ({ type }) => {
       password: "",
     },
   });
+  const { user, login, logout } = useAuth()!;
+
+  useEffect(() => {
+    if (user) {
+      logout();
+    }
+  });
 
   function onSubmit(values: z.infer<typeof loginFormSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(`${type}login with ${values.password} and ${values.username}`);
+    console.log(`login with ${values.password} and ${values.username}`);
+    // mock login
+    if (values.password === "password" && values.username === "username") {
+      // TODO: do API call
+      login({ username: values.username, type: "customer" });
+    }
   }
 
   return (
@@ -52,7 +54,7 @@ const Login: React.FC<LoginProps> = ({ type }) => {
       </div>
       <div className="min-h-screen w-full lg:grid lg:grid-cols-2">
         <div className="hidden place-content-center bg-muted lg:block">
-          <div className="text-center">TODO: a logo or something</div>
+          <img src={XiaoDing}/>
         </div>
         <div className="flex items-center justify-center py-12">
           <div className="mx-auto grid w-[350px] gap-6">

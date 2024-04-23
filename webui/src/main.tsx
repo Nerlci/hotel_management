@@ -4,15 +4,15 @@ import Root from "./routes/Root.tsx";
 import "./index.css";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import ErrorPage from "./ErrorPage.tsx";
-import Login, { UserType } from "./routes/Login.tsx";
+import Login from "./routes/Login.tsx";
 import { ThemeProvider } from "./components/theme-provider.tsx";
 import { CustomerDashboard } from "./routes/CustomerDashboard.tsx";
 import { CustomerBooking } from "./routes/CustomerBooking.tsx";
 import { Register } from "./routes/Register.tsx";
-import {
-  QueryClient,
-  QueryClientProvider,
-} from "@tanstack/react-query";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ProtectedRoute } from "./components/ProtectedRoute.tsx";
+import { AuthProvider } from "./components/AuthProvider.tsx";
+import { AirconDashboard } from "./routes/AirconDashboard.tsx";
 
 const router = createBrowserRouter([
   {
@@ -22,24 +22,25 @@ const router = createBrowserRouter([
   },
   {
     path: "login",
-    children: [
-      {
-        path: "customer",
-        element: <Login type={UserType.Customer} />,
-      },
-      {
-        path: "staff",
-        element: <Login type={UserType.Staff} />,
-      },
-      {
-        path: "admin",
-        element: <Login type={UserType.Admin} />,
-      },
-    ],
+    element: (
+      <AuthProvider>
+        <Login />
+      </AuthProvider>
+    ),
   },
   {
     path: "customer",
-    element: <CustomerDashboard />,
+    element: (
+      <AuthProvider>
+        <ProtectedRoute>
+          <CustomerDashboard />
+        </ProtectedRoute>
+      </AuthProvider>
+    ),
+  },
+  {
+    path: "airconmanager",
+    element: <AirconDashboard />,
   },
   {
     path: "register",
@@ -47,7 +48,13 @@ const router = createBrowserRouter([
   },
   {
     path: "booking",
-    element: <CustomerBooking />,
+    element: (
+      <AuthProvider>
+        <ProtectedRoute>
+          <CustomerBooking />
+        </ProtectedRoute>
+      </AuthProvider>
+    ),
   },
 ]);
 
