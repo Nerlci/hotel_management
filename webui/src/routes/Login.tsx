@@ -15,6 +15,7 @@ import { Link } from "react-router-dom";
 import { ModeToggle } from "@/components/mode-toggle";
 import { useAuth } from "@/hooks/useAuth";
 import { useEffect } from "react";
+import XiaoDing from "../assets/xiaoding.jpg";
 
 const loginFormSchema = z.object({
   username: z.string().min(3, "用户名至少3个字符"),
@@ -53,7 +54,7 @@ const Login = () => {
       </div>
       <div className="min-h-screen w-full lg:grid lg:grid-cols-2">
         <div className="hidden place-content-center bg-muted lg:block">
-          <div className="text-center">TODO: a logo or something</div>
+          <img src={XiaoDing}/>
         </div>
         <div className="flex items-center justify-center py-12">
           <div className="mx-auto grid w-[350px] gap-6">
