@@ -11,6 +11,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useAuth } from "@/hooks/useAuth";
 
 import { Line, LineChart, ResponsiveContainer, XAxis, YAxis } from "recharts";
 
@@ -57,12 +58,14 @@ function calcTotalCost(costData: CostDataItem[]): number {
 }
 
 export const CustomerDashboard: React.FC = () => {
+  const { user } = useAuth()!;
+
   return (
     <>
       <NavBar title={<HomeIcon />} />
       <Card className="ml-auto mr-auto mt-8 w-11/12">
         <CardHeader>
-          <CardTitle>欢迎您</CardTitle>
+          <CardTitle>欢迎回来，{user.username}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex gap-5">

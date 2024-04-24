@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -19,6 +19,8 @@ import {
   FormItem,
   FormMessage,
 } from "@/components/ui/form";
+import { useMutation } from "@tanstack/react-query";
+import { PostUserRegister } from "@/lib/dataFetch";
 
 const registerFormSchema = z.object({
   username: z.string().min(3, "用户名至少3个字符"),
@@ -26,8 +28,12 @@ const registerFormSchema = z.object({
   password: z.string().min(6, "密码至少6个字符"),
 });
 
+export type RegisterForm = z.infer<typeof registerFormSchema>;
+
 export const Register = () => {
-  const form = useForm<z.infer<typeof registerFormSchema>>({
+  const navigate = useNavigate();
+
+  const form = useForm<RegisterForm>({
     resolver: zodResolver(registerFormSchema),
     defaultValues: {
       username: "",
@@ -36,8 +42,18 @@ export const Register = () => {
     },
   });
 
-  function onSubmit(values: z.infer<typeof registerFormSchema>) {
-    console.log(`register with ${values.email} and ${values.username}`);
+  const mutation = useMutation({
+    mutationFn: PostUserRegister,
+    onSuccess: () => {
+      navigate("/login");
+    },
+    onError: (error) => {
+      console.log(error.message);
+    },
+  });
+
+  function onSubmit(values: RegisterForm) {
+    mutation.mutate(values);
   }
 
   return (
@@ -45,7 +61,13 @@ export const Register = () => {
       <Card className="mx-auto max-w-md">
         <CardHeader>
           <CardTitle className="text-4xl">注册</CardTitle>
-          <CardDescription>输入您的信息以创建一个新账户</CardDescription>
+          {mutation.isError ? (
+            <CardDescription className="text-destructive">
+              注册失败：{mutation.error.message}
+            </CardDescription>
+          ) : (
+            <CardDescription>输入您的信息以创建一个新账户</CardDescription>
+          )}
         </CardHeader>
         <CardContent>
           <div className="grid gap-4">
@@ -62,7 +84,7 @@ export const Register = () => {
                     render={({ field }) => (
                       <FormItem>
                         <FormControl>
-                          <Input placeholder="张三" {...field} />
+                          <Input type="text" placeholder="张三" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -103,7 +125,11 @@ export const Register = () => {
                     )}
                   />
                 </div>
-                <Button type="submit" className="w-full">
+                <Button
+                  type="submit"
+                  className="w-full"
+                  disabled={mutation.isPending || mutation.isSuccess}
+                >
                   创建账户
                 </Button>
                 <Button type="button" variant="outline" className="w-full">
