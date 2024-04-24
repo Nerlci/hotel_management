@@ -1,7 +1,15 @@
+import { useAuth } from "@/hooks/useAuth";
 import { Navigate } from "react-router-dom";
 
 function Root() {
-  return <Navigate to="/login" />;
+  const { user } = useAuth()!;
+  if (!user) {
+    return <Navigate to="/login" />;
+  } else {
+    if (user.type === "customer") {
+      return <Navigate to="/customer" />;
+    }
+  }
 }
 
 export default Root;

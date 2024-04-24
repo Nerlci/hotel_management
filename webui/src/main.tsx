@@ -17,7 +17,11 @@ import { AirconDashboard } from "./routes/AirconDashboard.tsx";
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Root />,
+    element: (
+      <AuthProvider>
+        <Root />
+      </AuthProvider>
+    ),
     errorElement: <ErrorPage />,
   },
   {
