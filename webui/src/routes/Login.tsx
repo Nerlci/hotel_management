@@ -80,7 +80,9 @@ const Login = () => {
       </div>
       <div className="min-h-screen w-full lg:grid lg:grid-cols-2">
         <div className="hidden place-content-center bg-muted lg:block">
-          <img src={XiaoDing} />
+          <div className="max-h-[100vh]">
+            <img src={XiaoDing} />
+          </div>
         </div>
         <div className="flex items-center justify-center py-12">
           <div className="mx-auto grid w-[350px] gap-6">

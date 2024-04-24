@@ -2,11 +2,17 @@ import { LoginForm } from "@/routes/Login";
 import { RegisterForm } from "@/routes/Register";
 import { UserAvailablityResponse, responseBase } from "shared";
 
-const BASE_URL = import.meta.env.VITE_API_URL as string;
+export const BASE_URL = import.meta.env.VITE_API_URL as string;
 
 export async function getRoomAvailability() {
   // validate using UserAvailablityResponse
-  const response = await fetch(`${BASE_URL}/api/room/availability`);
+  const response = await fetch(`${BASE_URL}/api/room/availability`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+  });
   const parsed = UserAvailablityResponse.parse(await response.json());
   return parsed.payload.unavailableDates.map((d) => new Date(d));
 }
@@ -18,6 +24,7 @@ export async function PostUserRegister(values: RegisterForm) {
       "Content-Type": "application/json",
     },
     body: JSON.stringify(values),
+    credentials: "include",
   });
   if (!response.ok) {
     throw new Error("Request failed");
@@ -36,6 +43,7 @@ export async function PostUserLogin(values: LoginForm) {
       "Content-Type": "application/json",
     },
     body: JSON.stringify(values),
+    credentials: "include",
   });
   if (!response.ok) {
     throw new Error("Request failed");
