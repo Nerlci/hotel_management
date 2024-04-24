@@ -38,6 +38,7 @@ const registerUser = async (req: Request, res: Response) => {
         payload: {
             email: user.email,
             username: user.username,
+            type: user.type,
         },
     });
 

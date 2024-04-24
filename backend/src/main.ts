@@ -6,7 +6,7 @@ import { apiRouter } from "./router/apiRouter";
 
 const app = express();
 
-app.use(cors()); // dev mode
+app.use(cors({ credentials: true, preflightContinue: true, origin: true }));
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
