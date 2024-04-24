@@ -39,6 +39,6 @@ app.get("/api/room/availability", async (req, res) => {
 
 app.use("/api", apiRouter);
 
-app.listen(58080, () => {
+app.listen(8080, () => {
   console.log("Server is running on http://localhost:8080");
 });

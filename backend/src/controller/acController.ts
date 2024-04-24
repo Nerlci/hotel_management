@@ -17,7 +17,7 @@ const statusController = async (req: Request, res: Response) => {
             channel.close(); // 关闭通道
         }
 
-    }, 100);
+    }, 1000);
 };
 
 const acController = { statusController };
