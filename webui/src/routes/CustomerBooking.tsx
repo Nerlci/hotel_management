@@ -19,7 +19,6 @@ const bookingFormSchema = z.object({
 });
 
 export const CustomerBooking = () => {
-  // @ts-ignore
   const { isLoading, error, data } = useQuery({
     queryKey: ["disabledDays"],
     queryFn: getRoomAvailability,

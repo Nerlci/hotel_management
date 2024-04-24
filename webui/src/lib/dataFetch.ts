@@ -5,7 +5,6 @@ import { UserAvailablityResponse, responseBase } from "shared";
 export const BASE_URL = import.meta.env.VITE_API_URL as string;
 
 export async function getRoomAvailability() {
-  // validate using UserAvailablityResponse
   const response = await fetch(`${BASE_URL}/api/room/availability`, {
     method: "GET",
     headers: {
@@ -17,7 +16,7 @@ export async function getRoomAvailability() {
   return parsed.payload.unavailableDates.map((d) => new Date(d));
 }
 
-export async function PostUserRegister(values: RegisterForm) {
+export async function postUserRegister(values: RegisterForm) {
   const response = await fetch(`${BASE_URL}/api/user/register`, {
     method: "POST",
     headers: {
@@ -36,7 +35,7 @@ export async function PostUserRegister(values: RegisterForm) {
   return json;
 }
 
-export async function PostUserLogin(values: LoginForm) {
+export async function postUserLogin(values: LoginForm) {
   const response = await fetch(`${BASE_URL}/api/user/login`, {
     method: "POST",
     headers: {

@@ -13,7 +13,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from "@/hooks/useAuth";
-import useSSE from "@/hooks/useSse";
+import { useSSE } from "@/hooks/useSse";
 import { BASE_URL } from "@/lib/dataFetch";
 import { useEffect } from "react";
 

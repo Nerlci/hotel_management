@@ -1,23 +1,17 @@
 import { useState, useRef, useEffect } from "react";
 
-const useSSE = (url: string) => {
-  const source = useRef<EventSource | null>(null);
-  //接收到的sse数据
-  const [sseData, setSseData] = useState({});
+const stateArr = [
+  { key: 0, value: "正在链接中" },
+  { key: 1, value: "已经链接并且可以通讯" },
+  { key: 2, value: "连接已关闭或者没有链接成功" },
+];
 
-  // sse状态
-  const [sseReadyState, setSseReadyState] = useState({
-    key: 0,
-    value: "正在链接中",
-  });
+export function useSSE(url: string) {
+  const source = useRef<EventSource | null>(null);
+  const [sseData, setSseData] = useState({});
+  const [sseReadyState, setSseReadyState] = useState(stateArr[0]);
 
   const creatSource = () => {
-    const stateArr = [
-      { key: 0, value: "正在链接中" },
-      { key: 1, value: "已经链接并且可以通讯" },
-      { key: 2, value: "连接已关闭或者没有链接成功" },
-    ];
-
     try {
       source.current = new EventSource(url, {
         withCredentials: true,
@@ -25,7 +19,6 @@ const useSSE = (url: string) => {
       source.current.onopen = (_e) => {
         setSseReadyState(stateArr[source.current?.readyState ?? 0]);
       };
-
       source.current.onerror = (_) => {
         setSseReadyState(stateArr[source.current?.readyState ?? 0]);
       };
@@ -43,12 +36,10 @@ const useSSE = (url: string) => {
     }
   };
 
-  //  关闭 WebSocket
   const closeSource = () => {
     source.current?.close();
   };
 
-  //重连
   const reconnectSSE = () => {
     try {
       closeSource();
@@ -59,9 +50,7 @@ const useSSE = (url: string) => {
     }
   };
 
-  useEffect(() => {
-    sourceInit();
-  }, []);
+  useEffect(sourceInit, []);
 
   return {
     sseData,
@@ -69,5 +58,4 @@ const useSSE = (url: string) => {
     closeSource,
     reconnectSSE,
   };
-};
-export default useSSE;
+}
