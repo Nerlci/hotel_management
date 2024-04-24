@@ -15,17 +15,36 @@ import { Link } from "react-router-dom";
 import { ModeToggle } from "@/components/mode-toggle";
 import { useAuth } from "@/hooks/useAuth";
 import { useEffect } from "react";
+import XiaoDing from "../assets/xiaoding.jpg";
+import { useMutation } from "@tanstack/react-query";
+import { PostUserLogin } from "@/lib/dataFetch";
+import { UserType } from "@/lib/types";
 
 const loginFormSchema = z.object({
-  username: z.string().min(3, "用户名至少3个字符"),
+  email: z.string().email("请输入有效的邮箱地址"),
   password: z.string().min(6, "密码至少6个字符"),
 });
 
+export type LoginForm = z.infer<typeof loginFormSchema>;
+
+function parseUserType(type: number): UserType {
+  switch (type) {
+    case 0:
+      return "customer";
+    case 1:
+      return "admin";
+    case 2:
+      return "reception";
+    default:
+      return "customer";
+  }
+}
+
 const Login = () => {
-  const form = useForm<z.infer<typeof loginFormSchema>>({
+  const form = useForm<LoginForm>({
     resolver: zodResolver(loginFormSchema),
     defaultValues: {
-      username: "",
+      email: "",
       password: "",
     },
   });
@@ -37,13 +56,21 @@ const Login = () => {
     }
   });
 
-  function onSubmit(values: z.infer<typeof loginFormSchema>) {
-    console.log(`login with ${values.password} and ${values.username}`);
-    // mock login
-    if (values.password === "password" && values.username === "username") {
-      // TODO: do API call
-      login({ username: values.username, type: "customer" });
-    }
+  const mutation = useMutation({
+    mutationFn: PostUserLogin,
+    onSuccess: (data) => {
+      login({
+        username: data.payload.username,
+        type: parseUserType(data.payload.type),
+      });
+    },
+    onError: (error) => {
+      console.log(error.message);
+    },
+  });
+
+  function onSubmit(values: LoginForm) {
+    mutation.mutate(values);
   }
 
   return (
@@ -53,7 +80,7 @@ const Login = () => {
       </div>
       <div className="min-h-screen w-full lg:grid lg:grid-cols-2">
         <div className="hidden place-content-center bg-muted lg:block">
-          <div className="text-center">TODO: a logo or something</div>
+          <img src={XiaoDing} />
         </div>
         <div className="flex items-center justify-center py-12">
           <div className="mx-auto grid w-[350px] gap-6">
@@ -70,14 +97,14 @@ const Login = () => {
                   className="w-80 space-y-2"
                 >
                   <div className="grid gap-2">
-                    <Label htmlFor="username">用户名</Label>
+                    <Label htmlFor="username">邮箱</Label>
                     <FormField
                       control={form.control}
-                      name="username"
+                      name="email"
                       render={({ field }) => (
                         <FormItem>
                           <FormControl>
-                            <Input placeholder="..." {...field} />
+                            <Input placeholder="" type="email" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>

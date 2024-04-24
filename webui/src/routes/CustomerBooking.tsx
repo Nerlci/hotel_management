@@ -3,6 +3,7 @@ import { NavBar } from "@/components/NavBar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
+import { Skeleton } from "@/components/ui/skeleton";
 import { getRoomAvailability } from "@/lib/dataFetch";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery } from "@tanstack/react-query";
@@ -64,79 +65,88 @@ export const CustomerBooking = () => {
           <CardTitle>填写必要信息</CardTitle>
         </CardHeader>
         <CardContent>
-          <Form {...form}>
-            <form
-              onSubmit={form.handleSubmit(onSubmit)}
-              className="w-80 space-y-2"
-            >
-              <FormField
-                control={form.control}
-                name="date"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormControl>
-                      <DatePickerWithRange
-                        date={field.value}
-                        setDate={(newVal) => {
-                          // @ts-ignore
-                          if (newVal.to === undefined) {
-                            field.onChange(newVal);
-                          } else {
+          {isLoading ? (
+            <div className="space-y-2">
+              <Skeleton className="h-4 w-[250px]" />
+              <Skeleton className="h-4 w-[200px]" />
+            </div>
+          ) : error ? (
+            <div className="space-y-2">Error: {error.message}</div>
+          ) : (
+            <Form {...form}>
+              <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className="w-80 space-y-2"
+              >
+                <FormField
+                  control={form.control}
+                  name="date"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <DatePickerWithRange
+                          date={field.value}
+                          setDate={(newVal) => {
                             // @ts-ignore
-                            const firstDisabledDay = findFirstDisabledDay(
-                              // @ts-ignore
-                              newVal.from,
-                              // @ts-ignore
-                              newVal.to,
-                            );
-                            if (firstDisabledDay === undefined) {
+                            if (newVal.to === undefined) {
                               field.onChange(newVal);
                             } else {
                               // @ts-ignore
-                              if (newVal.from === field.value.from) {
-                                field.onChange({
-                                  // @ts-ignore
-                                  from: newVal.to,
-                                  to: undefined,
-                                });
+                              const firstDisabledDay = findFirstDisabledDay(
+                                // @ts-ignore
+                                newVal.from,
+                                // @ts-ignore
+                                newVal.to,
+                              );
+                              if (firstDisabledDay === undefined) {
+                                field.onChange(newVal);
                               } else {
-                                field.onChange({
-                                  // @ts-ignore
-                                  from: newVal.from,
-                                  to: undefined,
-                                });
+                                // @ts-ignore
+                                if (newVal.from === field.value.from) {
+                                  field.onChange({
+                                    // @ts-ignore
+                                    from: newVal.to,
+                                    to: undefined,
+                                  });
+                                } else {
+                                  field.onChange({
+                                    // @ts-ignore
+                                    from: newVal.from,
+                                    to: undefined,
+                                  });
+                                }
                               }
                             }
-                          }
-                        }}
-                        disabledDays={[
-                          {
-                            before: new Date(),
-                          },
-                          ...disabledDays,
-                        ]}
-                        className="w-[300px]"
-                      />
-                    </FormControl>
-                    {form.formState.errors.date !== undefined ? (
-                      <p className="text-sm font-medium text-destructive">
-                        需填写开始日期和结束日期
-                      </p>
-                    ) : (
-                      <></>
-                    )}
-                  </FormItem>
-                )}
-              />
-              <Button
-                type="submit"
-                className="h-8"
-                disabled={form.formState.errors.date !== undefined}
-              >
-                提交
-              </Button>
-            </form>
-          </Form>
+                          }}
+                          disabledDays={[
+                            {
+                              before: new Date(),
+                            },
+                            ...disabledDays,
+                          ]}
+                          className="w-[300px]"
+                        />
+                      </FormControl>
+                      {form.formState.errors.date !== undefined ? (
+                        <p className="text-sm font-medium text-destructive">
+                          需填写开始日期和结束日期
+                        </p>
+                      ) : (
+                        <></>
+                      )}
+                    </FormItem>
+                  )}
+                />
+                <Button
+                  type="submit"
+                  className="h-8"
+                  disabled={form.formState.errors.date !== undefined}
+                >
+                  提交
+                </Button>
+              </form>
+            </Form>
+          )}
         </CardContent>
       </Card>
     </>

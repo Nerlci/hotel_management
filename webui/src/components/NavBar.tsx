@@ -19,7 +19,9 @@ export const NavBar: React.FC<NavBarProps> = ({ title }) => {
       <NavigationMenu className="mb-1 mt-1">
         <NavigationMenuList className="flex items-center">
           <NavigationMenuItem className="ml-2">
-            <Link to="/">{NAME}</Link>
+            <Link to="/">
+              <h1 className="text-2xl">{NAME}</h1>
+            </Link>
           </NavigationMenuItem>
           <NavigationMenuItem className="ml-2">
             <Breadcrumb>
