@@ -14,7 +14,8 @@
     "cors": "^2.8.5",
     "express": "^4.19.2",
     "jsonwebtoken": "^9.0.2",
-    "shared": "file:../shared"
+    "shared": "file:../shared",
+    "sse-channel": "^4.0.0"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",
