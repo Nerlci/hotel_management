@@ -19,7 +19,7 @@ export const NavBar: React.FC<NavBarProps> = ({ title }) => {
       <NavigationMenu className="mb-1 mt-1">
         <NavigationMenuList className="flex items-center">
           <NavigationMenuItem className="ml-2">
-            <Link to="/">
+            <Link to="/login">
               <h1 className="text-2xl">{NAME}</h1>
             </Link>
           </NavigationMenuItem>
