@@ -1,10 +1,13 @@
 import express from "express";
 import cors from "cors";
+import cookieParser from "cookie-parser";
 import { UserAvailablityResponse } from "shared";
+import { apiRouter } from "./router/apiRouter";
 
 const app = express();
 
 app.use(cors()); // dev mode
+app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -34,6 +37,8 @@ app.get("/api/room/availability", async (req, res) => {
   res.json(response);
 });
 
-app.listen(8080, () => {
+app.use("/api", apiRouter);
+
+app.listen(58080, () => {
   console.log("Server is running on http://localhost:8080");
 });

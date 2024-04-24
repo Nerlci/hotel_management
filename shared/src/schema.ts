@@ -7,6 +7,7 @@ export const responseBase = z.object({
   error: z.object({
     msg: z.string().default(""),
   }),
+  payload: z.object({}).passthrough(),
 });
 
 export const UserOrderResponse = responseBase.extend({
