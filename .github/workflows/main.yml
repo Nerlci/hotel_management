@@ -77,6 +77,7 @@ jobs:
             export PATH=${{ vars.PATH }}:$PATH
             pm2 stop 0 | true
           SCRIPT_AFTER: |
+            export PATH=${{ vars.PATH }}:$PATH
             cd ~/www/hotel_management
             cd ./shared
             npm i
