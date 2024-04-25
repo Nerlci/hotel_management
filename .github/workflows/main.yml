@@ -1,0 +1,89 @@
+# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
+
+name: Node.js CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [21.x]
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+    - name: Build with npm
+      run: |
+        cd ./shared
+        npm i
+        npm run build
+        cd ../webui
+        npm i
+        npm run build
+        cd ../backend
+        npm i
+        npm run build
+        cd ..
+    - name: Upload artifact for deployment job
+      uses: actions/upload-artifact@v4
+      with:
+        name: hotel_management
+        path: .
+    
+    
+  deployment:
+    needs: build
+    runs-on: ubuntu-latest
+    environment: BUPTServer
+
+    steps: 
+      - name: Download artifact from build job
+        uses: actions/download-artifact@v4
+        with:
+          name: hotel_management
+      - name: Get frp authentication
+        run: curl -k -X POST -d "persist_auth=off" -d "pw=${{ secrets.FRP_PASSWORD }}" "https://45.125.46.201:60976"
+      - name: SSH Deploy
+        uses: easingthemes/ssh-deploy@v5.0.3
+        with:
+          # Private key part of an SSH key pair
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          # Remote host
+          REMOTE_HOST: 45.125.46.201
+          # Remote user
+          REMOTE_USER: server
+          # Remote port
+          REMOTE_PORT: 60976
+          # Source directory, path relative to `$GITHUB_WORKSPACE` root, eg: `dist/`
+          SOURCE: ./
+          # Target directory
+          TARGET: ~/www/hotel_management
+          # paths to exclude separated by `,`, ie: `/dist/, /node_modules/`
+          EXCLUDE: /shared/node_modules/, /webui/node_modules/, /backend/node_modules/
+          SCRIPT_BEFORE: |
+            export PATH=${{ vars.PATH }}:$PATH
+            pm2 stop 0 | true
+          SCRIPT_AFTER: |
+            export PATH=${{ vars.PATH }}:$PATH
+            cd ~/www/hotel_management
+            cd ./shared
+            npm i
+            cd ../webui
+            npm i
+            cd ../backend
+            npm i
+            pm2 start ./dist/main.js
+            
