@@ -70,7 +70,7 @@ jobs:
           # Source directory, path relative to `$GITHUB_WORKSPACE` root, eg: `dist/`
           SOURCE: ./
           # Target directory
-          TARGET: ~/../../www/hotel_management
+          TARGET: ../../www/hotel_management
           # paths to exclude separated by `,`, ie: `/dist/, /node_modules/`
           EXCLUDE: /shared/node_modules/, /webui/node_modules/, /backend/node_modules/
           SCRIPT_BEFORE: pm2 stop 0
