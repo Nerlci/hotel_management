@@ -27,6 +27,7 @@ jobs:
         cache: 'npm'
     - name: Build with npm
       run: |
+        export VITE_API_URL="${{ vars.VITE_API_URL }}"
         cd ./shared
         npm i
         npm run build
