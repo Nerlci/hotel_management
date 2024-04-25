@@ -75,7 +75,7 @@ jobs:
           EXCLUDE: /shared/node_modules/, /webui/node_modules/, /backend/node_modules/
           SCRIPT_BEFORE: |
             export PATH=${{ vars.PATH }}:$PATH
-            pm2 stop 0
+            pm2 stop 0 | true
           SCRIPT_AFTER_REQUIRED: |
             cd ~/www/hotel_management
             cd ./shared
