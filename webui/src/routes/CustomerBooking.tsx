@@ -8,7 +8,7 @@ import { getRoomAvailability } from "@/lib/dataFetch";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
-import { DateRange } from "shared";
+import { DateRange as DateRangeType } from "shared";
 import { z } from "zod";
 
 const bookingFormSchema = z.object({
@@ -48,7 +48,7 @@ export const CustomerBooking = () => {
   });
 
   function onSubmit(values: z.infer<typeof bookingFormSchema>) {
-    const dateRange = DateRange.parse({
+    const dateRange = DateRangeType.parse({
       startDate: values.date.from,
       endDate: values.date.to ?? values.date.from,
     });
@@ -86,30 +86,29 @@ export const CustomerBooking = () => {
                         <DatePickerWithRange
                           date={field.value}
                           setDate={(newVal) => {
-                            // @ts-ignore
+                            // @ts-expect-error newVal is DateRange
                             if (newVal.to === undefined) {
                               field.onChange(newVal);
                             } else {
-                              // @ts-ignore
                               const firstDisabledDay = findFirstDisabledDay(
-                                // @ts-ignore
+                                // @ts-expect-error newVal is DateRange
                                 newVal.from,
-                                // @ts-ignore
+                                // @ts-expect-error newVal is DateRange
                                 newVal.to,
                               );
                               if (firstDisabledDay === undefined) {
                                 field.onChange(newVal);
                               } else {
-                                // @ts-ignore
+                                // @ts-expect-error newVal is DateRange
                                 if (newVal.from === field.value.from) {
                                   field.onChange({
-                                    // @ts-ignore
+                                    // @ts-expect-error newVal is DateRange
                                     from: newVal.to,
                                     to: undefined,
                                   });
                                 } else {
                                   field.onChange({
-                                    // @ts-ignore
+                                    // @ts-expect-error newVal is DateRange
                                     from: newVal.from,
                                     to: undefined,
                                   });

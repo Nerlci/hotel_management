@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 
 const stateArr = [
   { key: 0, value: "正在链接中" },
@@ -6,9 +6,9 @@ const stateArr = [
   { key: 2, value: "连接已关闭或者没有链接成功" },
 ];
 
-export function useSSE(url: string) {
+export function useSSE<T>(url: string) {
   const source = useRef<EventSource | null>(null);
-  const [sseData, setSseData] = useState({});
+  const [sseData, setSseData] = useState<T>();
   const [sseReadyState, setSseReadyState] = useState(stateArr[0]);
 
   const creatSource = () => {
@@ -16,10 +16,10 @@ export function useSSE(url: string) {
       source.current = new EventSource(url, {
         withCredentials: true,
       });
-      source.current.onopen = (_e) => {
+      source.current.onopen = () => {
         setSseReadyState(stateArr[source.current?.readyState ?? 0]);
       };
-      source.current.onerror = (_) => {
+      source.current.onerror = () => {
         setSseReadyState(stateArr[source.current?.readyState ?? 0]);
       };
       source.current.onmessage = (e) => {
@@ -36,9 +36,9 @@ export function useSSE(url: string) {
     }
   };
 
-  const closeSource = () => {
+  const closeSource = useCallback(() => {
     source.current?.close();
-  };
+  }, []);
 
   const reconnectSSE = () => {
     try {
@@ -50,7 +50,7 @@ export function useSSE(url: string) {
     }
   };
 
-  useEffect(sourceInit, []);
+  useEffect(sourceInit);
 
   return {
     sseData,
