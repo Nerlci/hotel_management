@@ -20,7 +20,8 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { useMutation } from "@tanstack/react-query";
-import { PostUserRegister } from "@/lib/dataFetch";
+import { postUserRegister } from "@/lib/dataFetch";
+import { toast } from "sonner";
 
 const registerFormSchema = z.object({
   username: z.string().min(3, "用户名至少3个字符"),
@@ -43,12 +44,15 @@ export const Register = () => {
   });
 
   const mutation = useMutation({
-    mutationFn: PostUserRegister,
+    mutationFn: postUserRegister,
     onSuccess: () => {
       navigate("/login");
     },
     onError: (error) => {
       console.log(error.message);
+      toast(error.message, {
+        description: "注册失败",
+      });
     },
   });
 

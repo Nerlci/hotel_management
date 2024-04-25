@@ -17,8 +17,10 @@ import { useAuth } from "@/hooks/useAuth";
 import { useEffect } from "react";
 import XiaoDing from "../assets/xiaoding.jpg";
 import { useMutation } from "@tanstack/react-query";
-import { PostUserLogin } from "@/lib/dataFetch";
+import { postUserLogin } from "@/lib/dataFetch";
 import { UserType } from "@/lib/types";
+import { toast } from "sonner";
+import { Toaster } from "@/components/ui/sonner";
 
 const loginFormSchema = z.object({
   email: z.string().email("请输入有效的邮箱地址"),
@@ -57,7 +59,7 @@ const Login = () => {
   });
 
   const mutation = useMutation({
-    mutationFn: PostUserLogin,
+    mutationFn: postUserLogin,
     onSuccess: (data) => {
       login({
         username: data.payload.username,
@@ -65,7 +67,9 @@ const Login = () => {
       });
     },
     onError: (error) => {
-      console.log(error.message);
+      toast(error.message, {
+        description: "请检查您的用户名和密码",
+      });
     },
   });
 
@@ -75,6 +79,7 @@ const Login = () => {
 
   return (
     <>
+      <Toaster />
       <div className="absolute right-2 top-1">
         <ModeToggle />
       </div>

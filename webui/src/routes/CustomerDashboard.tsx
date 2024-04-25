@@ -13,7 +13,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from "@/hooks/useAuth";
-import useSSE from "@/hooks/useSse";
+import { useSSE } from "@/hooks/useSse";
 import { BASE_URL } from "@/lib/dataFetch";
 import { useEffect } from "react";
 
@@ -63,18 +63,18 @@ function calcTotalCost(costData: CostDataItem[]): number {
 
 export const CustomerDashboard: React.FC = () => {
   const { user } = useAuth()!;
-  const { sseData, sseReadyState, closeSource } = useSSE(
-    `${BASE_URL}/api/ac/status`,
-  );
+  const { sseData, sseReadyState, closeSource } = useSSE<{
+    data: string;
+  }>(`${BASE_URL}/api/ac/status`);
 
-  useEffect(() => closeSource, []);
+  useEffect(() => closeSource, [closeSource]);
 
   return (
     <>
       <NavBar title={<HomeIcon />} />
       <Card className="ml-auto mr-auto mt-8 w-11/12">
         <CardHeader>
-          <CardTitle>欢迎回来，{user.username}</CardTitle>
+          <CardTitle>欢迎回来，{user && user.username}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex gap-5">
@@ -84,8 +84,7 @@ export const CustomerDashboard: React.FC = () => {
             {sseReadyState.key === 0 ? (
               <Skeleton className="h-5 w-20" />
             ) : (
-              // @ts-ignore
-              <div>{sseData.data}</div>
+              <div>{sseData && sseData.data}</div>
             )}
           </div>
         </CardContent>

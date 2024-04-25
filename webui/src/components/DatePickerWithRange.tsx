@@ -24,7 +24,7 @@ export function DatePickerWithRange({
   setDate,
   disabledDays,
 }: DatePickerWithRangeProps) {
-  const [width, _] = useWindowSize();
+  const [width] = useWindowSize();
 
   return (
     <div className={cn("grid gap-2", className)}>
