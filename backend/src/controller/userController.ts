@@ -49,7 +49,7 @@ const loginUser = async (req: Request, res: Response) => {
     const { email, password } = req.body;
 
     const user = await userService.getUserByEmail(email);
-
+    
     if (!user) {
         const response = responseBase.parse({
             error: {
@@ -58,13 +58,13 @@ const loginUser = async (req: Request, res: Response) => {
             code: '400',
             payload: {},
         });
-
+        
         res.json(response);
         return;
     }
-
+    
     const isValid = await validatePassword(password, user.password);
-
+    
     if (!isValid) {
         const response = responseBase.parse({
             error: {
@@ -73,11 +73,11 @@ const loginUser = async (req: Request, res: Response) => {
             code: '400',
             payload: {},
         });
-
+        
         res.json(response);
         return;
     }
-
+    
     const response = responseBase.parse({
         error: {
             msg: '',
@@ -90,31 +90,15 @@ const loginUser = async (req: Request, res: Response) => {
         },
     });
 
-    const token = jwt.sign({ userId: user.id, username: user.username, type: user.type }, process.env.JWT_SECRET!);
+    const token = jwt.sign({ userId: user.id, username: user.username, type:user.type }, process.env.JWT_SECRET!);
 
-    res.cookie('token', token, { httpOnly: true });
-    res.json(response);
-};
-
-const logoutUser = async (req: Request, res: Response) => {
-    res.clearCookie('token');
-    const response = responseBase.parse({
-        error: {
-            msg: '',
-        },
-        code: '200',
-        payload: {
-            message: 'Logged out',
-        },
-    });
-
+    res.cookie('token', token, { httpOnly: false });
     res.json(response);
 };
 
 const userController = {
     registerUser,
     loginUser,
-    logoutUser,
 };
 
 export { userController };
