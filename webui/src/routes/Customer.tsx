@@ -5,7 +5,7 @@ import { NavBar } from "@/components/NavBar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export const Customer: React.FC = () => {
-  const customerBooked = false; // TODO: fetch this from server
+  const customerBooked = true; // TODO: fetch this from server
 
   return (
     <>
