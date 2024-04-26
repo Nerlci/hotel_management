@@ -92,7 +92,7 @@ const loginUser = async (req: Request, res: Response) => {
 
     const token = jwt.sign({ userId: user.id, username: user.username, type:user.type }, process.env.JWT_SECRET!);
 
-    res.cookie('token', token, { httpOnly: true });
+    res.cookie('token', token, { httpOnly: false });
     res.json(response);
 };
 
