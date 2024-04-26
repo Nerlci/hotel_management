@@ -12,6 +12,7 @@ import { ProtectedRoute } from "./components/ProtectedRoute.tsx";
 import { AuthProvider } from "./components/AuthProvider.tsx";
 import { Aircon } from "./routes/Aircon.tsx";
 import { Customer } from "./routes/Customer.tsx";
+import { Toaster } from "./components/ui/sonner.tsx";
 
 const router = createBrowserRouter([
   {
@@ -43,11 +44,19 @@ const router = createBrowserRouter([
   },
   {
     path: "airconmanager",
-    element: <Aircon />,
+    element: (
+      <AuthProvider>
+        <Aircon />
+      </AuthProvider>
+    ),
   },
   {
     path: "register",
-    element: <Register />,
+    element: (
+      <AuthProvider>
+        <Register />
+      </AuthProvider>
+    ),
   },
 ]);
 
@@ -57,6 +66,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
       <QueryClientProvider client={queryClient}>
+        <Toaster />
         <RouterProvider router={router} />
       </QueryClientProvider>
     </ThemeProvider>

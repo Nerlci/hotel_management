@@ -6,22 +6,24 @@ import {
 import { ModeToggle } from "@/components/mode-toggle";
 import { NAME } from "shared";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbList } from "./ui/breadcrumb";
-import { Link } from "react-router-dom";
 import { Separator } from "@/components/ui/separator";
+import { useAuth } from "@/hooks/useAuth";
 
 export interface NavBarProps {
   title?: string | JSX.Element;
 }
 
 export const NavBar: React.FC<NavBarProps> = ({ title }) => {
+  const { logout } = useAuth()!;
+
   return (
     <>
       <NavigationMenu className="mb-1 mt-1">
         <NavigationMenuList className="flex items-center">
           <NavigationMenuItem className="ml-2">
-            <Link to="/login">
+            <div onClick={logout} className="hover:cursor-pointer">
               <h1 className="text-2xl">{NAME}</h1>
-            </Link>
+            </div>
           </NavigationMenuItem>
           <NavigationMenuItem className="ml-2">
             <Breadcrumb>

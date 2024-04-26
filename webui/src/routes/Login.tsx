@@ -14,13 +14,11 @@ import { Label } from "@/components/ui/label";
 import { Link } from "react-router-dom";
 import { ModeToggle } from "@/components/mode-toggle";
 import { useAuth } from "@/hooks/useAuth";
-import { useEffect } from "react";
 import XiaoDing from "../assets/xiaoding.jpg";
 import { useMutation } from "@tanstack/react-query";
 import { postUserLogin } from "@/lib/dataFetch";
 import { UserType } from "@/lib/types";
 import { toast } from "sonner";
-import { Toaster } from "@/components/ui/sonner";
 
 const loginFormSchema = z.object({
   email: z.string().email("请输入有效的邮箱地址"),
@@ -50,9 +48,7 @@ const Login = () => {
       password: "",
     },
   });
-  const { login, logout } = useAuth()!;
-
-  useEffect(logout);
+  const { login } = useAuth()!;
 
   const mutation = useMutation({
     mutationFn: postUserLogin,
@@ -75,7 +71,6 @@ const Login = () => {
 
   return (
     <>
-      <Toaster />
       <div className="absolute right-2 top-1">
         <ModeToggle />
       </div>
