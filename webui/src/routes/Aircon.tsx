@@ -58,7 +58,7 @@ const tasks = JSON.parse(`
 ]
 `);
 
-export const AirconDashboard = () => {
+export const Aircon = () => {
   return (
     <>
       <NavBar title={"空调管理员"} />

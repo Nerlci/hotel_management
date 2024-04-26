@@ -1,5 +1,4 @@
 import { DatePickerWithRange } from "@/components/DatePickerWithRange";
-import { NavBar } from "@/components/NavBar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
@@ -58,8 +57,7 @@ export const CustomerBooking = () => {
 
   return (
     <>
-      <NavBar title={"预定"} />
-      <Card className="ml-auto mr-auto mt-10 w-11/12">
+      <Card className="ml-auto mr-auto mt-5">
         <CardHeader>
           <CardTitle>填写必要信息</CardTitle>
         </CardHeader>

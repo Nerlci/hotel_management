@@ -50,13 +50,9 @@ const Login = () => {
       password: "",
     },
   });
-  const { user, login, logout } = useAuth()!;
+  const { login, logout } = useAuth()!;
 
-  useEffect(() => {
-    if (user) {
-      logout();
-    }
-  });
+  useEffect(logout);
 
   const mutation = useMutation({
     mutationFn: postUserLogin,

@@ -11,7 +11,7 @@ export function AuthProvider({ children }: { children: React.ReactElement }) {
   const value = useMemo(
     () => ({
       user,
-      login: async (data: LoggedinUser) => {
+      login: (data: LoggedinUser) => {
         setUser(data);
         // TODO redirect to different pages depend on usre type
         if (data!.type === "customer") {
@@ -19,8 +19,11 @@ export function AuthProvider({ children }: { children: React.ReactElement }) {
         }
       },
       logout: () => {
-        setUser(null);
-        navigate("/", { replace: true });
+        if (user) {
+          setUser(null);
+          // TODO clear cookies
+          navigate("/", { replace: true });
+        }
       },
     }),
     [user, navigate, setUser],

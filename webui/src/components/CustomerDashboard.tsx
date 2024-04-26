@@ -1,7 +1,5 @@
 import { AirconDrawer } from "@/components/AirconDrawer";
 import { FoodDrawer } from "@/components/FoodDrawer";
-import { HomeIcon } from "@/components/HomeIcon";
-import { NavBar } from "@/components/NavBar";
 import { RoomDrawer } from "@/components/RoomDrawer";
 import {
   Card,
@@ -71,8 +69,7 @@ export const CustomerDashboard: React.FC = () => {
 
   return (
     <>
-      <NavBar title={<HomeIcon />} />
-      <Card className="ml-auto mr-auto mt-8 w-11/12">
+      <Card className="ml-auto mr-auto mt-5">
         <CardHeader>
           <CardTitle>欢迎回来，{user && user.username}</CardTitle>
         </CardHeader>
@@ -89,7 +86,7 @@ export const CustomerDashboard: React.FC = () => {
           </div>
         </CardContent>
       </Card>
-      <Card className="ml-auto mr-auto mt-5 w-11/12">
+      <Card className="ml-auto mr-auto mt-5">
         <CardHeader>
           <div className="flex flex-row">
             <CardTitle className="text-base">消费</CardTitle>

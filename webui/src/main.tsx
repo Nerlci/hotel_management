@@ -6,13 +6,12 @@ import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import ErrorPage from "./ErrorPage.tsx";
 import Login from "./routes/Login.tsx";
 import { ThemeProvider } from "./components/theme-provider.tsx";
-import { CustomerDashboard } from "./routes/CustomerDashboard.tsx";
-import { CustomerBooking } from "./routes/CustomerBooking.tsx";
 import { Register } from "./routes/Register.tsx";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ProtectedRoute } from "./components/ProtectedRoute.tsx";
 import { AuthProvider } from "./components/AuthProvider.tsx";
-import { AirconDashboard } from "./routes/AirconDashboard.tsx";
+import { Aircon } from "./routes/Aircon.tsx";
+import { Customer } from "./routes/Customer.tsx";
 
 const router = createBrowserRouter([
   {
@@ -36,27 +35,19 @@ const router = createBrowserRouter([
     path: "customer",
     element: (
       <AuthProvider>
-        <CustomerDashboard />
+        <ProtectedRoute>
+          <Customer />
+        </ProtectedRoute>
       </AuthProvider>
     ),
   },
   {
     path: "airconmanager",
-    element: <AirconDashboard />,
+    element: <Aircon />,
   },
   {
     path: "register",
     element: <Register />,
-  },
-  {
-    path: "booking",
-    element: (
-      <AuthProvider>
-        <ProtectedRoute>
-          <CustomerBooking />
-        </ProtectedRoute>
-      </AuthProvider>
-    ),
   },
 ]);
 
