@@ -18,20 +18,43 @@ import {
 } from "shared";
 import AirConditionerIcon from "../assets/aircon.svg";
 import { Switch } from "./ui/switch";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useSSE } from "@/hooks/useSse";
+import { BASE_URL } from "@/lib/dataFetch";
+import { useEffect } from "react";
 
 export function AirconDrawer() {
   const [tempreture, settempreture] = useState(24);
   const [windspeed, setwindspeed] = useState(1);
   const [start, setstart] = useState(false);
 
+  const { sseData, sseReadyState, closeSource } = useSSE<{
+    data: string;
+  }>(`${BASE_URL}/api/ac/status`);
+
+  useEffect(() => closeSource, [closeSource]);
+
   return (
     <Drawer>
       <DrawerTrigger asChild>
-        <Button className="h-14 w-20" variant="outline">
-          <img
-            className="pointer-events-none w-10 select-none invert-0 dark:invert"
-            src={AirConditionerIcon}
-          />
+        <Button className="h-14 w-40" variant="outline">
+          <div className="flex flex-initial flex-row gap-2">
+            <img
+              className="pointer-events-none w-10 select-none invert-0 dark:invert"
+              src={AirConditionerIcon}
+            />
+            {start && (
+              <>
+                <p>{tempreture}&deg;C</p>
+                <p>{windspeed}</p>
+              </>
+            )}
+            {sseReadyState.key === 0 ? (
+              <Skeleton className="h-5 w-20" />
+            ) : (
+              <div>{sseData && sseData.data}</div>
+            )}
+          </div>
         </Button>
       </DrawerTrigger>
       <DrawerContent>

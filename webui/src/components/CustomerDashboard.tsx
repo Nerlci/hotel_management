@@ -1,7 +1,5 @@
 import { AirconDrawer } from "@/components/AirconDrawer";
 import { FoodDrawer } from "@/components/FoodDrawer";
-import { HomeIcon } from "@/components/HomeIcon";
-import { NavBar } from "@/components/NavBar";
 import { RoomDrawer } from "@/components/RoomDrawer";
 import {
   Card,
@@ -10,12 +8,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from "@/hooks/useAuth";
-import { useSSE } from "@/hooks/useSse";
-import { BASE_URL } from "@/lib/dataFetch";
-import { useEffect } from "react";
 
 import { Line, LineChart, ResponsiveContainer, XAxis, YAxis } from "recharts";
 
@@ -63,16 +57,10 @@ function calcTotalCost(costData: CostDataItem[]): number {
 
 export const CustomerDashboard: React.FC = () => {
   const { user } = useAuth()!;
-  const { sseData, sseReadyState, closeSource } = useSSE<{
-    data: string;
-  }>(`${BASE_URL}/api/ac/status`);
-
-  useEffect(() => closeSource, [closeSource]);
 
   return (
     <>
-      <NavBar title={<HomeIcon />} />
-      <Card className="ml-auto mr-auto mt-8 w-11/12">
+      <Card className="ml-auto mr-auto mt-5">
         <CardHeader>
           <CardTitle>欢迎回来，{user && user.username}</CardTitle>
         </CardHeader>
@@ -81,15 +69,10 @@ export const CustomerDashboard: React.FC = () => {
             <AirconDrawer />
             <FoodDrawer />
             <RoomDrawer />
-            {sseReadyState.key === 0 ? (
-              <Skeleton className="h-5 w-20" />
-            ) : (
-              <div>{sseData && sseData.data}</div>
-            )}
           </div>
         </CardContent>
       </Card>
-      <Card className="ml-auto mr-auto mt-5 w-11/12">
+      <Card className="ml-auto mr-auto mt-5">
         <CardHeader>
           <div className="flex flex-row">
             <CardTitle className="text-base">消费</CardTitle>
