@@ -3,6 +3,8 @@ import { acController } from '../controller/acController';
 
 let acRouter = express.Router();
 
-acRouter.get('/status', acController.statusController);
+acRouter.post('/update', acController.updateAC);
+
+acRouter.get('/status', acController.statusAC);
 
 export { acRouter };
