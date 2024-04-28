@@ -2,7 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import Root from "./routes/Root.tsx";
 import "./index.css";
-import { RouterProvider, createBrowserRouter } from "react-router-dom";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import ErrorPage from "./ErrorPage.tsx";
 import Login from "./routes/Login.tsx";
 import { ThemeProvider } from "./components/theme-provider.tsx";
@@ -14,52 +14,6 @@ import { Aircon } from "./routes/Aircon.tsx";
 import { Customer } from "./routes/Customer.tsx";
 import { Toaster } from "./components/ui/sonner.tsx";
 
-const router = createBrowserRouter([
-  {
-    path: "/",
-    element: (
-      <AuthProvider>
-        <Root />
-      </AuthProvider>
-    ),
-    errorElement: <ErrorPage />,
-  },
-  {
-    path: "login",
-    element: (
-      <AuthProvider>
-        <Login />
-      </AuthProvider>
-    ),
-  },
-  {
-    path: "customer",
-    element: (
-      <AuthProvider>
-        <ProtectedRoute>
-          <Customer />
-        </ProtectedRoute>
-      </AuthProvider>
-    ),
-  },
-  {
-    path: "airconmanager",
-    element: (
-      <AuthProvider>
-        <Aircon />
-      </AuthProvider>
-    ),
-  },
-  {
-    path: "register",
-    element: (
-      <AuthProvider>
-        <Register />
-      </AuthProvider>
-    ),
-  },
-]);
-
 const queryClient = new QueryClient();
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
@@ -67,7 +21,25 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
       <QueryClientProvider client={queryClient}>
         <Toaster />
-        <RouterProvider router={router} />
+        <BrowserRouter>
+          <AuthProvider>
+            <Routes>
+              <Route path="/" element={<Root />} />
+              <Route path="/login" element={<Login />} />
+              <Route
+                path="/customer"
+                element={
+                  <ProtectedRoute>
+                    <Customer />
+                  </ProtectedRoute>
+                }
+              />
+              <Route path="/airconmanager" element={<Aircon />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="*" element={<ErrorPage />} />
+            </Routes>
+          </AuthProvider>
+        </BrowserRouter>
       </QueryClientProvider>
     </ThemeProvider>
   </React.StrictMode>,
