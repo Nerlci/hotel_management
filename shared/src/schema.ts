@@ -62,6 +62,7 @@ export const DateRange = z
 export type DateRange = z.infer<typeof DateRange>;
 
 export const acUpdateRequest = z.object({
+  userId: z.string().min(1, "User ID can't be empty"),
   roomId: z.string().min(1, "Room ID can't be empty"),
   temp: z.number().min(18).max(30).step(0.5),
   windspeed: z.number().int().min(1).max(3),
@@ -70,7 +71,7 @@ export const acUpdateRequest = z.object({
 });
 export type ACUpdateRequest = z.infer<typeof acUpdateRequest>;
 
-export const acStatus = acUpdateRequest.extend({
+export const acStatus = acUpdateRequest.omit({ userId: true }).extend({
   timestamp: z.date(),
 });
 export type ACStatus = z.infer<typeof acStatus>;
