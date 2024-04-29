@@ -5,7 +5,11 @@ import { statusService } from '../service/statusService';
 import jsonwebtoken from 'jsonwebtoken';
 
 const updateAC = async (req: Request, res: Response) => {
-    const ac = acUpdateRequest.parse(req.body);
+    // TODO: Call service to check if the user has permission to update the AC
+    const ac = acUpdateRequest.parse({
+        userId: res.locals.user.userId,
+        ...req.body,
+    });
 
     schedulerService.addUpdateRequest(ac);
 

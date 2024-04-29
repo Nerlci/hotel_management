@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import { userService } from '../service/userService';
 import { encryptPassword, validatePassword } from '../utils/utils';
 import { responseBase } from 'shared';
@@ -111,10 +111,45 @@ const logoutUser = async (req: Request, res: Response) => {
     res.json(response);
 };
 
+const authUserMiddleware = async (req: Request, res: Response, next: NextFunction) => {
+    const token = req.cookies.token;
+
+    if (!token) {
+        const response = responseBase.parse({
+            error: {
+                msg: 'Not logged in, please login first',
+            },
+            code: '400',
+            payload: {},
+        });
+
+        res.json(response);
+        return;
+    }
+
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET!);
+        res.locals.user = decoded;
+    } catch (err) {
+        const response = responseBase.parse({
+            error: {
+                msg: 'Not logged in, please login first',
+            },
+            code: '400',
+            payload: {},
+        });
+
+        res.json(response);
+        return;
+    }
+
+    next();
+}
+
 const userController = {
     registerUser,
     loginUser,
     logoutUser,
 };
 
-export { userController };
+export { userController, authUserMiddleware };
