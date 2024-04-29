@@ -24,7 +24,8 @@ model User {
 
 model ACRecord {
   id        String   @id @default(cuid())
-  user      User    @relation(fields: [id], references: [id])
+  user      User    @relation(fields: [userId], references: [id])
+  userId    String
   roomId    String
   temp      Float
   windspeed Int
