@@ -67,6 +67,7 @@ export const CustomerDashboard: React.FC = () => {
         <CardContent>
           <div className="flex gap-5">
             <AirconDrawer />
+            <div className="grow" />
             <FoodDrawer />
             <RoomDrawer />
           </div>

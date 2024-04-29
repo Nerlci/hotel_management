@@ -9,18 +9,26 @@ export const useTempEmulate = (props: {
   windSpeed: number;
   mode: "cool" | "heat";
   start: boolean;
+  onTempTied?: () => void;
 }) => {
-  const { startTemp, targetTemp, windSpeed, mode, start } = props;
+  /* 功能：
+   * 1. startTemp 如何设定？
+   * 2. 以 1 秒为时间间隔，根据当前空调参数调整温度，
+   *    温度可以是浮点数。
+   * 3. 当温度达到 targetTemp 时，调用 onTempTied 回调。
+   * 4. 可能会增加其他的回调函数。
+   */
+  const { startTemp, targetTemp, start } = props;
   const [currentTemp, setCurrentTemp] = useState(startTemp);
 
-  useInterval(
-    () => {
-      if (start) {
-        setCurrentTemp((prev) => prev + 1);
-      }
-    },
-    currentTemp < targetTemp ? 1000 : null,
-  );
+  useInterval(() => {
+    if (currentTemp === targetTemp) {
+      props.onTempTied && props.onTempTied();
+    }
+    if (start && currentTemp < targetTemp) {
+      setCurrentTemp((prev) => prev + 1);
+    }
+  }, 1000);
 
   return currentTemp;
 };
