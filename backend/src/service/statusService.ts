@@ -36,7 +36,7 @@ const listenStatus = async (req: Request, res: Response, roomId: string) => {
         on: false,
         timestamp: new Date(),
     });
-    channel.send(JSON.stringify(statusData));
+    channel.send(JSON.stringify(statusData), [res]);
 }
 
 const updateStatus = async (status: ACStatus) => {
