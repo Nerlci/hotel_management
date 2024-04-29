@@ -19,4 +19,18 @@ model User {
   username  String?
   type      Int      @default(0)
   password  String
+  acRecords ACRecord[]
+}
+
+model ACRecord {
+  id        String   @id @default(cuid())
+  user      User    @relation(fields: [userId], references: [id])
+  userId    String
+  roomId    String
+  temp      Float
+  fanSpeed  Int
+  mode      Int
+  on        Boolean
+  type      Int
+  timestamp DateTime @default(now())
 }

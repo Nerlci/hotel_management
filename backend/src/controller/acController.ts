@@ -1,24 +1,47 @@
 import { Request, Response } from 'express';
-const SseChannel = require('sse-channel');
+import { acUpdateRequest, responseBase } from 'shared';
+import { schedulerService } from '../service/schedulerService';
+import { statusService } from '../service/statusService';
+import jsonwebtoken from 'jsonwebtoken';
 
-const statusController = async (req: Request, res: Response) => {
-    const str = 'hello word!';
-    let index = 0;
+const updateAC = async (req: Request, res: Response) => {
+    // TODO: Call service to check if the user has permission to update the AC
+    const ac = acUpdateRequest.parse({
+        userId: res.locals.user.userId,
+        ...req.body,
+    });
 
-    let channel = new SseChannel();
-    channel.addClient(req, res);
+    schedulerService.addUpdateRequest(ac);
 
-    const timer = setInterval(() => {
-        if (index < str.length) {
-            channel.send(JSON.stringify({ data: str[index] }));
-            index++;
-        } else {
-            clearInterval(timer); // 停止定时器
-            channel.close(); // 关闭通道
-        }
+    const response = responseBase.parse({
+        code: '200',
+        error: {
+            msg: '',
+        },
+        payload: {},
+    });
 
-    }, 1000);
+    res.json(response);
+}
+    
+
+const statusAC = async (req: Request, res: Response) => {
+    const roomId = req.query.roomId;
+
+    if (typeof roomId !== 'string') {
+        const response = responseBase.parse({
+            code: '400',
+            error: {
+                msg: 'Invalid room ID',
+            },
+            payload: {},
+        });
+        res.json(response);
+        return;
+    }
+    
+    statusService.listenStatus(req, res, roomId);
 };
 
-const acController = { statusController };
+const acController = { updateAC:updateAC, statusAC: statusAC };
 export { acController };

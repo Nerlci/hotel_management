@@ -1,0 +1,16 @@
+-- CreateTable
+CREATE TABLE `ACRecord` (
+    `id` VARCHAR(191) NOT NULL,
+    `roomId` VARCHAR(191) NOT NULL,
+    `temp` DOUBLE NOT NULL,
+    `windspeed` INTEGER NOT NULL,
+    `mode` INTEGER NOT NULL,
+    `on` BOOLEAN NOT NULL,
+    `type` INTEGER NOT NULL,
+    `timestamp` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- AddForeignKey
+ALTER TABLE `ACRecord` ADD CONSTRAINT `ACRecord_id_fkey` FOREIGN KEY (`id`) REFERENCES `User`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
