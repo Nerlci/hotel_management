@@ -5,11 +5,13 @@ import SseChannel from 'sse-channel';
 
 const channels: Map<string, SseChannel> = new Map();
 
+
 const getChannel = (roomId: string) => {
     // TODO: Check if the room is valid
     if (!channels.has(roomId)) {
         channels.set(roomId, new SseChannel());
     }
+
 
     return channels.get(roomId)!;
 }
@@ -37,6 +39,7 @@ const listenStatus = async (req: Request, res: Response, roomId: string) => {
         timestamp: new Date(),
     });
     channel.send(JSON.stringify(statusData), [res]);
+
 }
 
 const updateStatus = async (status: ACStatus) => {
