@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/drawer";
 import { Minus, Plus } from "lucide-react";
 import {
+  ACStatus,
   MAX_AIRCON_SPEED,
   MAX_AIRCON_TEMP,
   MIN_AIRCON_SPEED,
@@ -17,11 +18,13 @@ import {
 } from "shared";
 import AirConditionerIcon from "../assets/aircon.svg";
 import { Switch } from "./ui/switch";
-// import { Skeleton } from "@/components/ui/skeleton";
-// import { useSSE } from "@/hooks/useSse";
-// import { BASE_URL } from "@/lib/dataFetch";
-// import { useEffect } from "react";
+import { useSSE } from "@/hooks/useSse";
+import { BASE_URL, postUserAirconUpdate } from "@/lib/dataFetch";
 import { useLocalStorage } from "usehooks-ts";
+import { useEffect } from "react";
+import { Skeleton } from "./ui/skeleton";
+import { useMutation } from "@tanstack/react-query";
+import { toast } from "sonner";
 import { useTempEmulate } from "@/lib/tempEmulate";
 
 export function AirconDrawer() {
@@ -29,40 +32,79 @@ export function AirconDrawer() {
   const [windspeed, setwindspeed] = useLocalStorage("windspeed", 1);
   const [start, setstart] = useLocalStorage("start", false);
   const [cool, setcool] = useLocalStorage("cool", true);
+  const { sseData, sseReadyState, closeSource } = useSSE<ACStatus>(
+    `${BASE_URL}/api/ac/status?roomId=${8103}`,
+  );
   const currentTemp = useTempEmulate({
     startTemp: 10,
     targetTemp: temperature,
     windSpeed: windspeed,
     mode: cool ? "cool" : "heat",
-    start: start,
+    start: sseData?.on ?? start,
+  });
+  const mutation = useMutation({
+    mutationFn: postUserAirconUpdate,
+    onSuccess: () => {
+      toast("空调状态更改成功");
+    },
+    onError: (error) => {
+      toast(error.message, {
+        description: "空调状态更改失败",
+      });
+    },
   });
 
-  // const { sseData, sseReadyState, closeSource } = useSSE<{
-  //   data: string;
-  // }>(`${BASE_URL}/api/ac/status`);
+  // update display state when sseData changes
+  useEffect(() => {
+    setTemperature(sseData?.temp ?? temperature);
+    setwindspeed(sseData?.fanSpeed ?? windspeed);
+    if (sseData?.mode) {
+      setcool(sseData.mode === 1);
+    }
+    setstart(sseData?.on === true);
+  }, [sseData]);
 
-  // useEffect(() => closeSource, [closeSource]);
+  useEffect(() => closeSource, [closeSource]);
+
+  // turn aircon off when currentTemp === temperature
+  useEffect(() => {
+    if (currentTemp === temperature) {
+      setstart(false);
+      mutation.mutate({
+        roomId: "8103",
+        temp: temperature,
+        fanSpeed: windspeed,
+        mode: cool ? 1 : 0,
+        on: false,
+      });
+    }
+  }, [currentTemp, setstart, temperature]);
 
   return (
     <Drawer>
       <DrawerTrigger asChild>
-        <Button className="w-70 h-14" variant="outline">
+        <Button
+          className="w-70 h-14"
+          variant="outline"
+          disabled={sseReadyState.key !== 1}
+        >
           <div className="flex flex-initial flex-row gap-5">
             <img
               className="pointer-events-none w-10 select-none invert-0 dark:invert"
               src={AirConditionerIcon}
             />
             <div
-              className={`flex flex-row flex-wrap items-center justify-center gap-1 ${start ? "" : "text-zinc-700"}`}
+              className={`flex flex-row flex-wrap items-center justify-center gap-1 ${sseData?.on ? "" : "text-zinc-700"}`}
             >
-              <p className="w-28">目标温度：{temperature}&deg;C</p>
-              <p className="w-24">目标风速：{windspeed}</p>
-              <p className="w-28">当前温度：{currentTemp}&deg;C</p>
-              {/*sseReadyState.key === 0 ? (
-                <Skeleton className="h-5 w-20" />
+              {sseReadyState.key !== 1 ? (
+                <Skeleton className="h-5 w-40" />
               ) : (
-                <div>{sseData && sseData.data}</div>
-              )*/}
+                <>
+                  <p className="w-28">目标温度：{sseData?.temp}&deg;C</p>
+                  <p className="w-24">目标风速：{sseData?.fanSpeed}</p>
+                  <p className="w-28">当前温度：{currentTemp}&deg;C</p>
+                </>
+              )}
             </div>
           </div>
         </Button>
@@ -200,7 +242,19 @@ export function AirconDrawer() {
             </div>
           </div>
           <DrawerFooter>
-            <Button>提交</Button>
+            <Button
+              onClick={() => {
+                mutation.mutate({
+                  roomId: "8103",
+                  temp: temperature,
+                  fanSpeed: windspeed,
+                  mode: cool ? 1 : 0,
+                  on: start,
+                });
+              }}
+            >
+              提交
+            </Button>
           </DrawerFooter>
         </div>
       </DrawerContent>

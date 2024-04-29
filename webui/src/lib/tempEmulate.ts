@@ -10,12 +10,14 @@ export const useTempEmulate = (props: {
   mode: "cool" | "heat";
   start: boolean;
 }) => {
-  const { startTemp, targetTemp, windSpeed, mode } = props;
+  const { startTemp, targetTemp, windSpeed, mode, start } = props;
   const [currentTemp, setCurrentTemp] = useState(startTemp);
 
   useInterval(
     () => {
-      setCurrentTemp((prev) => prev + 1);
+      if (start) {
+        setCurrentTemp((prev) => prev + 1);
+      }
     },
     currentTemp < targetTemp ? 1000 : null,
   );
