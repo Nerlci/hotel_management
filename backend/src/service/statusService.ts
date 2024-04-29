@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
-import { ACStatus } from 'shared';
+import { ACStatus, acStatus } from 'shared';
+import { prisma } from '../prisma';
 const SseChannel = require('sse-channel');
 
 const channels: Map<string, any> = new Map();
@@ -16,7 +17,26 @@ const getChannel = (roomId: string) => {
 const listenStatus = async (req: Request, res: Response, roomId: string) => {
     const channel = getChannel(roomId);
     channel.addClient(req, res);
-    // TODO: Send initial status
+
+    const status = await prisma.aCRecord.findFirst({
+        where: {
+            roomId: roomId,
+            type: 1,
+        },
+        orderBy: {
+            timestamp: 'desc',
+        },
+    });
+    
+    const statusData = status ? acStatus.parse(status) : acStatus.parse({
+        roomId: roomId,
+        temp: 25,
+        mode: 0,
+        fanSpeed: 1,
+        on: false,
+        timestamp: new Date(),
+    });
+    channel.send(JSON.stringify(statusData));
 }
 
 const updateStatus = async (status: ACStatus) => {

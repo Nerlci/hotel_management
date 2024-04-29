@@ -65,7 +65,7 @@ export const acUpdateRequest = z.object({
   userId: z.string().min(1, "User ID can't be empty"),
   roomId: z.string().min(1, "Room ID can't be empty"),
   temp: z.number().min(18).max(30).step(0.5),
-  windspeed: z.number().int().min(1).max(3),
+  fanSpeed: z.number().int().min(1).max(3),
   mode: z.union([z.literal(0), z.literal(1)]),
   on: z.boolean(),
 });

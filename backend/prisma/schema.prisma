@@ -28,7 +28,7 @@ model ACRecord {
   userId    String
   roomId    String
   temp      Float
-  windspeed Int
+  fanSpeed  Int
   mode      Int
   on        Boolean
   type      Int

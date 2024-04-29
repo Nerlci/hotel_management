@@ -9,67 +9,54 @@ interface SchedulerItem extends ACUpdateRequest {
 const schedulerList:SchedulerItem[] = [];
 
 const addUpdateRequest = async (request: ACUpdateRequest) => {
-  const timestamp = new Date();
+  const { userId, ...rest } = request;
+  const now = new Date();
 
   const data = {
     user: {
       connect: {
-        id: request.userId,
+        id: userId,
       },
     },
-    roomId: request.roomId,
-    temp: request.temp,
-    windspeed: request.windspeed,
-    mode: request.mode,
-    on: request.on,
+    ...rest,
     type: 0,
-    timestamp: timestamp,
+    timestamp: now,
   };
-
   await prisma.aCRecord.create({
     data: data,
   });
 
   const schedulerItem: SchedulerItem = {
     ...request,
-    timestamp
+    timestamp: now,
   };
-
   schedulerList.push(schedulerItem);
+  
   schedulerStep();
 }
 
 const schedulerStep = async () => {
   const now = new Date();
   const next = schedulerList[0];
+  const { userId, ...rest } = next;
 
   schedulerList.shift();
+
   const data = {
     user: {
       connect: {
-        id: next.userId,
+        id: userId,
       },
     },
-    roomId: next.roomId,
-    temp: next.temp,
-    windspeed: next.windspeed,
-    mode: next.mode,
-    on: next.on,
+    ...rest,
     type: 1,
-    timestamp: next.timestamp,
+    timestamp: now,
   };
   await prisma.aCRecord.create({
     data: data,
   });
 
-  const status = acStatus.parse({
-    roomId: next.roomId,
-    temp: next.temp,
-    windspeed: next.windspeed,
-    mode: next.mode,
-    on: next.on,
-    timestamp: now,
-  });
+  const status = acStatus.parse(data);
   statusService.updateStatus(status);
 }
 
