@@ -1,9 +1,9 @@
 import { Request, Response } from 'express';
 import { ACStatus, acStatus } from 'shared';
 import { prisma } from '../prisma';
-const SseChannel = require('sse-channel');
+import SseChannel from 'sse-channel';
 
-const channels: Map<string, any> = new Map();
+const channels: Map<string, SseChannel> = new Map();
 
 const getChannel = (roomId: string) => {
     // TODO: Check if the room is valid
@@ -11,7 +11,7 @@ const getChannel = (roomId: string) => {
         channels.set(roomId, new SseChannel());
     }
 
-    return channels.get(roomId);
+    return channels.get(roomId)!;
 }
 
 const listenStatus = async (req: Request, res: Response, roomId: string) => {
