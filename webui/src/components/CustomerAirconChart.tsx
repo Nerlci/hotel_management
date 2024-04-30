@@ -59,6 +59,8 @@ export default function CustomerAirconChart() {
     enabled: !!roomId,
   });
 
+  airconDetail && console.log(airconDetail);
+
   // TODO: generate costData from airconDetail
   const costData: CostDataItem[] = [
     {
