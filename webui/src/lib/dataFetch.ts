@@ -53,3 +53,21 @@ export async function postUserLogin(values: LoginForm) {
   }
   return json;
 }
+
+export async function getUserLogout() {
+  const response = await fetch(`${BASE_URL}/api/user/logout`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+  });
+  if (!response.ok) {
+    throw new Error("Request failed");
+  }
+  const json = responseBase.parse(await response.json());
+  if (json.code !== "200") {
+    throw new Error(json.error.msg);
+  }
+  return json;
+}
