@@ -8,4 +8,6 @@ acRouter.post('/update', authUserMiddleware, acController.updateAC);
 
 acRouter.get('/status', authUserMiddleware, acController.statusAC);
 
+acRouter.get('/detail', authUserMiddleware, acController.detailAC);
+
 export { acRouter };
