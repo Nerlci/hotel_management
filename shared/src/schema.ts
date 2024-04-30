@@ -71,7 +71,24 @@ export const acUpdateRequest = z.object({
 });
 export type ACUpdateRequest = z.infer<typeof acUpdateRequest>;
 
+export const acUpdateRequestBody = acUpdateRequest.omit({
+  userId: true,
+});
+export type ACUpdateRequestBody = z.infer<typeof acUpdateRequestBody>;
+
 export const acStatus = acUpdateRequest.omit({ userId: true }).extend({
   timestamp: z.date(),
 });
 export type ACStatus = z.infer<typeof acStatus>;
+
+export const acDetailResponse = responseBase.extend({
+  payload: z.object({
+    details: z.array(
+      acUpdateRequest.omit({ userId: true }).extend({
+        timestamp: z.string().datetime(),
+      }),
+    ),
+    roomId: z.string().min(1, "Room ID can't be empty"),
+  }),
+});
+export type ACDetailResponse = z.infer<typeof acDetailResponse>;
