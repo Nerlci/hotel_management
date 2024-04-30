@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { acUpdateRequest, responseBase } from 'shared';
 import { schedulerService } from '../service/schedulerService';
 import { statusService } from '../service/statusService';
-import jsonwebtoken from 'jsonwebtoken';
+import { acService } from '../service/acService';
 
 const updateAC = async (req: Request, res: Response) => {
     // TODO: Call service to check if the user has permission to update the AC
@@ -23,7 +23,6 @@ const updateAC = async (req: Request, res: Response) => {
 
     res.json(response);
 }
-    
 
 const statusAC = async (req: Request, res: Response) => {
     const roomId = req.query.roomId;
@@ -39,9 +38,39 @@ const statusAC = async (req: Request, res: Response) => {
         res.json(response);
         return;
     }
-    
+
     statusService.listenStatus(req, res, roomId);
 };
 
-const acController = { updateAC:updateAC, statusAC: statusAC };
+const detailAC = async (req: Request, res: Response) => {
+    const roomId = req.query.roomId;
+
+    if (typeof roomId !== 'string') {
+        const response = responseBase.parse({
+            code: '400',
+            error: {
+                msg: 'Invalid room ID',
+            },
+            payload: {},
+        });
+        res.json(response);
+        return;
+    }
+
+    const details = await acService.getDetailByRoomId(roomId);
+
+    const response = responseBase.parse({
+        code: '200',
+        error: {
+            msg: '',
+        },
+        payload: {
+            roomId: roomId,
+            details,
+        },
+    });
+    res.json(response);
+}
+
+const acController = { updateAC, statusAC, detailAC };
 export { acController };
