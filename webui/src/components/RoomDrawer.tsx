@@ -11,6 +11,12 @@ import {
 import RoomIcon from "../assets/bed.svg";
 import { useEffect, useState } from "react";
 import { DatePicker } from "./DatePicker";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 export function RoomDrawer() {
   const [date, setdate] = useState<Date | undefined>(new Date());
@@ -22,11 +28,27 @@ export function RoomDrawer() {
   return (
     <Drawer>
       <DrawerTrigger asChild>
-        <Button className="h-14 w-20" variant="outline">
-          <img
-            className="pointer-events-none w-10 select-none invert-0 dark:invert"
-            src={RoomIcon}
-          />
+        <Button className="h-14 w-60" variant="outline">
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild className="w-60">
+                <div className="flex w-full flex-initial flex-row gap-5">
+                  <img
+                    className="pointer-events-none w-10 select-none invert-0 dark:invert"
+                    src={RoomIcon}
+                  />
+                  <div
+                    className={`flex flex-row flex-wrap items-center justify-center gap-1`}
+                  >
+                    <p className="w-24">入住至：58 月 76 日</p>
+                  </div>
+                </div>
+              </TooltipTrigger>
+              <TooltipContent className="mb-2">
+                <p>续住</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </Button>
       </DrawerTrigger>
       <DrawerContent>

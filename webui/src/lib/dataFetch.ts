@@ -1,6 +1,11 @@
 import { LoginForm } from "@/routes/Login";
 import { RegisterForm } from "@/routes/Register";
-import { UserAvailablityResponse, responseBase } from "shared";
+import {
+  ACUpdateRequestBody,
+  UserAvailablityResponse,
+  acDetailResponse,
+  responseBase,
+} from "shared";
 
 export const BASE_URL = import.meta.env.VITE_API_URL as string;
 
@@ -70,4 +75,51 @@ export async function getUserLogout() {
     throw new Error(json.error.msg);
   }
   return json;
+}
+
+export async function postUserAirconUpdate(value: ACUpdateRequestBody) {
+  const response = await fetch(`${BASE_URL}/api/ac/update`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(value),
+    credentials: "include",
+  });
+  if (!response.ok) {
+    throw new Error("Request failed");
+  }
+  const json = responseBase.parse(await response.json());
+  if (json.code !== "200") {
+    throw new Error(json.error.msg);
+  }
+  return json;
+}
+
+export async function getUserRoomNumber() {
+  // TODO: call api
+  return new Promise<string>((resolve) => {
+    resolve("8103");
+  });
+}
+
+export function generateGetUserAirconDetail(roomId: string) {
+  return async () => {
+    const response = await fetch(`${BASE_URL}/api/ac/detail?roomId=${roomId}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+    });
+    if (!response.ok) {
+      throw new Error("Request failed");
+    }
+    // TODO: parse the response
+    const json = acDetailResponse.parse(await response.json());
+    if (json.code !== "200") {
+      throw new Error(json.error.msg);
+    }
+    return json;
+  };
 }
