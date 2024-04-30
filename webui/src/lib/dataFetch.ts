@@ -94,3 +94,31 @@ export async function postUserAirconUpdate(value: ACUpdateRequestBody) {
   }
   return json;
 }
+
+export async function getUserRoomNumber() {
+  // TODO: call api
+  return new Promise<string>((resolve) => {
+    resolve("8103");
+  });
+}
+
+export function generateGetUserAirconDetail(roomId: string) {
+  return async () => {
+    const response = await fetch(`${BASE_URL}/api/ac/detail?roomId=${roomId}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+    });
+    if (!response.ok) {
+      throw new Error("Request failed");
+    }
+    // TODO: parse the response
+    const json = responseBase.parse(await response.json());
+    if (json.code !== "200") {
+      throw new Error(json.error.msg);
+    }
+    return json;
+  };
+}
