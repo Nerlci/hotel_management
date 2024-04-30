@@ -3,6 +3,7 @@ import { RegisterForm } from "@/routes/Register";
 import {
   ACUpdateRequestBody,
   UserAvailablityResponse,
+  acDetailResponse,
   responseBase,
 } from "shared";
 
@@ -115,7 +116,7 @@ export function generateGetUserAirconDetail(roomId: string) {
       throw new Error("Request failed");
     }
     // TODO: parse the response
-    const json = responseBase.parse(await response.json());
+    const json = acDetailResponse.parse(await response.json());
     if (json.code !== "200") {
       throw new Error(json.error.msg);
     }

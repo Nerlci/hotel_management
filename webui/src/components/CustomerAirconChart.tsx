@@ -11,14 +11,31 @@ import {
   getUserRoomNumber,
 } from "@/lib/dataFetch";
 import { useQuery } from "@tanstack/react-query";
-import { Line, LineChart, ResponsiveContainer, XAxis, YAxis } from "recharts";
+import {
+  Line,
+  LineChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
 import { Skeleton } from "./ui/skeleton";
+import { toast } from "sonner";
+import { MAX_AIRCON_SPEED, MAX_AIRCON_TEMP, MIN_AIRCON_SPEED } from "shared";
 
 type CostDataItem = {
   date: string;
   cost: number;
   aircon: number;
   food: number;
+};
+
+type AirconDataItem = {
+  温度: number | undefined;
+  time: number;
+  风速: number | undefined;
+  cool: boolean | undefined;
+  on: boolean;
 };
 
 function calcTotalCost(costData: CostDataItem[]): number {
@@ -43,6 +60,25 @@ function ChartSkeleton() {
   );
 }
 
+// @ts-expect-error recharts api is not well typed
+const CustomTooltip = ({ active, payload }) => {
+  if (
+    active &&
+    payload &&
+    payload.length &&
+    payload[0].payload.温度 !== undefined &&
+    payload[0].payload.风速 !== undefined
+  ) {
+    return (
+      <div className="flex flex-col gap-2">
+        <div>温度：{payload[0].payload.温度}</div>
+        <div>风速：{payload[0].payload.风速}</div>
+      </div>
+    );
+  }
+  return null;
+};
+
 export default function CustomerAirconChart() {
   const roomNumberQuery = useQuery({
     queryKey: ["customerRoomNumber"],
@@ -58,8 +94,38 @@ export default function CustomerAirconChart() {
     queryFn: generateGetUserAirconDetail(roomId!),
     enabled: !!roomId,
   });
+  if (error) {
+    toast("获取详单信息失败", {
+      description: error.message,
+    });
+  }
+  // airconDetail && console.log(airconDetail);
 
-  airconDetail && console.log(airconDetail);
+  const airconData: AirconDataItem[] = [];
+  airconDetail?.payload.details
+    .map((item) => {
+      return {
+        温度: item.temp,
+        time: new Date(item.timestamp).getTime(),
+        风速: item.fanSpeed,
+        cool: item.mode === 1,
+        on: item.on,
+      };
+    })
+    .forEach((item) => {
+      airconData.push(item);
+      if (!item.on) {
+        airconData.push({
+          ...item,
+          time: item.time + 1,
+          温度: undefined,
+          风速: undefined,
+          cool: undefined,
+        });
+      }
+    });
+
+  // console.log(JSON.stringify(airconData));
 
   // TODO: generate costData from airconDetail
   const costData: CostDataItem[] = [
@@ -105,7 +171,7 @@ export default function CustomerAirconChart() {
         </div>
       </CardHeader>
       <CardContent>
-        <Tabs defaultValue="total">
+        <Tabs defaultValue="aircon">
           <TabsList>
             <TabsTrigger value="total">总计</TabsTrigger>
             <TabsTrigger value="aircon">空调</TabsTrigger>
@@ -142,20 +208,36 @@ export default function CustomerAirconChart() {
             ) : (
               <ResponsiveContainer width="100%" height={300}>
                 <LineChart
-                  data={costData}
+                  data={airconData}
                   margin={{ top: 5, right: 40, left: 0, bottom: 5 }}
                 >
-                  <XAxis dataKey="date" hide />
+                  <XAxis dataKey="time" hide />
+                  <YAxis yAxisId="left" domain={[0, MAX_AIRCON_TEMP]} />
                   <YAxis
-                    domain={["dataMin", "dataMax + 10"]}
-                    interval="preserveStart"
+                    yAxisId="right"
+                    orientation="right"
+                    domain={[MIN_AIRCON_SPEED, MAX_AIRCON_SPEED]}
                   />
                   <Line
+                    yAxisId="left"
                     type="linear"
-                    dataKey="aircon"
+                    dataKey="温度"
                     stroke="hsl(var(--foreground))"
                     strokeWidth={3}
                     dot={{ strokeWidth: 5 }}
+                  />
+                  <Line
+                    yAxisId="right"
+                    type="linear"
+                    dataKey="风速"
+                    stroke="hsl(var(--foreground))"
+                    strokeWidth={3}
+                    dot={{ strokeWidth: 5 }}
+                  />
+                  <Tooltip
+                    // @ts-expect-error recharts api is not well typed
+                    content={<CustomTooltip />}
+                    isAnimationActive={false}
                   />
                 </LineChart>
               </ResponsiveContainer>
