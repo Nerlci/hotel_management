@@ -12,6 +12,8 @@ import {
 } from "@/lib/dataFetch";
 import { useQuery } from "@tanstack/react-query";
 import {
+  Area,
+  AreaChart,
   Line,
   LineChart,
   ResponsiveContainer,
@@ -21,7 +23,7 @@ import {
 } from "recharts";
 import { Skeleton } from "./ui/skeleton";
 import { toast } from "sonner";
-import { MAX_AIRCON_SPEED, MAX_AIRCON_TEMP, MIN_AIRCON_SPEED } from "shared";
+import { MAX_AIRCON_SPEED, MAX_AIRCON_TEMP } from "shared";
 
 type CostDataItem = {
   date: string;
@@ -31,10 +33,10 @@ type CostDataItem = {
 };
 
 type AirconDataItem = {
-  温度: number | undefined;
+  温度?: number;
   time: number;
-  风速: number | undefined;
-  cool: boolean | undefined;
+  风速?: number;
+  cool?: boolean;
   on: boolean;
 };
 
@@ -69,14 +71,22 @@ const CustomTooltip = ({ active, payload }) => {
     payload[0].payload.温度 !== undefined &&
     payload[0].payload.风速 !== undefined
   ) {
+    const date = new Date(payload[0].payload.time);
     return (
-      <div className="flex flex-col gap-2">
-        <div>温度：{payload[0].payload.温度}</div>
-        <div>风速：{payload[0].payload.风速}</div>
-      </div>
+      <Card className="bg-card/70 dark:bg-card/40">
+        <div className="m-3 flex flex-col gap-2">
+          <div>时间：{date.toLocaleString()}</div>
+          <div>温度：{payload[0].payload.温度}</div>
+          <div>风速：{payload[0].payload.风速}</div>
+        </div>
+      </Card>
     );
+  } else {
+    // smh if null or empty string is returned,
+    // the previous tooltip will show up in the
+    // top left corner of the chart, wtf?
+    return <div>...</div>;
   }
-  return null;
 };
 
 export default function CustomerAirconChart() {
@@ -93,13 +103,13 @@ export default function CustomerAirconChart() {
     queryKey: ["customerAirconChartData"],
     queryFn: generateGetUserAirconDetail(roomId!),
     enabled: !!roomId,
+    refetchInterval: 1000,
   });
   if (error) {
     toast("获取详单信息失败", {
       description: error.message,
     });
   }
-  // airconDetail && console.log(airconDetail);
 
   const airconData: AirconDataItem[] = [];
   airconDetail?.payload.details
@@ -125,9 +135,6 @@ export default function CustomerAirconChart() {
       }
     });
 
-  // console.log(JSON.stringify(airconData));
-
-  // TODO: generate costData from airconDetail
   const costData: CostDataItem[] = [
     {
       date: "2021-01-01",
@@ -207,7 +214,7 @@ export default function CustomerAirconChart() {
               <ChartSkeleton />
             ) : (
               <ResponsiveContainer width="100%" height={300}>
-                <LineChart
+                <AreaChart
                   data={airconData}
                   margin={{ top: 5, right: 40, left: 0, bottom: 5 }}
                 >
@@ -216,30 +223,29 @@ export default function CustomerAirconChart() {
                   <YAxis
                     yAxisId="right"
                     orientation="right"
-                    domain={[MIN_AIRCON_SPEED, MAX_AIRCON_SPEED]}
+                    domain={[0, MAX_AIRCON_SPEED]}
                   />
-                  <Line
+                  <Area
                     yAxisId="left"
                     type="linear"
                     dataKey="温度"
                     stroke="hsl(var(--foreground))"
-                    strokeWidth={3}
-                    dot={{ strokeWidth: 5 }}
+                    isAnimationActive={false}
                   />
-                  <Line
+                  <Area
                     yAxisId="right"
                     type="linear"
                     dataKey="风速"
+                    fill="hsl(var(--destructive))"
                     stroke="hsl(var(--foreground))"
-                    strokeWidth={3}
-                    dot={{ strokeWidth: 5 }}
+                    isAnimationActive={false}
                   />
                   <Tooltip
                     // @ts-expect-error recharts api is not well typed
                     content={<CustomTooltip />}
-                    isAnimationActive={false}
+                    cursor={false}
                   />
-                </LineChart>
+                </AreaChart>
               </ResponsiveContainer>
             )}
           </TabsContent>
