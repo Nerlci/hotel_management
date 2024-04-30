@@ -50,7 +50,7 @@ export function FoodDrawer() {
   return (
     <Drawer>
       <DrawerTrigger asChild>
-        <Button className="h-14 w-20" variant="outline">
+        <Button className=" h-14 w-20" variant="outline">
           <img
             className="pointer-events-none w-10 select-none invert-0 dark:invert"
             src={FoodIcon}
