@@ -25,6 +25,12 @@ import { Skeleton } from "./ui/skeleton";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { useTempEmulate } from "@/lib/tempEmulate";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 const AirconDrawerContent = ({
   sseData,
@@ -42,6 +48,11 @@ const AirconDrawerContent = ({
   const [windspeed, setwindspeed] = useState(sseData.fanSpeed);
   const [start, setstart] = useState(sseData.on);
   const [cool, setcool] = useState(sseData.mode === 1);
+
+  // start state could change from outside when drawer is open
+  useEffect(() => {
+    setstart(sseData.on);
+  }, [sseData, setstart]);
 
   return (
     <div className="mx-auto w-full max-w-sm">
@@ -65,7 +76,7 @@ const AirconDrawerContent = ({
               onCheckedChange={setcool}
               disabled={!start}
             />
-            <div className={`${start ? "" : "text-zinc-700"}`}>
+            <div className={`${start ? "" : "text-muted"}`}>
               {cool ? "制冷" : "制热"}
             </div>
           </div>
@@ -93,7 +104,7 @@ const AirconDrawerContent = ({
               <div className="text-4xl">&deg;C</div>
             </div>
             <div
-              className={`text-[1.2rem] text-muted-foreground ${start ? "" : "text-zinc-700"}`}
+              className={`text-[1.2rem] text-muted-foreground ${start ? "" : "text-muted"}`}
             >
               目标温度
             </div>
@@ -139,7 +150,7 @@ const AirconDrawerContent = ({
               {windspeed}
             </div>
             <div
-              className={`text-[1.2rem] text-muted-foreground ${start ? "" : "text-zinc-700"}`}
+              className={`text-[1.2rem] text-muted-foreground ${start ? "" : "text-muted"}`}
             >
               目标风速
             </div>
@@ -226,25 +237,37 @@ export function AirconDrawer() {
           variant="outline"
           disabled={sseReadyState.key !== 1}
         >
-          <div className="flex flex-initial flex-row gap-5">
-            <img
-              className="pointer-events-none w-10 select-none invert-0 dark:invert"
-              src={AirConditionerIcon}
-            />
-            <div
-              className={`flex flex-row flex-wrap items-center justify-center gap-1 ${sseData?.on ? "" : "text-zinc-700"}`}
-            >
-              {sseReadyState.key !== 1 ? (
-                <Skeleton className="h-5 w-40" />
-              ) : (
-                <>
-                  <p className="w-28">目标温度：{sseData?.temp}&deg;C</p>
-                  <p className="w-24">目标风速：{sseData?.fanSpeed}</p>
-                  <p className="w-28">当前温度：{currentTemp}&deg;C</p>
-                </>
-              )}
-            </div>
-          </div>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <div className="flex flex-initial flex-row gap-5">
+                  <img
+                    className="pointer-events-none w-10 select-none invert-0 dark:invert"
+                    src={AirConditionerIcon}
+                  />
+                  <div
+                    className={`flex flex-row flex-wrap items-center justify-center gap-1 ${sseData?.on ? "" : "text-muted-foreground"}`}
+                  >
+                    {sseReadyState.key !== 1 ? (
+                      <Skeleton className="h-5 w-40" />
+                    ) : (
+                      <>
+                        <p className="w-28">目标温度：{sseData?.temp}&deg;C</p>
+                        <p className="w-24">目标风速：{sseData?.fanSpeed}</p>
+                        <p className="w-28">当前温度：{currentTemp}&deg;C</p>
+                        <p className="w-24">
+                          模式：{sseData?.mode === 0 ? "制热" : "制冷"}
+                        </p>
+                      </>
+                    )}
+                  </div>
+                </div>
+              </TooltipTrigger>
+              <TooltipContent className="mb-2">
+                <p>控制空调</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </Button>
       </DrawerTrigger>
       <DrawerContent>

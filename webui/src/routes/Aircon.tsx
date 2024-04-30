@@ -3,6 +3,7 @@ import { NavBar } from "@/components/NavBar";
 import { columns } from "@/components/aircon-datatable-components/columns";
 import { DataTable } from "@/components/aircon-datatable-components/data-table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { GearIcon } from "@radix-ui/react-icons";
 
 const tasks = JSON.parse(`
 [
@@ -61,7 +62,7 @@ const tasks = JSON.parse(`
 export const Aircon = () => {
   return (
     <>
-      <NavBar title={"空调管理员"} />
+      <NavBar title={<GearIcon />} />
       <div className="mt-3 justify-center">
         <Tabs defaultValue="overview" className="top-3 mx-auto w-10/12">
           <TabsList className="overview">
