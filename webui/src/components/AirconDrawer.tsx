@@ -233,14 +233,14 @@ export function AirconDrawer() {
     <Drawer open={drawerOpen} onOpenChange={setDrawerOpen}>
       <DrawerTrigger asChild>
         <Button
-          className="w-70 h-14"
+          className="h-14 max-w-[20rem]"
           variant="outline"
           disabled={sseReadyState.key !== 1}
         >
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
-                <div className="flex flex-initial flex-row gap-5">
+                <div className="flex w-full max-w-[20rem] flex-initial flex-row gap-5">
                   <img
                     className="pointer-events-none w-10 select-none invert-0 dark:invert"
                     src={AirConditionerIcon}

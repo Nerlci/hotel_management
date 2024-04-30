@@ -24,6 +24,12 @@ import Img3 from "../assets/foods/eiliv-aceron-ZuIDLSz3XLg-unsplash.jpg";
 import Img4 from "../assets/foods/joseph-gonzalez-fdlZBWIP0aM-unsplash.jpg";
 import Img5 from "../assets/foods/anna-tukhfatullina-food-photographer-stylist-Mzy-OjtCI70-unsplash.jpg";
 import { useState } from "react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 const images = [Img1, Img2, Img3, Img4, Img5];
 const prices = [10, 20, 30, 40, 50];
@@ -50,11 +56,27 @@ export function FoodDrawer() {
   return (
     <Drawer>
       <DrawerTrigger asChild>
-        <Button className=" h-14 w-20" variant="outline">
-          <img
-            className="pointer-events-none w-10 select-none invert-0 dark:invert"
-            src={FoodIcon}
-          />
+        <Button className="h-14 w-52" variant="outline">
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <div className="flex flex-initial flex-row gap-5">
+                  <img
+                    className="pointer-events-none w-10 select-none invert-0 dark:invert"
+                    src={FoodIcon}
+                  />
+                  <div
+                    className={`flex flex-row flex-wrap items-center justify-center gap-1`}
+                  >
+                    <p className="w-24">共消费：10 ￥</p>
+                  </div>
+                </div>
+              </TooltipTrigger>
+              <TooltipContent className="mb-2">
+                <p>点餐</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </Button>
       </DrawerTrigger>
       <DrawerContent>

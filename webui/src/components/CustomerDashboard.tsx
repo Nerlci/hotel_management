@@ -15,7 +15,7 @@ export const CustomerDashboard: React.FC = () => {
           <CardTitle>欢迎回来，{user && user.username}</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="flex gap-5 xs:flex-col sm:flex-row">
+          <div className="flex gap-5 xs:flex-col sm:flex-col md:flex-col lg:flex-row">
             <AirconDrawer />
             <div className="grow xs:mt-[-20px]" />
             <FoodDrawer />
