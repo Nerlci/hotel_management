@@ -254,7 +254,7 @@ export function AirconDrawer() {
                       <>
                         <p className="w-28">目标温度：{sseData?.temp}&deg;C</p>
                         <p className="w-24">目标风速：{sseData?.fanSpeed}</p>
-                        <p className="w-28">当前温度：{currentTemp}&deg;C</p>
+                        <p className="w-28">当前温度：{currentTemp.toFixed(2)}&deg;C</p>
                         <p className="w-24">
                           模式：{sseData?.mode === 0 ? "制热" : "制冷"}
                         </p>
