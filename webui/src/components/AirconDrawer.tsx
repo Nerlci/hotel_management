@@ -36,7 +36,6 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { Slider } from "./ui/slider";
 import { TempSlider } from "./AirconSlider";
 
 const AirconDrawerContent = ({
@@ -105,7 +104,7 @@ const AirconDrawerContent = ({
             <div className="grow" />
             <div className="flex items-center justify-center space-x-2">
               <div
-                className={`flex items-center justify-center gap-1 text-5xl font-bold tracking-tighter ${
+                className={`flex w-28 items-center justify-center gap-1 text-5xl font-bold tracking-tighter ${
                   start ? "" : "text-muted"
                 }`}
               >
