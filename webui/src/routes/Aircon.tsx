@@ -1,8 +1,12 @@
 import { AirconOverview } from "@/components/AirconOverview";
 import { NavBar } from "@/components/NavBar";
-import { columns } from "@/components/aircon-datatable-components/columns";
-import { DataTable } from "@/components/aircon-datatable-components/data-table";
+import { DataTable } from "@/components/DataTable/data-table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  columns,
+  filterableColumns,
+  getDisplayName,
+} from "@/lib/tasks-data/data";
 import { GearIcon } from "@radix-ui/react-icons";
 
 const tasks = JSON.parse(`
@@ -71,7 +75,13 @@ export const Aircon = () => {
           </TabsList>
           <TabsContent value="aircon">
             <div className="mb-4 hidden h-full flex-1 flex-col md:flex">
-              <DataTable data={tasks} columns={columns} />
+              <DataTable
+                data={tasks}
+                columns={columns}
+                getDisplayName={getDisplayName}
+                searchPlaceholder="搜索房间号..."
+                filterableColumns={filterableColumns}
+              />
             </div>
           </TabsContent>
           <TabsContent value="overview">

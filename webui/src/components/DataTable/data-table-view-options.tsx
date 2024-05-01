@@ -1,7 +1,6 @@
 import { DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
 import { MixerHorizontalIcon } from "@radix-ui/react-icons";
 import { Table } from "@tanstack/react-table";
-
 import { Button } from "../ui/button";
 import {
   DropdownMenu,
@@ -13,24 +12,12 @@ import {
 
 interface DataTableViewOptionsProps<TData> {
   table: Table<TData>;
-}
-
-function getChineseName(column: string) {
-  switch (column) {
-    case "temperature":
-      return "温度";
-    case "windspeed":
-      return "风速";
-    case "mode":
-      return "模式";
-    case "status":
-      return "状态";
-  }
-  return column;
+  getDisplayName: (column: string) => string;
 }
 
 export function DataTableViewOptions<TData>({
   table,
+  getDisplayName,
 }: DataTableViewOptionsProps<TData>) {
   return (
     <DropdownMenu>
@@ -60,7 +47,7 @@ export function DataTableViewOptions<TData>({
                 checked={column.getIsVisible()}
                 onCheckedChange={(value) => column.toggleVisibility(!!value)}
               >
-                {getChineseName(column.id)}
+                {getDisplayName(column.id)}
               </DropdownMenuCheckboxItem>
             );
           })}
