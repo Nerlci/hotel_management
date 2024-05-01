@@ -18,4 +18,4 @@ export const airconSchema = z
     }
   });
 
-export type Task = z.infer<typeof airconSchema>;
+export type Aircon = z.infer<typeof airconSchema>;

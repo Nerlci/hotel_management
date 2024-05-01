@@ -1,11 +1,5 @@
-import {
-  BlendingModeIcon,
-  CheckCircledIcon,
-  CrossCircledIcon,
-  SunIcon,
-} from "@radix-ui/react-icons";
 import { ColumnDef } from "@tanstack/react-table";
-import { Aircon } from "@/lib/aircon-data/schema";
+import { Room, roomSchema } from "@/lib/room-data/schema";
 import { Checkbox } from "@/components/ui/checkbox";
 import { DataTableColumnHeader } from "@/components/DataTable/data-table-column-header";
 import { DotsHorizontalIcon } from "@radix-ui/react-icons";
@@ -23,7 +17,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { airconSchema } from "@/lib/aircon-data/schema";
+import { UserRoundCheckIcon, UserRoundXIcon } from "lucide-react";
+import { DataTableColumnValue } from "../types";
 
 interface DataTableRowActionsProps<TData> {
   row: Row<TData>;
@@ -32,7 +27,7 @@ interface DataTableRowActionsProps<TData> {
 export function DataTableRowActions<TData>({
   row,
 }: DataTableRowActionsProps<TData>) {
-  const task = airconSchema.parse(row.original);
+  const task = roomSchema.parse(row.original);
 
   return (
     <DropdownMenu>
@@ -59,7 +54,7 @@ export function DataTableRowActions<TData>({
           </DropdownMenuSubContent>
         </DropdownMenuSub>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>详单</DropdownMenuItem>
+        <DropdownMenuItem>设置</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );
@@ -67,19 +62,17 @@ export function DataTableRowActions<TData>({
 
 export const getDisplayName = (column: string) => {
   switch (column) {
-    case "temperature":
-      return "温度";
-    case "windspeed":
-      return "风速";
-    case "mode":
-      return "模式";
+    case "startDate":
+      return "开始日期";
+    case "endDate":
+      return "结束日期";
     case "status":
       return "状态";
   }
   return column;
 };
 
-export const columns: ColumnDef<Aircon>[] = [
+export const columns: ColumnDef<Room>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -114,58 +107,35 @@ export const columns: ColumnDef<Aircon>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: "temperature",
+    accessorKey: "startDate",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="温度" />
+      <DataTableColumnHeader column={column} title="开始日期" />
     ),
     cell: ({ row }) => {
       return (
         <div className="flex space-x-2">
           <span className="max-w-[500px] truncate font-medium">
-            {row.getValue("temperature")}
+            {row.getValue("startDate") === "-"
+              ? "-"
+              : row.getValue("startDate")}
           </span>
         </div>
       );
     },
   },
   {
-    accessorKey: "windspeed",
+    accessorKey: "endDate",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="风速" />
+      <DataTableColumnHeader column={column} title="结束日期" />
     ),
     cell: ({ row }) => {
       return (
         <div className="flex space-x-2">
           <span className="max-w-[500px] truncate font-medium">
-            {row.getValue("windspeed")}
+            {row.getValue("endDate") === "-" ? "-" : row.getValue("endDate")}
           </span>
         </div>
       );
-    },
-  },
-  {
-    accessorKey: "mode",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="模式" />
-    ),
-    cell: ({ row }) => {
-      const mode = modes.find((mode) => mode.value === row.getValue("mode"));
-
-      if (!mode) {
-        return null;
-      }
-
-      return (
-        <div className="flex w-[100px] items-center">
-          {mode.icon && (
-            <mode.icon className={`mr-2 h-4 w-4 ${mode.iconClassName}`} />
-          )}
-          <span>{mode.label}</span>
-        </div>
-      );
-    },
-    filterFn: (row, id, value) => {
-      return value.includes(row.getValue(id));
     },
   },
   {
@@ -205,46 +175,22 @@ export const columns: ColumnDef<Aircon>[] = [
   },
 ];
 
-export const statuses = [
+export const statuses: DataTableColumnValue[] = [
   {
-    value: "on",
-    label: "打开",
-    icon: CheckCircledIcon,
-    iconClassName: "text-green-500",
-  },
-  {
-    value: "off",
-    label: "关闭",
-    icon: CrossCircledIcon,
-    iconClassName: "text-red-500",
-  },
-];
-
-export const modes = [
-  {
-    value: "cool",
-    label: "制冷",
-    icon: BlendingModeIcon,
-    iconClassName: "text-blue-500",
-  },
-  {
-    value: "heat",
-    label: "制热",
-    icon: SunIcon,
+    value: "occupied",
+    label: "有人",
+    icon: UserRoundCheckIcon,
     iconClassName: "text-orange-500",
   },
   {
-    value: "-",
-    label: "-",
-    iconClassName: "",
+    value: "empty",
+    label: "空闲",
+    icon: UserRoundXIcon,
+    iconClassName: "text-blue-500",
   },
 ];
 
 export const filterableColumns = [
-  {
-    columnId: "mode",
-    columnValues: modes,
-  },
   {
     columnId: "status",
     columnValues: statuses,

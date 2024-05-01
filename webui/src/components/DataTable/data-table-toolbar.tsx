@@ -36,8 +36,10 @@ export function DataTableToolbar<TData>({
           (column) =>
             table.getColumn(column.columnId) && (
               <DataTableFacetedFilter
+                key={column.columnId}
                 column={table.getColumn(column.columnId)}
                 title={getDisplayName(column.columnId)}
+                // @ts-expect-error typing is not there yet
                 options={column.columnValues}
               />
             ),
