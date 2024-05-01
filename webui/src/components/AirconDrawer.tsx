@@ -8,7 +8,12 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
-import { Minus, Plus } from "lucide-react";
+import {
+  Minus,
+  Plus,
+  ThermometerSnowflakeIcon,
+  ThermometerSunIcon,
+} from "lucide-react";
 import {
   ACStatus,
   MAX_AIRCON_SPEED,
@@ -31,6 +36,8 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { Slider } from "./ui/slider";
+import { TempSlider } from "./AirconSlider";
 
 const AirconDrawerContent = ({
   sseData,
@@ -68,61 +75,61 @@ const AirconDrawerContent = ({
         </div>
       </DrawerHeader>
       <div className="p-4 pb-0">
-        <div className="flex items-center justify-center space-x-2">
-          <div className="flex w-full justify-start gap-4">
-            <Switch
-              className="ml-2 data-[state=checked]:bg-blue-500 data-[state=unchecked]:bg-orange-500"
-              checked={cool}
-              onCheckedChange={setcool}
-              disabled={!start}
-            />
-            <div className={`${start ? "" : "text-muted"}`}>
-              {cool ? "制冷" : "制热"}
+        <div className="flex flex-col items-center gap-2">
+          <div className="flex flex-row items-center gap-3">
+            <div
+              className={`flex flex-row gap-1 text-[1.2rem] ${
+                start
+                  ? temperature > sseData.temp
+                    ? "text-orange-500"
+                    : "text-blue-500"
+                  : "text-muted"
+              }`}
+            >
+              <div
+                className={`h-10 w-10 rounded-full ${
+                  start
+                    ? temperature > sseData.temp
+                      ? "bg-orange-500/10"
+                      : "bg-blue-500/10"
+                    : "text-muted"
+                }`}
+              >
+                {temperature > sseData.temp ? (
+                  <ThermometerSunIcon className="mx-auto mt-2" />
+                ) : (
+                  <ThermometerSnowflakeIcon className="mx-auto mt-2" />
+                )}
+              </div>
+            </div>
+            <div className="grow" />
+            <div className="flex items-center justify-center space-x-2">
+              <div
+                className={`flex items-center justify-center gap-1 text-5xl font-bold tracking-tighter ${
+                  start ? "" : "text-muted"
+                }`}
+              >
+                {temperature}
+                <div className="text-4xl">&deg;C</div>
+              </div>
             </div>
           </div>
-        </div>
-        <div className="flex items-center justify-center space-x-2">
-          <Button
-            variant="outline"
-            size="icon"
-            className="h-8 w-8 shrink-0 rounded-full"
-            onClick={() => {
-              setTemperature((prev) =>
-                Math.max(MIN_AIRCON_TEMP, Math.min(MAX_AIRCON_TEMP, prev - 1)),
-              );
+          <TempSlider
+            className="w-full"
+            defaultValue={[temperature]}
+            max={MAX_AIRCON_TEMP}
+            min={MIN_AIRCON_TEMP}
+            step={1}
+            disabled={!start}
+            onValueChange={(value) => {
+              setTemperature(value[0]);
+              if (value[0] < sseData.temp) {
+                setcool(true);
+              } else {
+                setcool(false);
+              }
             }}
-            disabled={temperature <= MIN_AIRCON_TEMP || !start}
-          >
-            <Minus className="h-4 w-4" />
-            <span className="sr-only">Decrease</span>
-          </Button>
-          <div className="flex-1 text-center">
-            <div
-              className={`flex items-center justify-center gap-1 text-7xl font-bold tracking-tighter ${start ? "" : "text-muted"}`}
-            >
-              {temperature}
-              <div className="text-4xl">&deg;C</div>
-            </div>
-            <div
-              className={`text-[1.2rem] text-muted-foreground ${start ? "" : "text-muted"}`}
-            >
-              目标温度
-            </div>
-          </div>
-          <Button
-            variant="outline"
-            size="icon"
-            className="h-8 w-8 shrink-0 rounded-full"
-            onClick={() => {
-              setTemperature((prev) =>
-                Math.max(MIN_AIRCON_TEMP, Math.min(MAX_AIRCON_TEMP, prev + 1)),
-              );
-            }}
-            disabled={temperature >= MAX_AIRCON_TEMP || !start}
-          >
-            <Plus className="h-4 w-4" />
-            <span className="sr-only">Increase</span>
-          </Button>
+          />
         </div>
         <div className="mt-8" />
         <div className="flex items-center justify-center space-x-2">
