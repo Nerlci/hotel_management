@@ -13,6 +13,7 @@ import { AuthProvider } from "./components/AuthProvider.tsx";
 import { Aircon } from "./routes/Aircon.tsx";
 import { Customer } from "./routes/Customer.tsx";
 import { Toaster } from "./components/ui/sonner.tsx";
+import Reception from "./routes/Reception.tsx";
 
 const queryClient = new QueryClient();
 
@@ -36,6 +37,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
               />
               <Route path="/airconmanager" element={<Aircon />} />
               <Route path="/register" element={<Register />} />
+              <Route path="/reception" element={<Reception />} />
               <Route path="*" element={<ErrorPage />} />
             </Routes>
           </AuthProvider>
