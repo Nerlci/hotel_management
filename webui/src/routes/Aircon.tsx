@@ -65,7 +65,7 @@ export const Aircon = () => {
       <NavBar title={<GearIcon />} />
       <div className="mt-3 justify-center">
         <Tabs defaultValue="overview" className="top-3 mx-auto w-10/12">
-          <TabsList className="overview">
+          <TabsList>
             <TabsTrigger value="overview">概览</TabsTrigger>
             <TabsTrigger value="aircon">空调管理</TabsTrigger>
           </TabsList>
