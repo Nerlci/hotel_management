@@ -24,11 +24,11 @@ export const useTempEmulate = (props: {
   const speed = 0.1;
 
   useInterval(() => {
-    if (currentTemp === targetTemp) {
-      props.onTempTied && props.onTempTied();
-    }
     if (start) {
-      if (mode === "cool" && currentTemp > targetTemp) {
+      if (Math.abs(currentTemp - targetTemp) <= 0.1) {
+        setCurrentTemp(targetTemp);
+        props.onTempTied && props.onTempTied();
+      } else if (mode === "cool" && currentTemp > targetTemp) {
         setCurrentTemp(
           (prev) => prev - windSpeed * (prev - targetTemp) * speed,
         );
