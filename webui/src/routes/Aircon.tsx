@@ -6,7 +6,7 @@ import {
   columns,
   filterableColumns,
   getDisplayName,
-} from "@/lib/tasks-data/data";
+} from "@/lib/aircon-data/data";
 import { GearIcon } from "@radix-ui/react-icons";
 
 const tasks = JSON.parse(`

@@ -5,7 +5,7 @@ import {
   SunIcon,
 } from "@radix-ui/react-icons";
 import { ColumnDef } from "@tanstack/react-table";
-import { Task } from "@/lib/tasks-data/schema";
+import { Task } from "@/lib/aircon-data/schema";
 import { Checkbox } from "@/components/ui/checkbox";
 import { DataTableColumnHeader } from "@/components/DataTable/data-table-column-header";
 import { DotsHorizontalIcon } from "@radix-ui/react-icons";
@@ -23,7 +23,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { airconSchema } from "@/lib/tasks-data/schema";
+import { airconSchema } from "@/lib/aircon-data/schema";
 
 interface DataTableRowActionsProps<TData> {
   row: Row<TData>;

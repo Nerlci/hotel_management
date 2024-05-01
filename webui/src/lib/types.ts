@@ -1,4 +1,4 @@
-import { filterableColumns } from "./tasks-data/data";
+import { filterableColumns } from "./aircon-data/data";
 
 export type UserType = "customer" | "admin" | "reception" | "aircon-manager";
 
