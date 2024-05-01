@@ -10,7 +10,7 @@ export type LoggedinUser = {
 export type DataTableColumnValue = {
   value: string;
   label: string;
-  icon: React.ElementType;
+  icon?: React.ElementType;
   iconClassName: string;
 };
 

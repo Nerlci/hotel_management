@@ -24,6 +24,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { airconSchema } from "@/lib/aircon-data/schema";
+import { FilterableColumns } from "../types";
 
 interface DataTableRowActionsProps<TData> {
   row: Row<TData>;
@@ -240,7 +241,7 @@ export const modes = [
   },
 ];
 
-export const filterableColumns = [
+export const filterableColumns: FilterableColumns = [
   {
     columnId: "mode",
     columnValues: modes,

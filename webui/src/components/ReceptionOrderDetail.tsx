@@ -41,13 +41,11 @@ export default function ReceptionOrderDetail({ roomId }: DetailProps) {
               <Skeleton className="mb-1 mt-1 h-5 w-52" />
             )}
           </CardTitle>
-          <CardDescription>
-            {roomId ? (
-              `November 23, 2023`
-            ) : (
-              <Skeleton className="mb-1 mt-1 h-3 w-20" />
-            )}
-          </CardDescription>
+          {roomId ? (
+            <CardDescription>November 23, 2023</CardDescription>
+          ) : (
+            <Skeleton className="mb-1 mt-1 h-3 w-20" />
+          )}
         </div>
         {roomId ? (
           <div className="ml-auto flex items-center gap-1">
