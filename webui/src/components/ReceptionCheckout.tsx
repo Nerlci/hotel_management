@@ -1,10 +1,5 @@
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
-import {
-  ResizableHandle,
-  ResizablePanel,
-  ResizablePanelGroup,
-} from "@/components/ui/resizable";
 import { Check, ChevronsUpDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
@@ -21,34 +16,34 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import ReceptionOrderDetail from "./ReceptionOrderDetail";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import ReceptionBillingDetail from "./ReceptionBillingDetail";
 
-const frameworks = [
+const roomIds = [
   {
-    value: "next.js",
-    label: "Next.js",
+    value: "8101",
   },
   {
-    value: "sveltekit",
-    label: "SvelteKit",
+    value: "8102",
   },
   {
-    value: "nuxt.js",
-    label: "Nuxt.js",
+    value: "8103",
   },
   {
-    value: "remix",
-    label: "Remix",
+    value: "8104",
   },
   {
-    value: "astro",
-    label: "Astro",
+    value: "8105",
   },
 ];
 
-export function RoomSelect() {
+export function RoomSelect({
+  selectedRoom,
+  setSelectedRoom,
+}: {
+  selectedRoom: string;
+  setSelectedRoom: React.Dispatch<React.SetStateAction<string>>;
+}) {
   const [open, setOpen] = useState(false);
-  const [value, setValue] = useState("");
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -59,34 +54,38 @@ export function RoomSelect() {
           aria-expanded={open}
           className="w-[200px] justify-between"
         >
-          {value
-            ? frameworks.find((framework) => framework.value === value)?.label
-            : "Select framework..."}
+          {selectedRoom
+            ? roomIds.find((roomId) => roomId.value === selectedRoom)?.value
+            : "选择房间..."}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-[200px] p-0">
         <Command>
-          <CommandInput placeholder="Search framework..." />
-          <CommandEmpty>No framework found.</CommandEmpty>
+          <CommandInput placeholder="房间号 ..." />
+          <CommandEmpty>未找到房间号</CommandEmpty>
           <CommandGroup>
             <CommandList>
-              {frameworks.map((framework) => (
+              {roomIds.map((roomId) => (
                 <CommandItem
-                  key={framework.value}
-                  value={framework.value}
+                  key={roomId.value}
+                  value={roomId.value}
                   onSelect={(currentValue) => {
-                    setValue(currentValue === value ? "" : currentValue);
+                    setSelectedRoom(
+                      currentValue === selectedRoom ? "" : currentValue,
+                    );
                     setOpen(false);
                   }}
                 >
                   <Check
                     className={cn(
                       "mr-2 h-4 w-4",
-                      value === framework.value ? "opacity-100" : "opacity-0",
+                      selectedRoom === roomId.value
+                        ? "opacity-100"
+                        : "opacity-0",
                     )}
                   />
-                  {framework.label}
+                  {roomId.value}
                 </CommandItem>
               ))}
             </CommandList>
@@ -98,75 +97,33 @@ export function RoomSelect() {
 }
 
 export default function ReceptionCheckout() {
-  const [showBill, setShowBill] = useState(false);
+  const [selectedRoom, setSelectedRoom] = useState("");
 
   return (
-    <div className="h-[80vh]">
-      <ResizablePanelGroup
-        direction="vertical"
-        className="w-full rounded-lg border"
-      >
-        <ResizablePanel defaultSize={25}>
-          <div className="flex h-[200px] items-center justify-center p-6">
-            <div className="relative mx-auto flex flex-row gap-3">
-              <div className="">
-                <RoomSelect />
-              </div>
-              <Button
-                variant="outline"
-                onClick={() => setShowBill((prev) => !prev)}
-              >
-                生成账单 & 详单
-              </Button>
-            </div>
+    <div>
+      <div className="flex items-center justify-center">
+        <div className="relative mx-auto flex flex-row gap-3">
+          <div className="">
+            <RoomSelect
+              selectedRoom={selectedRoom}
+              setSelectedRoom={setSelectedRoom}
+            />
           </div>
-        </ResizablePanel>
-        <ResizableHandle />
-        <ResizablePanel defaultSize={75}>
-          <ResizablePanelGroup
-            direction="horizontal"
-            className="w-full rounded-lg border"
-          >
-            <ResizablePanel defaultSize={50}>
-              <ScrollArea>
-                <div className="bg-white">
-                  {showBill && <ReceptionOrderDetail />}
-                </div>
-              </ScrollArea>
-            </ResizablePanel>
-            <ResizableHandle withHandle />
-            <ResizablePanel defaultSize={50}>right</ResizablePanel>
-          </ResizablePanelGroup>
-        </ResizablePanel>
-      </ResizablePanelGroup>
+          <Button variant="outline">生成账单 & 详单</Button>
+        </div>
+      </div>
+      <div className="mt-3 flex gap-3">
+        <div className="grow">
+          <ReceptionOrderDetail roomId={selectedRoom} />
+        </div>
+        <div className="grow">
+          <ReceptionBillingDetail roomId={selectedRoom} />
+        </div>
+      </div>
     </div>
   );
 }
 
-// <ResizablePanelGroup direction="vertical">
-//   <ResizablePanel defaultSize={25}>
-//     <div className="flex h-full items-center justify-center p-6">
-//       <span className="font-semibold">Two</span>
-//     </div>
-//   </ResizablePanel>
-//   <ResizableHandle />
-//   <ResizablePanel defaultSize={75}>
-//     <div className="flex h-full items-center justify-center p-6">
-//       <span className="font-semibold">Three</span>
-//     </div>
-//   </ResizablePanel>
-// </ResizablePanelGroup>
-
-// <div className="grow">
-//   <Button variant="outline" onClick={() => setShowBill((prev) => !prev)}>
-//     生成账单
-//   </Button>
-// </div>
-// <div className="w-3/12">
-//   {/*账单*/}
-//   {showBill && (
-//     <Card className="mx-auto mb-3 mt-3 w-full">
-//       <ReceptionOrderDetail />
-//     </Card>
-//   )}
-// </div>
+export type DetailProps = {
+  roomId: string;
+};

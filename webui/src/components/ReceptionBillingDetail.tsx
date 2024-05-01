@@ -1,4 +1,5 @@
 import { Copy, MoreVertical, Truck } from "lucide-react";
+
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -19,7 +20,7 @@ import { Separator } from "@/components/ui/separator";
 import { DetailProps } from "./ReceptionCheckout";
 import { Skeleton } from "./ui/skeleton";
 
-export default function ReceptionOrderDetail({ roomId }: DetailProps) {
+export default function ReceptionBillingDetail({ roomId }: DetailProps) {
   return (
     <Card className="overflow-hidden">
       <CardHeader className="flex flex-row items-start bg-muted/50">
