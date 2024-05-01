@@ -15,11 +15,11 @@ const TempSlider = React.forwardRef<
     )}
     {...props}
   >
-    <SliderPrimitive.Track className="relative h-10 w-full grow overflow-hidden rounded-xl bg-gradient-to-r from-blue-300 to-orange-300 disabled:opacity-50">
+    <SliderPrimitive.Track className="relative h-10 w-full grow overflow-hidden rounded-xl bg-gradient-to-r from-blue-400 via-gray-100 to-orange-400 disabled:opacity-50 dark:from-blue-500/70 dark:via-gray-100/70 dark:to-orange-500/70">
       <SliderPrimitive.Range className="absolute h-full bg-primary/0" />
     </SliderPrimitive.Track>
     <SliderPrimitive.Thumb
-      className="block h-10 w-3 rounded-2xl border-0 border-primary bg-white/90 ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
+      className="block h-10 w-3 rounded-2xl border-0 border-primary bg-white ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
       asChild
     >
       <div className="flex flex-col">
