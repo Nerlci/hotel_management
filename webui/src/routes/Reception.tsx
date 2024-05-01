@@ -1,24 +1,27 @@
 import { NavBar } from "@/components/NavBar";
 import { PersonIcon } from "@radix-ui/react-icons";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import ReceptionCheckout from "@/components/ReceptionCheckout";
+import ReceptionBill from "@/components/ReceptionBill";
+import ReceptionCheckinCheckout from "@/components/ReceptionCheckinCheckout";
 
 export default function Reception() {
   return (
     <>
       <NavBar title={<PersonIcon />} />
       <div className="mt-3 justify-center">
-        <Tabs defaultValue="checkout" className="top-3 mx-auto w-10/12">
+        <Tabs defaultValue="bill" className="top-3 mx-auto w-10/12">
           <TabsList>
-            <TabsTrigger value="checkin">入住</TabsTrigger>
-            <TabsTrigger value="checkout">退房</TabsTrigger>
+            <TabsTrigger value="checkinout">入住与退房</TabsTrigger>
+            <TabsTrigger value="bill">详单与账单</TabsTrigger>
           </TabsList>
-          <TabsContent value="checkin">
-            <div className="mb-4 hidden h-full flex-1 flex-col md:flex"></div>
-          </TabsContent>
-          <TabsContent value="checkout">
+          <TabsContent value="checkinout">
             <div className="mb-4 hidden h-full flex-1 flex-col md:flex">
-              <ReceptionCheckout />
+              <ReceptionCheckinCheckout />
+            </div>
+          </TabsContent>
+          <TabsContent value="bill">
+            <div className="mb-4 hidden h-full flex-1 flex-col md:flex">
+              <ReceptionBill />
             </div>
           </TabsContent>
         </Tabs>

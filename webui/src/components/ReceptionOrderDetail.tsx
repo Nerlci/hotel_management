@@ -16,7 +16,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Separator } from "@/components/ui/separator";
-import { DetailProps } from "./ReceptionCheckout";
+import { DetailProps } from "./ReceptionBill";
 import { Skeleton } from "./ui/skeleton";
 
 export default function ReceptionOrderDetail({ roomId }: DetailProps) {

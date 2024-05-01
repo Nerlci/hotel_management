@@ -96,7 +96,7 @@ export function RoomSelect({
   );
 }
 
-export default function ReceptionCheckout() {
+export default function ReceptionBill() {
   const [selectedRoom, setSelectedRoom] = useState("");
 
   return (
