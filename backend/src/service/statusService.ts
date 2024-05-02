@@ -4,6 +4,7 @@ import { prisma } from '../prisma';
 import SseChannel from 'sse-channel';
 
 const channels: Map<string, SseChannel> = new Map();
+const globalChannel = new SseChannel();
 
 const getChannel = (roomId: string) => {
     // TODO: Check if the room is valid
@@ -14,10 +15,7 @@ const getChannel = (roomId: string) => {
     return channels.get(roomId)!;
 }
 
-const listenStatus = async (req: Request, res: Response, roomId: string) => {
-    const channel = getChannel(roomId);
-    channel.addClient(req, res);
-
+const getInitialStatus = async (roomId: string) => {
     const status = await prisma.aCRecord.findFirst({
         where: {
             roomId: roomId,
@@ -27,8 +25,8 @@ const listenStatus = async (req: Request, res: Response, roomId: string) => {
             timestamp: 'desc',
         },
     });
-    
-    const statusData = status ? acStatus.parse(status) : acStatus.parse({
+
+    return status ? acStatus.parse(status) : acStatus.parse({
         roomId: roomId,
         temp: 25,
         mode: 0,
@@ -36,12 +34,32 @@ const listenStatus = async (req: Request, res: Response, roomId: string) => {
         on: false,
         timestamp: new Date(),
     });
-    channel.send(JSON.stringify(statusData), [res]);
+}
+
+const listenStatus = async (req: Request, res: Response, roomId: string | undefined) => {
+    if (!roomId) {
+        globalChannel.addClient(req, res);
+        
+        const status: ACStatus[] = [];
+        for (const roomId of channels.keys()) {
+            status.push(await getInitialStatus(roomId));
+        }
+        globalChannel.send(JSON.stringify(status), [res]);
+        
+        return;
+    }
+    
+    const channel = getChannel(roomId);
+    channel.addClient(req, res);
+
+    const status = await getInitialStatus(roomId);
+    channel.send(JSON.stringify(status), [res]);
 }
 
 const updateStatus = async (status: ACStatus) => {
     const channel = getChannel(status.roomId);
     channel.send(JSON.stringify(status));
+    globalChannel.send(JSON.stringify(status));
 }
 
 const statusService = {

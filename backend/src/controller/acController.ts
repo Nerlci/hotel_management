@@ -27,7 +27,7 @@ const updateAC = async (req: Request, res: Response) => {
 const statusAC = async (req: Request, res: Response) => {
     const roomId = req.query.roomId;
 
-    if (typeof roomId !== 'string') {
+    if (typeof roomId !== 'string' && roomId !== undefined) {
         const response = responseBase.parse({
             code: '400',
             error: {
@@ -37,6 +37,20 @@ const statusAC = async (req: Request, res: Response) => {
         });
         res.json(response);
         return;
+    }
+
+    if (roomId === undefined) {
+        if (res.locals.user.type !== 0) {
+            const response = responseBase.parse({
+                code: '400',
+                error: {
+                    msg: 'Permission denied',
+                },
+                payload: {},
+            });
+            res.json(response);
+            return;
+        }
     }
 
     statusService.listenStatus(req, res, roomId);

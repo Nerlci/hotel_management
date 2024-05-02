@@ -13,7 +13,6 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-
 import {
   Table,
   TableBody,
@@ -22,18 +21,24 @@ import {
   TableHeader,
   TableRow,
 } from "../ui/table";
-
-import { DataTablePagination } from "./data-table-pagination";
 import { DataTableToolbar } from "./data-table-toolbar";
+import { DataTablePagination } from "../DataTable/data-table-pagination";
+import { FilterableColumns } from "@/lib/types";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
+  searchPlaceholder?: string;
+  getDisplayName: (column: string) => string;
+  filterableColumns: FilterableColumns;
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
+  searchPlaceholder,
+  getDisplayName,
+  filterableColumns,
 }: DataTableProps<TData, TValue>) {
   const [rowSelection, setRowSelection] = React.useState({});
   const [columnVisibility, setColumnVisibility] =
@@ -67,7 +72,12 @@ export function DataTable<TData, TValue>({
 
   return (
     <div className="space-y-4">
-      <DataTableToolbar table={table} />
+      <DataTableToolbar
+        table={table}
+        searchPlaceholder={searchPlaceholder}
+        getDisplayName={getDisplayName}
+        filterableColumns={filterableColumns}
+      />
       <div className="rounded-md border">
         <Table>
           <TableHeader>
@@ -111,7 +121,7 @@ export function DataTable<TData, TValue>({
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  No results.
+                  无结果
                 </TableCell>
               </TableRow>
             )}
