@@ -1,4 +1,4 @@
-import { ACUpdateRequest, acStatus, acUpdateRequest } from "shared";
+import { ACUpdateRequest, acStatus } from "shared";
 import { prisma } from "../prisma";
 import { statusService } from "./statusService";
 
@@ -53,7 +53,7 @@ const checkWaitingList = () => {
   if (waitingList.length === 0) { return; }
 
   waitingList.sort((a, b) => 
-    a.fanSpeed === b.fanSpeed ? b.fanSpeed - a.fanSpeed: b.onTimestamp.getTime() - a.onTimestamp.getTime()
+    a.fanSpeed === b.fanSpeed ? b.fanSpeed - a.fanSpeed : b.onTimestamp.getTime() - a.onTimestamp.getTime()
   );
   const minServingFanSpeed = Math.min(...servingList.map(item => item.fanSpeed));
   for (const waitingItem of waitingList) {
@@ -72,12 +72,14 @@ const preemptService = (item: SchedulerItem, preemptedItem: SchedulerItem) => {
     waitingList.splice(waitingIdx, 1);
   }
 
-  statusChange(item);
-  servingList.push(item);
+  const modifiedItem = modifyTimestamps(item, now);
+  statusChange(modifiedItem);
+  servingList.push(modifiedItem);
 
   statusChange({
     ...preemptedItem,
     on: false,
+    timestamp: now,
   });
   waitingList.push(modifyTimestamps(preemptedItem, now));
 
@@ -120,8 +122,8 @@ const schedulerStep = (item: SchedulerItem) => {
   const servingItemIdx = servingList.findIndex(servingItem => servingItem.roomId === item.roomId);
   if (servingItemIdx !== -1) {
     const modifiedItem = {
-      ...servingList[servingItemIdx],
       ...item,
+      onTimestamp: servingList[servingItemIdx].onTimestamp,
       timestamp: now,
     };
     statusChange(modifiedItem);
@@ -180,7 +182,7 @@ const schedulerStep = (item: SchedulerItem) => {
     // 如果只有一个风速最低的服务对象，或者有多个但风速不相等
     if (minFanSpeedItems.length === 1 || new Set(minFanSpeedItems.map(item => item.fanSpeed)).size > 1) {
       const minFanSpeedItem = minFanSpeedItems[0];
-      preemptService(modifyTimestamps(item, now), minFanSpeedItem);
+      preemptService(item, minFanSpeedItem);
 
       return;
     }
@@ -188,7 +190,7 @@ const schedulerStep = (item: SchedulerItem) => {
     // 如果有多个风速相等且低于请求风速的服务对象，找到服务时长最大的服务对象
     const maxServiceDuration = Math.max(...minFanSpeedItems.map(item => now.getTime() - item.onTimestamp.getTime()));
     const maxServiceDurationItem = minFanSpeedItems.find(item => now.getTime() - item.onTimestamp.getTime() === maxServiceDuration)!;
-    preemptService(modifyTimestamps(item, now), maxServiceDurationItem);
+    preemptService(item, maxServiceDurationItem);
 
     return;
   }
