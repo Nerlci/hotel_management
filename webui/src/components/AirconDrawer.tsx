@@ -9,8 +9,7 @@ import {
   DrawerTrigger,
 } from "@/components/ui/drawer";
 import {
-  Minus,
-  Plus,
+  FanIcon,
   ThermometerSnowflakeIcon,
   ThermometerSunIcon,
 } from "lucide-react";
@@ -36,7 +35,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { TempSlider } from "./AirconSlider";
+import { TempSlider, WindSlider } from "./AirconSlider";
 
 const AirconDrawerContent = ({
   sseData,
@@ -51,7 +50,7 @@ const AirconDrawerContent = ({
   ) => void;
 }) => {
   const [temperature, setTemperature] = useState(sseData.temp);
-  const [windspeed, setwindspeed] = useState(sseData.fanSpeed);
+  const [windspeed, setWindspeed] = useState(sseData.fanSpeed);
   const [start, setstart] = useState(sseData.on);
   const [cool, setcool] = useState(sseData.mode === 1);
 
@@ -131,53 +130,50 @@ const AirconDrawerContent = ({
           />
         </div>
         <div className="mt-8" />
-        <div className="flex items-center justify-center space-x-2">
-          <Button
-            variant="outline"
-            size="icon"
-            className="h-8 w-8 shrink-0 rounded-full"
-            onClick={() => {
-              setwindspeed((prev) =>
-                Math.max(
-                  MIN_AIRCON_SPEED,
-                  Math.min(MAX_AIRCON_SPEED, prev - 1),
-                ),
-              );
-            }}
-            disabled={windspeed <= MIN_AIRCON_SPEED || !start}
-          >
-            <Minus className="h-4 w-4" />
-            <span className="sr-only">Decrease</span>
-          </Button>
-          <div className="flex-1 text-center">
+        <div className="flex flex-col items-center gap-2">
+          <div className="flex flex-row items-center gap-3">
             <div
-              className={`text-7xl font-bold tracking-tighter ${start ? "" : "text-muted"}`}
+              className={`flex flex-row gap-1 text-[1.2rem] ${
+                start ? "text-green-500" : "text-muted"
+              }`}
             >
-              {windspeed}
+              <div
+                className={`h-10 w-10 rounded-full ${
+                  start ? "bg-green-500/10" : "text-muted"
+                }`}
+              >
+                <FanIcon
+                  className="mx-auto mt-2 animate-spin"
+                  style={{
+                    transform: "scale(-1, -1)",
+                    animation: `spin ${start ? 1 : 0}s linear infinite`,
+                    animationDuration: `${2 / (1.5 * windspeed)}s`,
+                  }}
+                />
+              </div>
             </div>
-            <div
-              className={`text-[1.2rem] text-muted-foreground ${start ? "" : "text-muted"}`}
-            >
-              目标风速
+            <div className="grow" />
+            <div className="flex items-center justify-center space-x-2">
+              <div
+                className={`flex w-28 items-center justify-center gap-1 text-5xl font-bold tracking-tighter ${
+                  start ? "" : "text-muted"
+                }`}
+              >
+                {windspeed}
+              </div>
             </div>
           </div>
-          <Button
-            variant="outline"
-            size="icon"
-            className="h-8 w-8 shrink-0 rounded-full"
-            onClick={() => {
-              setwindspeed((prev) =>
-                Math.max(
-                  MIN_AIRCON_SPEED,
-                  Math.min(MAX_AIRCON_SPEED, prev + 1),
-                ),
-              );
+          <WindSlider
+            className="w-full"
+            defaultValue={[temperature]}
+            max={MAX_AIRCON_SPEED}
+            min={MIN_AIRCON_SPEED}
+            step={1}
+            disabled={!start}
+            onValueChange={(value) => {
+              setWindspeed(value[0]);
             }}
-            disabled={windspeed >= MAX_AIRCON_SPEED || !start}
-          >
-            <Plus className="h-4 w-4" />
-            <span className="sr-only">Increase</span>
-          </Button>
+          />
         </div>
       </div>
       <DrawerFooter>
