@@ -1,5 +1,5 @@
 import {Request, Response} from "express";
-import {acUpdateRequest, responseBase} from "shared";
+import {acUpdateRequest, responseBase, userAvailablityResponse, userRoomOrderResponse} from "shared";
 import {roomService} from "../service/roomService";
 import {prisma} from "../prisma";
 
@@ -69,18 +69,20 @@ const queryRoom = async (req: Request, res: Response) => {
 	});
 
 	if (room.length === 0) {
-		const response = responseBase.parse({
+		const response = userRoomOrderResponse.parse({
 			error: {
 				msg: "No reservation",
 			},
 			code: "400",
-			payload: {},
+			payload: {
+				roomId: "",
+			},
 		});
 
 		res.json(response);
 		return;
 	} else {
-		const response = responseBase.parse({
+		const response = userRoomOrderResponse.parse({
 			error: {
 				msg: "",
 			},
@@ -100,7 +102,7 @@ const checkDaysAvailability = async (req: Request, res: Response) => {
 
 	const busyDays = await roomService.findBusyDays(startDate, endDate);
 
-	const response = responseBase.parse({
+	const response = userAvailablityResponse.parse({
 		error: {
 			msg: "",
 		},
