@@ -60,15 +60,15 @@ const bookRoom = async (req: Request, res: Response) => {
 };
 
 // 订单查询
-const queryRoom = async (req: Request, res: Response) => {
+const checkOrder = async (req: Request, res: Response) => {
 	const userId = res.locals.user.userId;
-	const room = await prisma.reservation.findMany({
+	const reservation = await prisma.reservation.findMany({
 		where: {
 			userId: userId,
 		},
 	});
 
-	if (room.length === 0) {
+	if (reservation.length === 0) {
 		const response = responseBase.parse({
 			error: {
 				msg: "No reservation",
@@ -86,7 +86,11 @@ const queryRoom = async (req: Request, res: Response) => {
 			},
 			code: "200",
 			payload: {
-				roomId: room[0].roomId ? room[0].roomId : "",
+				reservationId: reservation[0].roomId
+					? reservation[0].roomId
+					: "",
+				startDate: reservation[0].startDate,
+				endDate: reservation[0].endDate,
 			},
 		});
 
