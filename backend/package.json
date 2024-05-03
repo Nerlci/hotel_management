@@ -9,6 +9,11 @@
     "format": "prettier --write .",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "lint-staged": {
+    "src/**/*.{js,ts,json}": [
+      "prettier --write ."
+    ]
+  },
   "dependencies": {
     "@prisma/client": "^5.13.0",
     "cookie-parser": "^1.4.6",
@@ -24,6 +29,7 @@
     "@types/express": "^4.17.21",
     "@types/jsonwebtoken": "^9.0.6",
     "@types/node": "^20.12.5",
+    "lint-staged": "^15.2.2",
     "nodemon": "^3.1.0",
     "prisma": "^5.12.1",
     "ts-node": "^10.9.2",
