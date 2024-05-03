@@ -34,7 +34,6 @@ async function findBusyDays(startDate: Date, endDate: Date) {
 	return busyDays;
 }
 
-// 房间初始化
 const initRoom = async () => {
 	const rooms = await prisma.room.findMany();
 	if (rooms.length === 0) {
@@ -48,9 +47,32 @@ const initRoom = async () => {
 	}
 };
 
+const getAvailableRooms = async (startDate: Date, endDate: Date) => {
+	// 查询room的reservation中是否有冲突的预定
+	const rooms = await prisma.room.findMany({
+		where: {
+			NOT: {
+				reservations: {
+					some: {
+						startDate: {
+							lte: endDate,
+						},
+						endDate: {
+							gte: startDate,
+						},
+					},
+				},
+			},
+		},
+	});
+
+	return rooms;
+};
+
 const roomService = {
 	findBusyDays,
 	checkRoomAvailability,
+	getAvailableRooms,
 };
 
 export {roomService};
