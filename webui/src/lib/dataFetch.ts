@@ -2,23 +2,70 @@ import { LoginForm } from "@/routes/Login";
 import { RegisterForm } from "@/routes/Register";
 import {
   ACUpdateRequestBody,
+  DateRange,
   UserAvailablityResponse,
   acDetailResponse,
   responseBase,
+  userRoomOrderResponse,
 } from "shared";
 
 export const BASE_URL = import.meta.env.VITE_API_URL as string;
 
-export async function getRoomAvailability() {
-  const response = await fetch(`${BASE_URL}/api/room/availability`, {
+export async function getRoomAvailability(body: DateRange) {
+  const response = await fetch(
+    `${BASE_URL}/api/room/availability?startDate=${body.startDate}:endDate=${body.endDate}`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+    },
+  );
+  if (!response.ok) {
+    throw new Error("Request failed");
+  }
+  const parsed = UserAvailablityResponse.parse(await response.json());
+  if (parsed.code !== "200") {
+    throw new Error(parsed.error.msg);
+  }
+  return parsed.payload.unavailableDates.map((d) => new Date(d));
+}
+
+export async function postRoomBooking(body: DateRange) {
+  const response = await fetch(`${BASE_URL}/api/room/book`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+    body: JSON.stringify(body),
+  });
+  if (!response.ok) {
+    throw new Error("Request failed");
+  }
+  const parsed = responseBase.parse(await response.json());
+  if (parsed.code !== "200") {
+    throw new Error(parsed.error.msg);
+  }
+}
+
+export async function getUserRoomOrder() {
+  const response = await fetch(`${BASE_URL}/api/room/order`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
     },
     credentials: "include",
   });
-  const parsed = UserAvailablityResponse.parse(await response.json());
-  return parsed.payload.unavailableDates.map((d) => new Date(d));
+  if (!response.ok) {
+    throw new Error("Request failed");
+  }
+  const json = userRoomOrderResponse.parse(await response.json());
+  if (json.code !== "200") {
+    throw new Error(json.error.msg);
+  }
+  return json;
 }
 
 export async function postUserRegister(values: RegisterForm) {

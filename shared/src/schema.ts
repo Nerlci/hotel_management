@@ -92,3 +92,14 @@ export const acDetailResponse = responseBase.extend({
   }),
 });
 export type ACDetailResponse = z.infer<typeof acDetailResponse>;
+
+export const userRoomOrderResponse = responseBase.extend({
+  payload: z.object({
+    roomId: z
+      .string()
+      .min(1, "Room ID can't be empty")
+      .max(5, "Room ID too long")
+      .or(z.literal("")),
+  }),
+});
+export type UserRoomOrderResponse = z.infer<typeof userRoomOrderResponse>;
