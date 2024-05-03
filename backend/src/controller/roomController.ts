@@ -4,8 +4,8 @@ import {roomService} from "../service/roomService";
 import {prisma} from "../prisma";
 
 const bookRoom = async (req: Request, res: Response) => {
-	const startDate = new Date(req.query.startDate as string);
-	const endDate = new Date(req.query.endDate as string);
+	const startDate = new Date(req.body.startDate);
+	const endDate = new Date(req.body.endDate);
 	const userId = res.locals.user.userId;
 
 	const room = await roomService.findAvailableRooms(startDate, endDate);
@@ -68,7 +68,7 @@ const queryRoom = async (req: Request, res: Response) => {
 			},
 			code: "200",
 			payload: {
-				roomId: room[0].roomId,
+				roomId: room[0].roomId ? room[0].roomId : "",
 			},
 		});
 
@@ -78,7 +78,10 @@ const queryRoom = async (req: Request, res: Response) => {
 
 const checkDaysAvailability = async (req: Request, res: Response) => {
 	const startDate = new Date(req.query.startDate as string);
-	const endDate = new Date(req.body.endDate as string);
+	const endDate = new Date(req.query.endDate as string);
+
+	console.log(startDate, endDate);
+	console.log("checkDaysAvailability");
 
 	const busyDays = await roomService.findBusyDays(startDate, endDate);
 
