@@ -168,11 +168,167 @@ const cancelOrder = async (req: Request, res: Response) => {
 	}
 };
 
+const getAvailableRooms = async (req: Request, res: Response) => {
+	const startDate = new Date(req.query.startDate as string);
+	const endDate = new Date(req.query.endDate as string);
+	const availableRooms = await roomService.getAvailableRooms(
+		startDate,
+		endDate
+	);
+
+	if (availableRooms.length === 0) {
+		const response = responseBase.parse({
+			error: {
+				msg: "No room available. Please choose another date.",
+			},
+			code: "400",
+			payload: {},
+		});
+
+		res.json(response);
+	} else {
+		const response = responseBase.parse({
+			error: {
+				msg: "",
+			},
+			code: "200",
+			payload: {
+				recommended: availableRooms[0].roomId,
+				available: availableRooms.map((room) => room.roomId),
+			},
+		});
+
+		res.json(response);
+	}
+};
+
+const checkIn = async (req: Request, res: Response) => {
+	const email = req.query.email;
+	const roomId = req.query.roomId;
+
+	const room = await prisma.room.findUnique({
+		where: {
+			roomId: roomId as string,
+		},
+	});
+
+	if (!room) {
+		const response = responseBase.parse({
+			error: {
+				msg: "Room not found",
+			},
+			code: "400",
+			payload: {},
+		});
+
+		res.json(response);
+		return;
+	} else if (room.status === "occupied") {
+		const response = responseBase.parse({
+			error: {
+				msg: "Room is occupied",
+			},
+			code: "400",
+			payload: {},
+		});
+
+		res.json(response);
+		return;
+	} else {
+		const user = await prisma.user.findUnique({
+			where: {
+				email: email as string,
+			},
+		});
+
+		if (!user) {
+			const response = responseBase.parse({
+				error: {
+					msg: "User not found",
+				},
+				code: "400",
+				payload: {},
+			});
+
+			res.json(response);
+			return;
+		}
+
+		const reservation = await prisma.reservation.findMany({
+			where: {
+				userId: user?.id,
+			},
+		});
+
+		// 是否有预定
+		if (reservation.length === 0) {
+			const response = responseBase.parse({
+				error: {
+					msg: "No reservation",
+				},
+				code: "400",
+				payload: {},
+			});
+
+			res.json(response);
+			return;
+		} else {
+			// 是否已经入住
+			if (reservation[0].roomId !== null) {
+				const response = responseBase.parse({
+					error: {
+						msg: "You have already checked in",
+					},
+					code: "400",
+					payload: {},
+				});
+
+				res.json(response);
+				return;
+			}
+		}
+
+		await prisma.room.update({
+			where: {
+				roomId: roomId as string,
+			},
+			data: {
+				status: "occupied",
+			},
+		});
+
+		await prisma.reservation.update({
+			where: {
+				userId: user?.id,
+			},
+			data: {
+				room: {
+					connect: {
+						roomId: room.roomId,
+					},
+				},
+			},
+		});
+
+		const response = responseBase.parse({
+			error: {
+				msg: "",
+			},
+			code: "200",
+			payload: {},
+		});
+
+		res.json(response);
+	}
+};
+
 const roomController = {
 	bookRoom,
-	queryRoom,
+	checkOrder,
 	checkDaysAvailability,
 	cancelOrder,
+	getAvailableRooms,
+	checkIn,
 };
 
 export {roomController};
