@@ -3,16 +3,39 @@ import { CustomerDashboard } from "@/components/CustomerDashboard";
 import { HomeIcon } from "@/components/HomeIcon";
 import { NavBar } from "@/components/NavBar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { getUserRoomOrder } from "@/lib/dataFetch";
+import { useQuery } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
 
 export const Customer: React.FC = () => {
-  const customerBooked = true; // TODO: fetch this from server
+  const bookingQuery = useQuery({
+    queryKey: ["userBooking"],
+    queryFn: getUserRoomOrder,
+  });
+  const customerBooked = bookingQuery.data
+    ? bookingQuery.data.payload.roomId.length > 0
+    : false;
+  const [tabVal, setTabVal] = useState<string | "booking" | "dashboard">(
+    "booking",
+  );
+
+  useEffect(() => {
+    if (bookingQuery.data) {
+      if (bookingQuery.data.payload.roomId.length > 0) {
+        setTabVal("dashboard");
+      } else {
+        setTabVal("booking");
+      }
+    }
+  }, [bookingQuery.data]);
 
   return (
     <>
       <NavBar title={<HomeIcon />} />
       <div className="mt-3 justify-center">
         <Tabs
-          defaultValue={customerBooked ? "dashboard" : "booking"}
+          value={tabVal}
+          onValueChange={setTabVal}
           className="top-3 mx-auto w-10/12"
         >
           <TabsList>
@@ -24,7 +47,7 @@ export const Customer: React.FC = () => {
             </TabsTrigger>
           </TabsList>
           <TabsContent value="booking">
-            <CustomerBooking />
+            <CustomerBooking bookingQuery={bookingQuery} />
           </TabsContent>
           <TabsContent value="dashboard">
             <CustomerDashboard />

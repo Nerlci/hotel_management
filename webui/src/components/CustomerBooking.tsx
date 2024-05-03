@@ -2,13 +2,16 @@ import { DatePickerWithRange } from "@/components/DatePickerWithRange";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
-import { Skeleton } from "@/components/ui/skeleton";
-import { getRoomAvailability } from "@/lib/dataFetch";
+import { getRoomAvailability, postRoomBooking } from "@/lib/dataFetch";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useQuery } from "@tanstack/react-query";
+import { UseQueryResult, useMutation } from "@tanstack/react-query";
+import { useRef } from "react";
+import { DateRange } from "react-day-picker";
 import { useForm } from "react-hook-form";
-import { DateRange as DateRangeType } from "shared";
+import { DateRange as DateRangeType, UserRoomOrderResponse } from "shared";
+import { toast } from "sonner";
 import { z } from "zod";
+import { Skeleton } from "./ui/skeleton";
 
 const bookingFormSchema = z.object({
   date: z.object({
@@ -17,12 +20,39 @@ const bookingFormSchema = z.object({
   }),
 });
 
-export const CustomerBooking = () => {
-  const { isLoading, error, data } = useQuery({
-    queryKey: ["disabledDays"],
-    queryFn: getRoomAvailability,
+function FormCard({ updateBookingQuery }: { updateBookingQuery: () => void }) {
+  const bookingDateRange = useRef<DateRangeType | undefined>(undefined);
+  const book = useMutation({
+    mutationFn: postRoomBooking,
+    onSuccess: () => {
+      toast("预定成功", {
+        description: "您的预定已成功提交",
+      });
+      updateBookingQuery();
+    },
+    onError: (error) => {
+      console.log(error.message);
+      toast(error.message, {
+        description: "预定失败",
+      });
+      updateBookingQuery();
+    },
   });
-  const disabledDays = data ?? [];
+  const availability = useMutation({
+    mutationFn: getRoomAvailability,
+    onSuccess: (data) => {
+      if (data.length === 0 && bookingDateRange.current !== undefined) {
+        book.mutate(bookingDateRange.current);
+      }
+    },
+    onError: (error) => {
+      console.log(error.message);
+      toast(error.message, {
+        description: "获取房间可用性失败",
+      });
+    },
+  });
+  const disabledDays = availability.data ?? [];
 
   function findFirstDisabledDay(from: Date, to: Date): Date | undefined {
     for (let i = 0; i < disabledDays.length; i++) {
@@ -48,11 +78,13 @@ export const CustomerBooking = () => {
 
   function onSubmit(values: z.infer<typeof bookingFormSchema>) {
     const dateRange = DateRangeType.parse({
-      startDate: values.date.from,
-      endDate: values.date.to ?? values.date.from,
+      startDate: values.date.from.toISOString(),
+      endDate: values.date.to
+        ? values.date.to.toISOString()
+        : values.date.from.toISOString(),
     });
-    console.log(JSON.stringify(dateRange));
-    // TODO: post dateRange to server
+    bookingDateRange.current = dateRange;
+    availability.mutate(dateRange);
   }
 
   return (
@@ -62,89 +94,128 @@ export const CustomerBooking = () => {
           <CardTitle>填写必要信息</CardTitle>
         </CardHeader>
         <CardContent>
-          {isLoading ? (
-            <div className="space-y-2">
-              <Skeleton className="h-4 w-[250px]" />
-              <Skeleton className="h-4 w-[200px]" />
-            </div>
-          ) : error ? (
-            <div className="space-y-2">Error: {error.message}</div>
-          ) : (
-            <Form {...form}>
-              <form
-                onSubmit={form.handleSubmit(onSubmit)}
-                className="w-80 space-y-2"
-              >
-                <FormField
-                  control={form.control}
-                  name="date"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormControl>
-                        <DatePickerWithRange
-                          date={field.value}
-                          setDate={(newVal) => {
-                            // @ts-expect-error newVal is DateRange
-                            if (newVal.to === undefined) {
-                              field.onChange(newVal);
+          <Form {...form}>
+            <form
+              onSubmit={form.handleSubmit(onSubmit)}
+              className="flex flex-row items-center gap-10"
+            >
+              <FormField
+                control={form.control}
+                name="date"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <DatePickerWithRange
+                        date={field.value}
+                        // @ts-expect-error newVal is never a function
+                        setDate={(newVal: DateRange | undefined) => {
+                          if (newVal === undefined) {
+                            return;
+                          }
+                          if (newVal.to === undefined) {
+                            field.onChange(newVal);
+                          } else {
+                            if (newVal.from === undefined) {
+                              // this should never happen
+                              console.log("error: newVal.from is undefined");
                             } else {
                               const firstDisabledDay = findFirstDisabledDay(
-                                // @ts-expect-error newVal is DateRange
                                 newVal.from,
-                                // @ts-expect-error newVal is DateRange
                                 newVal.to,
                               );
                               if (firstDisabledDay === undefined) {
                                 field.onChange(newVal);
                               } else {
-                                // @ts-expect-error newVal is DateRange
                                 if (newVal.from === field.value.from) {
                                   field.onChange({
-                                    // @ts-expect-error newVal is DateRange
                                     from: newVal.to,
                                     to: undefined,
                                   });
                                 } else {
                                   field.onChange({
-                                    // @ts-expect-error newVal is DateRange
                                     from: newVal.from,
                                     to: undefined,
                                   });
                                 }
                               }
                             }
-                          }}
-                          disabledDays={[
-                            {
-                              before: new Date(),
-                            },
-                            ...disabledDays,
-                          ]}
-                          className="w-[300px]"
-                        />
-                      </FormControl>
-                      {form.formState.errors.date !== undefined ? (
-                        <p className="text-sm font-medium text-destructive">
-                          需填写开始日期和结束日期
-                        </p>
-                      ) : (
-                        <></>
-                      )}
-                    </FormItem>
-                  )}
-                />
-                <Button
-                  type="submit"
-                  className="h-8"
-                  disabled={form.formState.errors.date !== undefined}
-                >
-                  提交
-                </Button>
-              </form>
-            </Form>
-          )}
+                          }
+                        }}
+                        disabledDays={[
+                          {
+                            before: new Date(),
+                          },
+                          ...disabledDays,
+                        ]}
+                        className="w-[300px]"
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+              {form.formState.errors.date !== undefined ? (
+                <p className="text-sm font-medium text-destructive">
+                  需填写开始日期和结束日期
+                </p>
+              ) : disabledDays.length > 0 ? (
+                <p className="text-sm font-medium text-destructive">
+                  日期不可用
+                </p>
+              ) : (
+                <></>
+              )}
+              <Button
+                type="submit"
+                className="h-8"
+                disabled={
+                  form.formState.errors.date !== undefined ||
+                  disabledDays.length > 0
+                }
+              >
+                提交
+              </Button>
+            </form>
+          </Form>
         </CardContent>
       </Card>
+    </>
+  );
+}
+
+function DataCard({
+  bookingQuery,
+}: {
+  bookingQuery: UseQueryResult<UserRoomOrderResponse, Error>;
+}) {
+  return (
+    <Card className="ml-auto mr-auto mt-5">
+      <CardHeader>
+        <CardTitle>已预定信息</CardTitle>
+      </CardHeader>
+      <CardContent>
+        {bookingQuery.isLoading || bookingQuery.isRefetching ? (
+          <Skeleton className="h-5 w-32" />
+        ) : bookingQuery.error || bookingQuery.isRefetchError ? (
+          <div className="text-destructive">获取预定信息失败</div>
+        ) : bookingQuery.data?.payload.roomId === "" ? (
+          <p>暂无预定</p>
+        ) : (
+          <p>{bookingQuery.data?.payload.roomId}</p>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
+
+export const CustomerBooking = ({
+  bookingQuery,
+}: {
+  bookingQuery: UseQueryResult<UserRoomOrderResponse, Error>;
+}) => {
+  return (
+    <>
+      <FormCard updateBookingQuery={bookingQuery.refetch} />
+      <DataCard bookingQuery={bookingQuery} />
     </>
   );
 };
