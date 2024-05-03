@@ -82,8 +82,10 @@ function FormCard({ updateBookingQuery }: { updateBookingQuery: () => void }) {
 
   function onSubmit(values: z.infer<typeof bookingFormSchema>) {
     const dateRange = DateRangeType.parse({
-      startDate: values.date.from,
-      endDate: values.date.to ?? values.date.from,
+      startDate: values.date.from.toISOString(),
+      endDate: values.date.to
+        ? values.date.to.toISOString()
+        : values.date.from.toISOString(),
     });
     bookingDateRange.current = dateRange;
     availability.mutate(dateRange);

@@ -1,11 +1,25 @@
 import {Request, Response} from "express";
-import {acUpdateRequest, responseBase, userAvailablityResponse, userRoomOrderResponse} from "shared";
+import {DateRange, responseBase, userAvailablityResponse, userRoomOrderResponse} from "shared";
 import {roomService} from "../service/roomService";
 import {prisma} from "../prisma";
 
 const bookRoom = async (req: Request, res: Response) => {
-	const startDate = new Date(req.body.startDate);
-	const endDate = new Date(req.body.endDate);
+	let reqBody: DateRange;
+	try {
+		reqBody = DateRange.parse(req.body);
+	} catch (e: any) {
+		const response = responseBase.parse({
+			error: {
+				msg: e.message,
+			},
+			code: "400",
+			payload: {},
+		});
+		res.json(response);
+		return;
+	}
+	const startDate = new Date(reqBody.startDate);
+	const endDate = new Date(reqBody.endDate);
 	const userId = res.locals.user.userId;
 
 	// 一个用户只能订一间房
@@ -97,8 +111,23 @@ const queryRoom = async (req: Request, res: Response) => {
 };
 
 const checkDaysAvailability = async (req: Request, res: Response) => {
-	const startDate = new Date(req.query.startDate as string);
-	const endDate = new Date(req.query.endDate as string);
+	let reqBody: DateRange;
+	try {
+		reqBody = DateRange.parse(req.query);
+	} catch (e: any) {
+		console.log(e);
+		const response = responseBase.parse({
+			error: {
+				msg: e.message,
+			},
+			code: "400",
+			payload: {},
+		});
+		res.json(response);
+		return;
+	}
+	const startDate = new Date(reqBody.startDate);
+	const endDate = new Date(reqBody.endDate);
 
 	const busyDays = await roomService.findBusyDays(startDate, endDate);
 

@@ -53,8 +53,8 @@ export type CheckinRequest = z.infer<typeof CheckinRequest>;
 
 export const DateRange = z
   .object({
-    startDate: z.date(),
-    endDate: z.date(),
+    startDate: z.string().datetime(),
+    endDate: z.string().datetime(),
   })
   .refine((d) => d.endDate >= d.startDate, {
     message: "End date must be later than or equal to the start date",

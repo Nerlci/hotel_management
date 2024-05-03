@@ -13,7 +13,7 @@ export const BASE_URL = import.meta.env.VITE_API_URL as string;
 
 export async function getRoomAvailability(body: DateRange) {
   const response = await fetch(
-    `${BASE_URL}/api/room/availability?startDate=${body.startDate}:endDate=${body.endDate}`,
+    `${BASE_URL}/api/room/availability?startDate=${body.startDate}&endDate=${body.endDate}`,
     {
       method: "GET",
       headers: {
