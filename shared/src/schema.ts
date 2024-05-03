@@ -17,12 +17,12 @@ export const UserOrderResponse = responseBase.extend({
 });
 export type UserOrderResponse = z.infer<typeof UserOrderResponse>;
 
-export const UserAvailablityResponse = responseBase.extend({
+export const userAvailablityResponse = responseBase.extend({
   payload: z.object({
     unavailableDates: z.array(z.string().datetime()),
   }),
 });
-export type UserAvailablityResponse = z.infer<typeof UserAvailablityResponse>;
+export type UserAvailablityResponse = z.infer<typeof userAvailablityResponse>;
 
 export const ReceptionAvailableResponse = responseBase
   .extend({

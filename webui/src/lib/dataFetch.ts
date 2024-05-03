@@ -3,9 +3,9 @@ import { RegisterForm } from "@/routes/Register";
 import {
   ACUpdateRequestBody,
   DateRange,
-  UserAvailablityResponse,
   acDetailResponse,
   responseBase,
+  userAvailablityResponse,
   userRoomOrderResponse,
 } from "shared";
 
@@ -25,7 +25,7 @@ export async function getRoomAvailability(body: DateRange) {
   if (!response.ok) {
     throw new Error("Request failed");
   }
-  const parsed = UserAvailablityResponse.parse(await response.json());
+  const parsed = userAvailablityResponse.parse(await response.json());
   if (parsed.code !== "200") {
     throw new Error(parsed.error.msg);
   }
