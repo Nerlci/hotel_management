@@ -121,16 +121,27 @@ const checkDaysAvailability = async (req: Request, res: Response) => {
 const cancelOrder = async (req: Request, res: Response) => {
 	const userId = res.locals.user.userId;
 
-	const room = await prisma.reservation.findMany({
+	const reservation = await prisma.reservation.findMany({
 		where: {
 			userId: userId,
 		},
 	});
 
-	if (room.length === 0) {
+	if (reservation.length === 0) {
 		const response = responseBase.parse({
 			error: {
 				msg: "No reservation",
+			},
+			code: "400",
+			payload: {},
+		});
+
+		res.json(response);
+		return;
+	} else if (reservation[0].roomId !== null) {
+		const response = responseBase.parse({
+			error: {
+				msg: "You have already checked in",
 			},
 			code: "400",
 			payload: {},
