@@ -6,6 +6,7 @@
     "build": "npx tsc",
     "start": "node dist/main.js",
     "dev": "nodemon src/main.ts",
+    "format": "prettier --write .",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
