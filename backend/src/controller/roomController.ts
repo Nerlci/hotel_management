@@ -8,6 +8,26 @@ const bookRoom = async (req: Request, res: Response) => {
 	const endDate = new Date(req.body.endDate);
 	const userId = res.locals.user.userId;
 
+	// 一个用户只能订一间房
+	const userRoom = await prisma.reservation.findMany({
+		where: {
+			userId: userId,
+		},
+	});
+
+	if (userRoom.length > 0) {
+		const response = responseBase.parse({
+			error: {
+				msg: "You have already booked a room",
+			},
+			code: "400",
+			payload: {},
+		});
+
+		res.json(response);
+		return;
+	}
+
 	const room = await roomService.findAvailableRooms(startDate, endDate);
 	if (room.length === 0) {
 		const response = responseBase.parse({
@@ -91,7 +111,7 @@ const checkDaysAvailability = async (req: Request, res: Response) => {
 		},
 		code: "200",
 		payload: {
-			busyDays,
+			unavailableDates: busyDays,
 		},
 	});
 
@@ -101,6 +121,7 @@ const checkDaysAvailability = async (req: Request, res: Response) => {
 // 客房退订
 const cancelOrder = async (req: Request, res: Response) => {
 	const userId = res.locals.user.userId;
+	console.log("cancelOrder");
 
 	const room = await prisma.reservation.findMany({
 		where: {
@@ -122,7 +143,7 @@ const cancelOrder = async (req: Request, res: Response) => {
 	} else {
 		await prisma.reservation.delete({
 			where: {
-				id: userId,
+				userId: userId,
 			},
 		});
 
