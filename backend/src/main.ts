@@ -1,9 +1,9 @@
 import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
-import { UserAvailablityResponse } from "shared";
-import { apiRouter } from "./router/apiRouter";
-
+import {UserAvailablityResponse} from "shared";
+import {apiRouter} from "./router/apiRouter";
+import {initRoom} from "./service/roomService";
 const app = express();
 
 app.use(cors({ credentials: true, preflightContinue: true, origin: true }));
@@ -16,25 +16,7 @@ app.get("/", async (req, res) => {
 });
 
 app.get("/echo", async (req, res) => {
-  res.send(req.body);
-});
-
-app.get("/api/room/availability", async (req, res) => {
-  const disabledDays: Date[] = [
-    new Date(),
-    new Date(2024, 4, 3),
-    new Date(2024, 4, 5),
-  ];
-  const response = UserAvailablityResponse.parse({
-    error: {
-      msg: "",
-    },
-    code: "200",
-    payload: {
-      unavailableDates: disabledDays.map((d) => d.toISOString()),
-    },
-  });
-  res.json(response);
+	res.send(req.body);
 });
 
 app.use("/api", apiRouter);
