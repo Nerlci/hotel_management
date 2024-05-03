@@ -2,13 +2,9 @@ import { DatePickerWithRange } from "@/components/DatePickerWithRange";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
-import {
-  getRoomAvailability,
-  getUserRoomOrder,
-  postRoomBooking,
-} from "@/lib/dataFetch";
+import { getRoomAvailability, postRoomBooking } from "@/lib/dataFetch";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { UseQueryResult, useMutation, useQuery } from "@tanstack/react-query";
+import { UseQueryResult, useMutation } from "@tanstack/react-query";
 import { useRef } from "react";
 import { DateRange } from "react-day-picker";
 import { useForm } from "react-hook-form";
@@ -211,12 +207,11 @@ function DataCard({
   );
 }
 
-export const CustomerBooking = () => {
-  const bookingQuery = useQuery({
-    queryKey: ["userBooking"],
-    queryFn: getUserRoomOrder,
-  });
-
+export const CustomerBooking = ({
+  bookingQuery,
+}: {
+  bookingQuery: UseQueryResult<UserRoomOrderResponse, Error>;
+}) => {
   return (
     <>
       <FormCard updateBookingQuery={bookingQuery.refetch} />
