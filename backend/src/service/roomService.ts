@@ -38,7 +38,7 @@ async function findBusyDays(startDate: Date, endDate: Date) {
 const initRoom = async () => {
 	const rooms = await prisma.room.findMany();
 	if (rooms.length === 0) {
-		for (let i = 0; i < 1; i++) {
+		for (let i = 0; i < totalRooms; i++) {
 			await prisma.room.create({
 				data: {
 					roomId: `100${i}`,
