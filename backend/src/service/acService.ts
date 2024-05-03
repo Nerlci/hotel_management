@@ -1,14 +1,14 @@
 import { prisma } from "../prisma";
 
 const getDetailByRoomId = async (roomId: string) => {
-	const ac = await prisma.aCRecord.findMany({
-		where: {
-			roomId: roomId,
-			type: 1,
-		},
-	});
+  const ac = await prisma.aCRecord.findMany({
+    where: {
+      roomId: roomId,
+      type: 1,
+    },
+  });
 
-	return ac;
+  return ac;
 };
 
 const acService = { getDetailByRoomId };
