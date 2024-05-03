@@ -117,7 +117,6 @@ const checkOrder = async (req: Request, res: Response) => {
 				endDate: reservation[0].endDate.toISOString(),
 			},
 		};
-		console.log(response);
 
 		res.json(response);
 	}
