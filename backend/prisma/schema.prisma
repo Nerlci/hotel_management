@@ -39,7 +39,8 @@ model ACRecord {
 model Room {
   id        String   @id @default(cuid())
   roomId    String   @unique
-  Reservations Reservation[]
+  status    String   @default("available")
+  reservations Reservation[]
 }
 
 model Reservation {

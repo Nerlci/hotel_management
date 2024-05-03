@@ -193,14 +193,22 @@ function DataCard({
         <CardTitle>已预定信息</CardTitle>
       </CardHeader>
       <CardContent>
-        {bookingQuery.isLoading || bookingQuery.isRefetching ? (
+        {bookingQuery.isLoading ||
+        bookingQuery.isRefetching ||
+        !bookingQuery.data ? (
           <Skeleton className="h-5 w-32" />
         ) : bookingQuery.error || bookingQuery.isRefetchError ? (
           <div className="text-destructive">获取预定信息失败</div>
-        ) : bookingQuery.data?.payload.roomId === "" ? (
+        ) : bookingQuery.data?.payload.startDate === "" ? (
           <p>暂无预定</p>
         ) : (
-          <p>{bookingQuery.data?.payload.roomId}</p>
+          <p>
+            {new Date(
+              bookingQuery.data?.payload.startDate,
+            ).toLocaleDateString()}{" "}
+            -{" "}
+            {new Date(bookingQuery.data?.payload.endDate).toLocaleDateString()}
+          </p>
         )}
       </CardContent>
     </Card>
