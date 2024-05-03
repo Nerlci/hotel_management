@@ -4,4 +4,7 @@ npm run format
 cd ..
 cd ./shared
 npm run format
+cd ..
+cd ./backend
+npm run format
 echo "Finished running pre-commit hook you may need to add the changes to your commit."
