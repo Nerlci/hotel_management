@@ -1,12 +1,12 @@
-import {Request, Response} from "express";
+import { Request, Response } from "express";
 import {
 	DateRange,
 	responseBase,
 	userAvailablityResponse,
 	userRoomOrderResponse,
 } from "shared";
-import {roomService} from "../service/roomService";
-import {prisma} from "../prisma";
+import { roomService } from "../service/roomService";
+import { prisma } from "../prisma";
 
 const bookRoom = async (req: Request, res: Response) => {
 	let reqBody: DateRange;
@@ -107,9 +107,7 @@ const checkOrder = async (req: Request, res: Response) => {
 			},
 			code: "200",
 			payload: {
-				reservationId: reservation[0].roomId
-					? reservation[0].roomId
-					: "",
+				reservationId: reservation[0].roomId ? reservation[0].roomId : "",
 				startDate: reservation[0].startDate,
 				endDate: reservation[0].endDate,
 			},
@@ -367,4 +365,4 @@ const roomController = {
 	checkIn,
 };
 
-export {roomController};
+export { roomController };
