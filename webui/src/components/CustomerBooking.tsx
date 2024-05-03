@@ -2,13 +2,9 @@ import { DatePickerWithRange } from "@/components/DatePickerWithRange";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
-import {
-  getRoomAvailability,
-  getUserRoomOrder,
-  postRoomBooking,
-} from "@/lib/dataFetch";
+import { getRoomAvailability, postRoomBooking } from "@/lib/dataFetch";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { UseQueryResult, useMutation, useQuery } from "@tanstack/react-query";
+import { UseQueryResult, useMutation } from "@tanstack/react-query";
 import { useRef } from "react";
 import { DateRange } from "react-day-picker";
 import { useForm } from "react-hook-form";
@@ -197,26 +193,33 @@ function DataCard({
         <CardTitle>已预定信息</CardTitle>
       </CardHeader>
       <CardContent>
-        {bookingQuery.isLoading || bookingQuery.isRefetching ? (
+        {bookingQuery.isLoading ||
+        bookingQuery.isRefetching ||
+        !bookingQuery.data ? (
           <Skeleton className="h-5 w-32" />
         ) : bookingQuery.error || bookingQuery.isRefetchError ? (
           <div className="text-destructive">获取预定信息失败</div>
-        ) : bookingQuery.data?.payload.roomId === "" ? (
+        ) : bookingQuery.data?.payload.startDate === "" ? (
           <p>暂无预定</p>
         ) : (
-          <p>{bookingQuery.data?.payload.roomId}</p>
+          <p>
+            {new Date(
+              bookingQuery.data?.payload.startDate,
+            ).toLocaleDateString()}{" "}
+            -{" "}
+            {new Date(bookingQuery.data?.payload.endDate).toLocaleDateString()}
+          </p>
         )}
       </CardContent>
     </Card>
   );
 }
 
-export const CustomerBooking = () => {
-  const bookingQuery = useQuery({
-    queryKey: ["userBooking"],
-    queryFn: getUserRoomOrder,
-  });
-
+export const CustomerBooking = ({
+  bookingQuery,
+}: {
+  bookingQuery: UseQueryResult<UserRoomOrderResponse, Error>;
+}) => {
   return (
     <>
       <FormCard updateBookingQuery={bookingQuery.refetch} />
