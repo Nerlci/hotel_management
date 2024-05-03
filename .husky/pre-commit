@@ -1,0 +1,13 @@
+cd ./webui
+npm run lint
+npm run format
+npx lint-staged
+cd ..
+cd ./shared
+npm run format
+npx lint-staged
+cd ..
+cd ./backend
+npm run format
+npx lint-staged
+echo "Finished running pre-commit hook you may need to add the changes to your commit."
