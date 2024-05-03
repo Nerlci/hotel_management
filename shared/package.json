@@ -10,6 +10,7 @@
     "default": "./dist/index.js"
   },
   "scripts": {
+    "format": "prettier --write .",
     "dev": "rollup -c -w",
     "build": "rollup -c"
   },
@@ -18,6 +19,7 @@
     "@rollup/plugin-terser": "^0.4.4",
     "@rollup/plugin-typescript": "^11.1.6",
     "rollup": "^4.13.0",
+    "prettier": "^3.2.5",
     "typescript": "^5.2.2"
   },
   "dependencies": {

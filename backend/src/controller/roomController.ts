@@ -1,12 +1,13 @@
-import { Request, Response } from "express";
+import {Request, Response} from "express";
 import {
 	DateRange,
+	UserRoomOrderResponse,
 	responseBase,
 	userAvailablityResponse,
 	userRoomOrderResponse,
 } from "shared";
-import { roomService } from "../service/roomService";
-import { prisma } from "../prisma";
+import {roomService} from "../service/roomService";
+import {prisma} from "../prisma";
 
 const bookRoom = async (req: Request, res: Response) => {
 	let reqBody: DateRange;
@@ -88,30 +89,34 @@ const checkOrder = async (req: Request, res: Response) => {
 	});
 
 	if (reservation.length === 0) {
-		const response = userRoomOrderResponse.parse({
+		const response: UserRoomOrderResponse = {
 			error: {
 				msg: "No reservation",
 			},
 			code: "400",
 			payload: {
 				roomId: "",
+				startDate: "",
+				endDate: "",
 			},
-		});
+		};
 
 		res.json(response);
 		return;
 	} else {
-		const response = userRoomOrderResponse.parse({
+		const response: UserRoomOrderResponse = {
 			error: {
 				msg: "",
 			},
 			code: "200",
 			payload: {
-				reservationId: reservation[0].roomId ? reservation[0].roomId : "",
-				startDate: reservation[0].startDate,
-				endDate: reservation[0].endDate,
+				roomId: reservation[0].roomId
+					? reservation[0].roomId
+					: "",
+				startDate: reservation[0].startDate.toISOString(),
+				endDate: reservation[0].endDate.toISOString(),
 			},
-		});
+		};
 
 		res.json(response);
 	}
