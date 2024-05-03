@@ -28,18 +28,16 @@ const bookRoom = async (req: Request, res: Response) => {
 		return;
 	}
 
-	const room = await roomService.findAvailableRooms(startDate, endDate);
-	if (room.length === 0) {
+	if (!(await roomService.checkRoomAvailability(startDate, endDate))) {
 		const response = responseBase.parse({
 			error: {
-				msg: "No available room",
+				msg: "No room available. Please choose another date.",
 			},
 			code: "400",
 			payload: {},
 		});
 
 		res.json(response);
-		return;
 	} else {
 		await prisma.reservation.create({
 			data: {
@@ -100,9 +98,6 @@ const checkDaysAvailability = async (req: Request, res: Response) => {
 	const startDate = new Date(req.query.startDate as string);
 	const endDate = new Date(req.query.endDate as string);
 
-	console.log(startDate, endDate);
-	console.log("checkDaysAvailability");
-
 	const busyDays = await roomService.findBusyDays(startDate, endDate);
 
 	const response = responseBase.parse({
@@ -121,7 +116,6 @@ const checkDaysAvailability = async (req: Request, res: Response) => {
 // 客房退订
 const cancelOrder = async (req: Request, res: Response) => {
 	const userId = res.locals.user.userId;
-	console.log("cancelOrder");
 
 	const room = await prisma.reservation.findMany({
 		where: {
