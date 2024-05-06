@@ -65,6 +65,20 @@ export default function TabLayout() {
         options={{
           title: "控制面板",
           tabBarIcon: ({ color }) => <TabBarIcon name="th" color={color} />,
+          headerLeft: () => (
+            <Link href="/modal" asChild>
+              <Pressable>
+                {({ pressed }) => (
+                  <FontAwesome
+                    name="navicon"
+                    size={25}
+                    color={Colors[colorScheme ?? "light"].text}
+                    style={{ marginLeft: 15, opacity: pressed ? 0.5 : 1 }}
+                  />
+                )}
+              </Pressable>
+            </Link>
+          ),
         }}
       />
     </Tabs>

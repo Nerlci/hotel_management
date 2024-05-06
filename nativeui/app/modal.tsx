@@ -1,17 +1,16 @@
-import { StatusBar } from "expo-status-bar";
-import { Platform } from "react-native";
 import { Text, View } from "@/components/Themed";
 import { Input } from "@/components/Input";
 import { useState } from "react";
 import { Button } from "@/components/Button";
 import { useSession } from "@/components/Auth";
-import { Link, router } from "expo-router";
+import { router } from "expo-router";
+import { StatusBar } from "expo-status-bar";
+import { Platform } from "react-native";
 
 export default function ModalScreen() {
   const [userName, setUserName] = useState("");
   const [password, setPassword] = useState("");
   const session = useSession();
-  const isPresented = router.canGoBack();
 
   if (!session.session) {
     return (
@@ -21,23 +20,23 @@ export default function ModalScreen() {
         <View className="flex flex-col">
           <Input
             className="my-3 w-64"
-            inputClasses="border-black dark:border-white"
+            inputClasses="border-black dark:border-white text-black dark:text-white"
             labelClasses="text-gray-900 dark:text-gray-100"
+            label="用户名"
             value={userName}
             onChange={(e) => {
-              e.nativeEvent.text && setUserName(e.nativeEvent.text);
+              setUserName(e.nativeEvent.text);
             }}
-            placeholder="用户名"
           />
           <Input
             className="my-3 w-64"
-            inputClasses="border-black dark:border-white"
+            inputClasses="border-black dark:border-white text-black dark:text-white"
             labelClasses="text-gray-900 dark:text-gray-100"
+            label="密码"
             value={password}
             onChange={(e) => {
-              e.nativeEvent.text && setPassword(e.nativeEvent.text);
+              setPassword(e.nativeEvent.text);
             }}
-            placeholder="密码"
             secureTextEntry={true}
           />
           <View className="flex flex-row">
@@ -66,20 +65,16 @@ export default function ModalScreen() {
         </Text>
         <View className="my-6 h-[1px] w-80 bg-gray-200" />
         <View className="flex flex-row items-center justify-center gap-5">
-          {isPresented && (
-            <Link href="../" asChild>
-              <Text className="text-lg text-blue-500">返回</Text>
-            </Link>
-          )}
           <Button
             onPress={() => {
               session.signOut();
+              router.replace("/");
             }}
           >
             登出
           </Button>
         </View>
-        {/*<StatusBar style={Platform.OS === "ios" ? "light" : "auto"} />*/}
+        <StatusBar style={Platform.OS === "ios" ? "light" : "auto"} />
       </View>
     );
   }

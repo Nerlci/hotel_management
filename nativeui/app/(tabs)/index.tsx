@@ -12,8 +12,6 @@ import { Text, View } from "@/components/Themed";
 export default function TabOneScreen() {
   return (
     <View className="flex-1 items-center justify-center">
-      <Text className="text-3xl font-bold">预定</Text>
-      <View className="my-6 h-[1px] w-80 bg-gray-200" />
       <View className="w-4/5">
         <Card>
           <CardHeader>
