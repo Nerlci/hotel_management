@@ -1,5 +1,3 @@
-// Temperature emulation for user aircon control
-
 import { useState } from "react";
 import { useInterval } from "usehooks-ts";
 

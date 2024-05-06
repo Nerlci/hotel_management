@@ -7,4 +7,7 @@ export {
 } from "./consts";
 export { ChineseDateFormat } from "./utils";
 export * from "./schema";
-export * as dataFetch from "./dataFetch"; // client only
+
+// client only
+export * as dataFetch from "./dataFetch";
+export * as clientHooks from "./hooks";
