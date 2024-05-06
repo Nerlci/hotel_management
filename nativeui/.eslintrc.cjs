@@ -10,6 +10,7 @@ module.exports = {
     ".eslintrc.cjs",
     "babel.config.js",
     "tailwind.config.js",
+    "metro.config.js",
   ],
   parser: "@typescript-eslint/parser",
   rules: {
