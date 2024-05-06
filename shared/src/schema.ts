@@ -94,28 +94,28 @@ export const acDetailResponse = responseBase.extend({
 export type ACDetailResponse = z.infer<typeof acDetailResponse>;
 
 export const userRoomOrderResponse = responseBase
-  .extend({
-    payload: z.object({
-      roomId: z
-        .string()
-        .min(1, "Room ID can't be empty")
-        .max(5, "Room ID too long")
-        .or(z.literal("")),
-      startDate: z.string().datetime().or(z.literal("")),
-      endDate: z.string().datetime().or(z.literal("")),
-    }),
-  })
-  .refine(
-    (d) => {
-      if (d.payload.startDate === "" && d.payload.endDate === "") {
-        return false;
-      } else {
-        return d.payload.startDate <= d.payload.endDate;
-      }
-    },
-    {
-      message: "Start date must be earlier than or equal to the end date",
-    },
-  );
+	.extend({
+		payload: z.object({
+			roomId: z
+				.string()
+				.min(1, "Room ID can't be empty")
+				.max(5, "Room ID too long")
+				.or(z.literal("")),
+			startDate: z.string().datetime().or(z.literal("")),
+			endDate: z.string().datetime().or(z.literal("")),
+		}),
+	})
+	.refine(
+		(d) => {
+			if (d.payload.startDate === "" && d.payload.endDate === "") {
+				return false;
+			} else {
+				return d.payload.startDate <= d.payload.endDate;
+			}
+		},
+		{
+			message: "Start date must be earlier than or equal to the end date",
+		}
+	);
 
 export type UserRoomOrderResponse = z.infer<typeof userRoomOrderResponse>;
