@@ -11,16 +11,16 @@ import { Text, View } from "@/components/Themed";
 
 export default function TabOneScreen() {
   return (
-    <View className="flex-1 items-center justify-center">
-      <View className="w-4/5">
+    <View className="flex-1">
+      <View className="mx-6 my-6">
         <Card>
-          <CardHeader>
-            <CardTitle>填写日期</CardTitle>
+          <CardHeader className="flex flex-row items-center">
+            <CardTitle className="mt-1 text-4xl">填写日期</CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="mt-5">
             <View className="ml-0 mr-auto mt-auto flex flex-row items-center justify-center gap-2">
               <View className="flex flex-row items-center justify-center">
-                <Text className="text-lg">从</Text>
+                <Text className="text-xl">从</Text>
                 <View className="w-24">
                   <RNDateTimePicker
                     mode="date"
@@ -31,7 +31,7 @@ export default function TabOneScreen() {
                 </View>
               </View>
               <View className="flex flex-row items-center justify-center">
-                <Text className="text-lg">到</Text>
+                <Text className="text-xl">到</Text>
                 <View className="w-24">
                   <RNDateTimePicker
                     mode="date"
@@ -47,6 +47,7 @@ export default function TabOneScreen() {
             <View className="flex flex-row">
               <View className="grow" />
               <Button
+                className="w-full"
                 onPress={() => {
                   console.log("确定");
                 }}

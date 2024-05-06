@@ -10,6 +10,16 @@ import {
   MIN_AIRCON_TEMP,
 } from "shared";
 import { useColorScheme } from "react-native";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/Card";
+import { Button } from "@/components/Button";
+import { MaterialIcons } from "@expo/vector-icons";
+import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 
 export default function DashboardScreen() {
   const [temp, setTemp] = useState(20);
@@ -19,61 +29,111 @@ export default function DashboardScreen() {
   const [cool, setCool] = useState(true);
   const colorScheme = useColorScheme();
 
+  const currentTemp = 22;
+
   return (
     <View className="flex-1">
-      <View className="mx-6 my-6 flex flex-col rounded-xl border border-gray-100 p-5 dark:border-zinc-900">
-        <View className="flex flex-row items-center justify-center">
-          <Text className="text-4xl font-bold">空调管理</Text>
-          <View className="grow" />
-          <View className="flex flex-row items-center justify-center">
-            <Text className="text-2xl">{start ? "关闭" : "启动"}</Text>
+      <View className="mx-6 my-6">
+        <Card>
+          <CardHeader className="flex flex-row items-center">
+            <CardTitle className="text-4xl">空调</CardTitle>
+            <View className="grow" />
             <Switch value={start} onValueChange={setStart} />
-          </View>
-        </View>
-        <View className="mt-10 flex">
-          <View className="mx-auto flex w-40 flex-row items-center">
-            <Text className="text-2xl">温度：</Text>
-            <View className="w-32">
-              <Text className="mx-auto text-5xl">{temp}&deg;C</Text>
-            </View>
-          </View>
-          <Slider
-            className="w-full"
-            disabled={!start}
-            minimumValue={MIN_AIRCON_TEMP}
-            maximumValue={MAX_AIRCON_TEMP}
-            value={temp}
-            onValueChange={(v) => {
-              setTemp(v);
-              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-            }}
-            step={1}
-            minimumTrackTintColor={colorScheme === "dark" ? "#222" : "#aaa"}
-            maximumTrackTintColor={colorScheme === "dark" ? "#aaa" : "#222"}
-          />
-          <View>
+          </CardHeader>
+          <CardContent className="mt-5">
             <View className="mx-auto flex w-40 flex-row items-center">
-              <Text className="text-2xl">风速：</Text>
+              <Text className={`mr-3 text-lg ${start ? "" : "text-[#aaa]"}`}>
+                温度
+              </Text>
+              <FontAwesome6
+                name={`temperature-arrow-${temp < currentTemp ? "down" : "up"}`}
+                size={30}
+                color={
+                  start
+                    ? temp < currentTemp
+                      ? "rgb(59 130 246)"
+                      : "rgb(249 115 22)"
+                    : "#aaa"
+                }
+              />
               <View className="w-32">
-                <Text className="mx-auto text-5xl">{windspeed}</Text>
+                <Text
+                  className={`mx-auto text-5xl ${start ? "" : "text-[#aaa]"}`}
+                >
+                  {temp}&deg;C
+                </Text>
               </View>
             </View>
             <Slider
               className="w-full"
               disabled={!start}
-              minimumValue={MIN_AIRCON_SPEED}
-              maximumValue={MAX_AIRCON_SPEED}
-              value={windspeed}
+              minimumValue={MIN_AIRCON_TEMP}
+              maximumValue={MAX_AIRCON_TEMP}
+              value={temp}
               onValueChange={(v) => {
-                setWindspeed(v);
+                setTemp(v);
                 Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
               }}
               step={1}
               minimumTrackTintColor={colorScheme === "dark" ? "#222" : "#aaa"}
               maximumTrackTintColor={colorScheme === "dark" ? "#aaa" : "#222"}
             />
-          </View>
-        </View>
+            <View>
+              <View className="mx-auto flex w-40 flex-row items-center">
+                <Text className={`mr-3 text-lg ${start ? "" : "text-[#aaa]"}`}>
+                  风速
+                </Text>
+                <MaterialIcons
+                  name="air"
+                  size={40}
+                  color={
+                    start
+                      ? colorScheme === "dark"
+                        ? "white"
+                        : "black"
+                      : "#aaa"
+                  }
+                />
+                <View className="w-32">
+                  <Text
+                    className={`mx-auto text-5xl ${start ? "" : "text-[#aaa]"}`}
+                  >
+                    {windspeed}
+                  </Text>
+                </View>
+              </View>
+              <Slider
+                className="w-full"
+                disabled={!start}
+                minimumValue={MIN_AIRCON_SPEED}
+                maximumValue={MAX_AIRCON_SPEED}
+                value={windspeed}
+                onValueChange={(v) => {
+                  setWindspeed(v);
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                }}
+                step={1}
+                minimumTrackTintColor={colorScheme === "dark" ? "#222" : "#aaa"}
+                maximumTrackTintColor={colorScheme === "dark" ? "#aaa" : "#222"}
+              />
+            </View>
+          </CardContent>
+          <CardFooter>
+            <View className="flex flex-row">
+              <View className="grow" />
+              <Button
+                className={`w-full ${start ? "" : "bg-[#aaa]"}`}
+                disabled={!start}
+                onPress={() => {
+                  console.log("确定");
+                }}
+              >
+                确定
+              </Button>
+              <View className="grow" />
+            </View>
+          </CardFooter>
+        </Card>
       </View>
     </View>
   );
