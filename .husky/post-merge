@@ -1,0 +1,12 @@
+npm i
+cd ./webui
+npm i
+cd ..
+cd ./shared
+npm i
+cd ..
+cd ./backend
+npm i
+cd ..
+cd ./nativeui
+npm i
