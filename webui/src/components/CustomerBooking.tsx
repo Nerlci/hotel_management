@@ -2,13 +2,16 @@ import { DatePickerWithRange } from "@/components/DatePickerWithRange";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
-import { getRoomAvailability, postRoomBooking } from "@/lib/dataFetch";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { UseQueryResult, useMutation } from "@tanstack/react-query";
 import { useRef } from "react";
 import { DateRange } from "react-day-picker";
 import { useForm } from "react-hook-form";
-import { DateRange as DateRangeType, UserRoomOrderResponse } from "shared";
+import {
+  DateRange as DateRangeType,
+  UserRoomOrderResponse,
+  dataFetch,
+} from "shared";
 import { toast } from "sonner";
 import { z } from "zod";
 import { Skeleton } from "./ui/skeleton";
@@ -23,7 +26,7 @@ const bookingFormSchema = z.object({
 function FormCard({ updateBookingQuery }: { updateBookingQuery: () => void }) {
   const bookingDateRange = useRef<DateRangeType | undefined>(undefined);
   const book = useMutation({
-    mutationFn: postRoomBooking,
+    mutationFn: dataFetch.postRoomBooking,
     onSuccess: () => {
       toast("预定成功", {
         description: "您的预定已成功提交",
@@ -39,7 +42,7 @@ function FormCard({ updateBookingQuery }: { updateBookingQuery: () => void }) {
     },
   });
   const availability = useMutation({
-    mutationFn: getRoomAvailability,
+    mutationFn: dataFetch.getRoomAvailability,
     onSuccess: (data) => {
       if (data.length === 0 && bookingDateRange.current !== undefined) {
         book.mutate(bookingDateRange.current);

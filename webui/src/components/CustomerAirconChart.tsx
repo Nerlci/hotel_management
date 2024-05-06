@@ -6,10 +6,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  generateGetUserAirconDetail,
-  getUserRoomNumber,
-} from "@/lib/dataFetch";
 import { useQuery } from "@tanstack/react-query";
 import {
   Area,
@@ -23,7 +19,7 @@ import {
 } from "recharts";
 import { Skeleton } from "./ui/skeleton";
 import { toast } from "sonner";
-import { MAX_AIRCON_SPEED, MAX_AIRCON_TEMP } from "shared";
+import { MAX_AIRCON_SPEED, MAX_AIRCON_TEMP, dataFetch } from "shared";
 
 type CostDataItem = {
   date: string;
@@ -92,7 +88,7 @@ const CustomTooltip = ({ active, payload }) => {
 export default function CustomerAirconChart() {
   const roomNumberQuery = useQuery({
     queryKey: ["customerRoomNumber"],
-    queryFn: getUserRoomNumber,
+    queryFn: dataFetch.getUserRoomNumber,
   });
   const roomId = roomNumberQuery?.data;
   const {
@@ -101,7 +97,7 @@ export default function CustomerAirconChart() {
     data: airconDetail,
   } = useQuery({
     queryKey: ["customerAirconChartData"],
-    queryFn: generateGetUserAirconDetail(roomId!),
+    queryFn: dataFetch.generateGetUserAirconDetail(roomId!),
     enabled: !!roomId,
     refetchInterval: 1000,
   });

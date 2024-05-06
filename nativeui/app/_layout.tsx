@@ -5,11 +5,12 @@ import {
   ThemeProvider,
 } from "@react-navigation/native";
 import { useFonts } from "expo-font";
-import { Stack } from "expo-router";
+import { Link, Stack, router } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
-
 import { useColorScheme } from "@/components/useColorScheme";
+import { SessionProvider } from "@/components/Auth";
+import { Text } from "@/components/Themed";
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -53,10 +54,31 @@ function RootLayoutNav() {
 
   return (
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" options={{ presentation: "modal" }} />
-      </Stack>
+      <SessionProvider>
+        <Stack>
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen
+            name="modal"
+            options={{
+              presentation: "modal",
+              headerShown: true,
+              headerTitle: "个人中心",
+              headerLeft: () => {
+                const canGoBack = router.canGoBack();
+                if (canGoBack) {
+                  return (
+                    <Link href="../">
+                      <Text className="text-lg text-blue-500">返回</Text>
+                    </Link>
+                  );
+                } else {
+                  return null;
+                }
+              },
+            }}
+          />
+        </Stack>
+      </SessionProvider>
     </ThemeProvider>
   );
 }

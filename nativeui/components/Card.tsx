@@ -9,7 +9,7 @@ function Card({
   return (
     <View
       className={cn(
-        "rounded-xl border border-black dark:border-white",
+        "rounded-xl border border-gray-100 dark:border-zinc-900",
         className,
       )}
       {...props}

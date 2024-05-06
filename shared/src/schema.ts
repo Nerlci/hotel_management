@@ -1,5 +1,20 @@
 import { z } from "zod";
 
+const loginFormSchema = z.object({
+  email: z.string().email("请输入有效的邮箱地址"),
+  password: z.string().min(6, "密码至少6个字符"),
+});
+
+export type LoginForm = z.infer<typeof loginFormSchema>;
+
+const registerFormSchema = z.object({
+  username: z.string().min(3, "用户名至少3个字符"),
+  email: z.string().email("无效邮箱地址"),
+  password: z.string().min(6, "密码至少6个字符"),
+});
+
+export type RegisterForm = z.infer<typeof registerFormSchema>;
+
 export const responseBase = z.object({
   code: z
     .union([z.literal("200"), z.literal("400"), z.literal("500")])

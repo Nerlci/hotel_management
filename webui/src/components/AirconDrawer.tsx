@@ -19,16 +19,15 @@ import {
   MAX_AIRCON_TEMP,
   MIN_AIRCON_SPEED,
   MIN_AIRCON_TEMP,
+  clientHooks,
+  dataFetch,
 } from "shared";
 import AirConditionerIcon from "../assets/aircon.svg";
 import { Switch } from "./ui/switch";
-import { useSSE } from "@/hooks/useSse";
-import { BASE_URL, postUserAirconUpdate } from "@/lib/dataFetch";
 import { useEffect, useState } from "react";
 import { Skeleton } from "./ui/skeleton";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { useTempEmulate } from "@/lib/tempEmulate";
 import {
   Tooltip,
   TooltipContent,
@@ -196,11 +195,11 @@ const AirconDrawerContent = ({
 };
 
 export function AirconDrawer() {
-  const { sseData, sseReadyState, closeSource } = useSSE<ACStatus>(
-    `${BASE_URL}/api/ac/status?roomId=${8103}`,
+  const { sseData, sseReadyState, closeSource } = clientHooks.useSSE<ACStatus>(
+    `${dataFetch.BASE_URL}/api/ac/status?roomId=${8103}`,
   );
   useEffect(() => closeSource, [closeSource]);
-  const currentTemp = useTempEmulate({
+  const currentTemp = clientHooks.useTempEmulate({
     startTemp: 10,
     targetTemp: sseData?.temp ?? 24,
     windSpeed: sseData?.fanSpeed ?? 1,
@@ -219,7 +218,7 @@ export function AirconDrawer() {
     },
   });
   const mutation = useMutation({
-    mutationFn: postUserAirconUpdate,
+    mutationFn: dataFetch.postUserAirconUpdate,
     onSuccess: () => {
       toast("空调状态更改成功");
     },
