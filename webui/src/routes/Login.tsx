@@ -1,6 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -16,16 +15,15 @@ import { ModeToggle } from "@/components/mode-toggle";
 import { useAuth } from "@/hooks/useAuth";
 import XiaoDing from "../assets/xiaoding.jpg";
 import { useMutation } from "@tanstack/react-query";
-import { postUserLogin } from "@/lib/dataFetch";
 import { UserType } from "@/lib/types";
 import { toast } from "sonner";
+import { LoginForm, dataFetch } from "shared";
+import { z } from "zod";
 
 const loginFormSchema = z.object({
   email: z.string().email("请输入有效的邮箱地址"),
   password: z.string().min(6, "密码至少6个字符"),
 });
-
-export type LoginForm = z.infer<typeof loginFormSchema>;
 
 function parseUserType(type: number): UserType {
   switch (type) {
@@ -51,7 +49,7 @@ const Login = () => {
   const { login } = useAuth()!;
 
   const mutation = useMutation({
-    mutationFn: postUserLogin,
+    mutationFn: dataFetch.postUserLogin,
     onSuccess: (data) => {
       login({
         username: data.payload.username,

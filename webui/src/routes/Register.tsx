@@ -9,7 +9,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Link, useNavigate } from "react-router-dom";
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import {
@@ -20,16 +19,15 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { useMutation } from "@tanstack/react-query";
-import { postUserRegister } from "@/lib/dataFetch";
 import { toast } from "sonner";
+import { RegisterForm, dataFetch } from "shared";
+import { z } from "zod";
 
 const registerFormSchema = z.object({
   username: z.string().min(3, "用户名至少3个字符"),
   email: z.string().email("无效邮箱地址"),
   password: z.string().min(6, "密码至少6个字符"),
 });
-
-export type RegisterForm = z.infer<typeof registerFormSchema>;
 
 export const Register = () => {
   const navigate = useNavigate();
@@ -44,7 +42,7 @@ export const Register = () => {
   });
 
   const mutation = useMutation({
-    mutationFn: postUserRegister,
+    mutationFn: dataFetch.postUserRegister,
     onSuccess: () => {
       navigate("/login");
     },

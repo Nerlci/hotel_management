@@ -1,9 +1,9 @@
 import { AuthContext } from "@/hooks/useAuth";
-import { getUserLogout } from "@/lib/dataFetch";
 import { LoggedinUser } from "@/lib/types";
 import { useMutation } from "@tanstack/react-query";
 import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
+import { dataFetch } from "shared";
 import { toast } from "sonner";
 import { useLocalStorage } from "usehooks-ts";
 
@@ -11,7 +11,7 @@ export function AuthProvider({ children }: { children: React.ReactElement }) {
   const [user, setUser] = useLocalStorage<LoggedinUser>("loggedin-user", null);
   const navigate = useNavigate();
   const logoutMutation = useMutation({
-    mutationFn: getUserLogout,
+    mutationFn: dataFetch.getUserLogout,
     onSuccess: () => {
       setUser(null);
       navigate("/", { replace: true });

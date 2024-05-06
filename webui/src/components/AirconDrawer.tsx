@@ -19,11 +19,11 @@ import {
   MAX_AIRCON_TEMP,
   MIN_AIRCON_SPEED,
   MIN_AIRCON_TEMP,
+  dataFetch,
 } from "shared";
 import AirConditionerIcon from "../assets/aircon.svg";
 import { Switch } from "./ui/switch";
 import { useSSE } from "@/hooks/useSse";
-import { BASE_URL, postUserAirconUpdate } from "@/lib/dataFetch";
 import { useEffect, useState } from "react";
 import { Skeleton } from "./ui/skeleton";
 import { useMutation } from "@tanstack/react-query";
@@ -197,7 +197,7 @@ const AirconDrawerContent = ({
 
 export function AirconDrawer() {
   const { sseData, sseReadyState, closeSource } = useSSE<ACStatus>(
-    `${BASE_URL}/api/ac/status?roomId=${8103}`,
+    `${dataFetch.BASE_URL}/api/ac/status?roomId=${8103}`,
   );
   useEffect(() => closeSource, [closeSource]);
   const currentTemp = useTempEmulate({
@@ -219,7 +219,7 @@ export function AirconDrawer() {
     },
   });
   const mutation = useMutation({
-    mutationFn: postUserAirconUpdate,
+    mutationFn: dataFetch.postUserAirconUpdate,
     onSuccess: () => {
       toast("空调状态更改成功");
     },

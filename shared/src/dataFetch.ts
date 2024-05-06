@@ -1,15 +1,15 @@
-import { LoginForm } from "@/routes/Login";
-import { RegisterForm } from "@/routes/Register";
 import {
   ACUpdateRequestBody,
   DateRange,
+  LoginForm,
+  RegisterForm,
   acDetailResponse,
   responseBase,
   userAvailablityResponse,
   userRoomOrderResponse,
-} from "shared";
+} from "./schema";
 
-export const BASE_URL = import.meta.env.VITE_API_URL as string;
+export const BASE_URL = process.env.API_URL as string;
 
 export async function getRoomAvailability(body: DateRange) {
   const response = await fetch(

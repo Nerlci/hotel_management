@@ -3,14 +3,14 @@ import { CustomerDashboard } from "@/components/CustomerDashboard";
 import { HomeIcon } from "@/components/HomeIcon";
 import { NavBar } from "@/components/NavBar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { getUserRoomOrder } from "@/lib/dataFetch";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
+import { dataFetch } from "shared";
 
 export const Customer: React.FC = () => {
   const bookingQuery = useQuery({
     queryKey: ["userBooking"],
-    queryFn: getUserRoomOrder,
+    queryFn: dataFetch.getUserRoomOrder,
   });
   const customerBooked = bookingQuery.data
     ? bookingQuery.data.payload.roomId.length > 0
