@@ -4,12 +4,35 @@ import {
   LoginForm,
   RegisterForm,
   acDetailResponse,
+  receptionAvailableResponse,
   responseBase,
   userAvailablityResponse,
   userRoomOrderResponse,
 } from "./schema";
 
 export const BASE_URL = "http://localhost:8080";
+
+export async function getRoomAvailable(body: DateRange) {
+  const response = await fetch(
+    `${BASE_URL}/api/room/available?startDate=${body.startDate}&endDate=${body.endDate}`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+    },
+  );
+  if (!response.ok) {
+    throw new Error("Request failed");
+  }
+  const responseJson = await response.json();
+  if (responseJson.code !== "200") {
+    throw new Error(responseJson.error.msg);
+  }
+  const parsed = receptionAvailableResponse.parse(responseJson);
+  return parsed;
+}
 
 export async function getRoomAvailability(body: DateRange) {
   const response = await fetch(

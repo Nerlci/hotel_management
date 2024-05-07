@@ -39,7 +39,7 @@ export const userAvailablityResponse = responseBase.extend({
 });
 export type UserAvailablityResponse = z.infer<typeof userAvailablityResponse>;
 
-export const ReceptionAvailableResponse = responseBase
+export const receptionAvailableResponse = responseBase
   .extend({
     payload: z.object({
       recommended: z.string(),
@@ -57,7 +57,7 @@ export const ReceptionAvailableResponse = responseBase
     },
   );
 export type ReceptionAvailableResponse = z.infer<
-  typeof ReceptionAvailableResponse
+  typeof receptionAvailableResponse
 >;
 
 export const CheckinRequest = z.object({
