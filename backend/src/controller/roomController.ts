@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import {
   DateRange,
+  ReceptionAvailableResponse,
   UserRoomOrderResponse,
   responseBase,
   userAvailablityResponse,
@@ -214,17 +215,20 @@ const getAvailableRooms = async (req: Request, res: Response) => {
   );
 
   if (availableRooms.length === 0) {
-    const response = userRoomOrderResponse.parse({
+    const response: ReceptionAvailableResponse = {
       error: {
         msg: "No room available. Please choose another date.",
       },
       code: "400",
-      payload: {},
-    });
+      payload: {
+        recommended: "",
+        available: [],
+      },
+    };
 
     res.json(response);
   } else {
-    const response = userRoomOrderResponse.parse({
+    const response: ReceptionAvailableResponse = {
       error: {
         msg: "",
       },
@@ -233,7 +237,7 @@ const getAvailableRooms = async (req: Request, res: Response) => {
         recommended: availableRooms[0].roomId,
         available: availableRooms.map((room) => room.roomId),
       },
-    });
+    };
 
     res.json(response);
   }

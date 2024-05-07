@@ -17,7 +17,12 @@ export type RegisterForm = z.infer<typeof registerFormSchema>;
 
 export const responseBase = z.object({
   code: z
-    .union([z.literal("200"), z.literal("400"), z.literal("500")])
+    .union([
+      z.literal("200"),
+      z.literal("400"),
+      z.literal("500"),
+      z.literal("401"),
+    ])
     .default("200"),
   error: z.object({
     msg: z.string().default(""),
@@ -39,7 +44,7 @@ export const userAvailablityResponse = responseBase.extend({
 });
 export type UserAvailablityResponse = z.infer<typeof userAvailablityResponse>;
 
-export const ReceptionAvailableResponse = responseBase
+export const receptionAvailableResponse = responseBase
   .extend({
     payload: z.object({
       recommended: z.string(),
@@ -57,7 +62,7 @@ export const ReceptionAvailableResponse = responseBase
     },
   );
 export type ReceptionAvailableResponse = z.infer<
-  typeof ReceptionAvailableResponse
+  typeof receptionAvailableResponse
 >;
 
 export const CheckinRequest = z.object({
@@ -134,3 +139,15 @@ export const userRoomOrderResponse = responseBase
   );
 
 export type UserRoomOrderResponse = z.infer<typeof userRoomOrderResponse>;
+
+export const userLoginResponse = responseBase.extend({
+  payload: z.object({
+    username: z.string().min(1, "Username can't be empty"),
+    type: z.union([
+      z.literal("customer"),
+      z.literal("admin"),
+      z.literal("reception"),
+    ]),
+  }),
+});
+export type UserLoginResponse = z.infer<typeof userLoginResponse>;

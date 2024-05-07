@@ -15,7 +15,6 @@ import { ModeToggle } from "@/components/mode-toggle";
 import { useAuth } from "@/hooks/useAuth";
 import XiaoDing from "../assets/xiaoding.jpg";
 import { useMutation } from "@tanstack/react-query";
-import { UserType } from "@/lib/types";
 import { toast } from "sonner";
 import { LoginForm, dataFetch } from "shared";
 import { z } from "zod";
@@ -24,19 +23,6 @@ const loginFormSchema = z.object({
   email: z.string().email("请输入有效的邮箱地址"),
   password: z.string().min(6, "密码至少6个字符"),
 });
-
-function parseUserType(type: number): UserType {
-  switch (type) {
-    case 0:
-      return "customer";
-    case 1:
-      return "admin";
-    case 2:
-      return "reception";
-    default:
-      return "customer";
-  }
-}
 
 const Login = () => {
   const form = useForm<LoginForm>({
@@ -53,7 +39,7 @@ const Login = () => {
     onSuccess: (data) => {
       login({
         username: data.payload.username,
-        type: parseUserType(data.payload.type),
+        type: data.payload.type,
       });
     },
     onError: (error) => {

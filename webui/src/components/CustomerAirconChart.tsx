@@ -20,6 +20,7 @@ import {
 import { Skeleton } from "./ui/skeleton";
 import { toast } from "sonner";
 import { MAX_AIRCON_SPEED, MAX_AIRCON_TEMP, dataFetch } from "shared";
+import { useAuth } from "@/hooks/useAuth";
 
 type CostDataItem = {
   date: string;
@@ -86,11 +87,17 @@ const CustomTooltip = ({ active, payload }) => {
 };
 
 export default function CustomerAirconChart() {
+  const { logout } = useAuth()!;
   const roomNumberQuery = useQuery({
     queryKey: ["customerRoomNumber"],
     queryFn: dataFetch.getUserRoomNumber,
   });
   const roomId = roomNumberQuery?.data;
+  if (roomNumberQuery.error) {
+    if (roomNumberQuery.error.message === "401") {
+      logout();
+    }
+  }
   const {
     isLoading,
     error,
@@ -102,9 +109,13 @@ export default function CustomerAirconChart() {
     refetchInterval: 1000,
   });
   if (error) {
-    toast("获取详单信息失败", {
-      description: error.message,
-    });
+    if (error.message === "401") {
+      logout();
+    } else {
+      toast("获取详单信息失败", {
+        description: error.message,
+      });
+    }
   }
 
   const airconData: AirconDataItem[] = [];

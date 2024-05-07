@@ -78,6 +78,19 @@ const loginUser = async (req: Request, res: Response) => {
     return;
   }
 
+  function parseUserType(type: number): string {
+    switch (type) {
+      case 0:
+        return "customer";
+      case 1:
+        return "admin";
+      case 2:
+        return "reception";
+      default:
+        return "customer";
+    }
+  }
+
   const response = responseBase.parse({
     error: {
       msg: "",
@@ -86,7 +99,7 @@ const loginUser = async (req: Request, res: Response) => {
     payload: {
       userId: user.id,
       username: user.username,
-      type: user.type,
+      type: parseUserType(user.type),
     },
   });
 
@@ -126,7 +139,7 @@ const authUserMiddleware = async (
       error: {
         msg: "Not logged in, please login first",
       },
-      code: "400",
+      code: "401",
       payload: {},
     });
 
@@ -142,7 +155,7 @@ const authUserMiddleware = async (
       error: {
         msg: "Not logged in, please login first",
       },
-      code: "400",
+      code: "401",
       payload: {},
     });
 

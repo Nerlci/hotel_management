@@ -4,12 +4,39 @@ import {
   LoginForm,
   RegisterForm,
   acDetailResponse,
+  receptionAvailableResponse,
   responseBase,
   userAvailablityResponse,
+  userLoginResponse,
   userRoomOrderResponse,
 } from "./schema";
 
 export const BASE_URL = "http://localhost:8080";
+
+export async function getRoomAvailable(body: DateRange) {
+  const response = await fetch(
+    `${BASE_URL}/api/room/available?startDate=${body.startDate}&endDate=${body.endDate}`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+    },
+  );
+  if (!response.ok) {
+    throw new Error("Request failed");
+  }
+  const responseJson = await response.json();
+  if (responseJson.code === "401") {
+    throw new Error("401");
+  }
+  if (responseJson.code !== "200") {
+    throw new Error(responseJson.error.msg);
+  }
+  const parsed = receptionAvailableResponse.parse(responseJson);
+  return parsed;
+}
 
 export async function getRoomAvailability(body: DateRange) {
   const response = await fetch(
@@ -25,7 +52,11 @@ export async function getRoomAvailability(body: DateRange) {
   if (!response.ok) {
     throw new Error("Request failed");
   }
-  const parsed = userAvailablityResponse.parse(await response.json());
+  const responseJson = await response.json();
+  if (responseJson.code === "401") {
+    throw new Error("401");
+  }
+  const parsed = userAvailablityResponse.parse(responseJson);
   if (parsed.code !== "200") {
     throw new Error(parsed.error.msg);
   }
@@ -44,7 +75,11 @@ export async function postRoomBooking(body: DateRange) {
   if (!response.ok) {
     throw new Error("Request failed");
   }
-  const parsed = responseBase.parse(await response.json());
+  const responseJson = await response.json();
+  if (responseJson.code === "401") {
+    throw new Error("401");
+  }
+  const parsed = responseBase.parse(responseJson);
   if (parsed.code !== "200") {
     throw new Error(parsed.error.msg);
   }
@@ -61,7 +96,11 @@ export async function getUserRoomOrder() {
   if (!response.ok) {
     throw new Error("Request failed");
   }
-  const json = userRoomOrderResponse.parse(await response.json());
+  const responseJson = await response.json();
+  if (responseJson.code === "401") {
+    throw new Error("401");
+  }
+  const json = userRoomOrderResponse.parse(responseJson);
   if (json.code !== "200") {
     throw new Error(json.error.msg);
   }
@@ -80,7 +119,11 @@ export async function postUserRegister(values: RegisterForm) {
   if (!response.ok) {
     throw new Error("Request failed");
   }
-  const json = responseBase.parse(await response.json());
+  const responseJson = await response.json();
+  if (responseJson.code === "401") {
+    throw new Error("401");
+  }
+  const json = responseBase.parse(responseJson);
   if (json.code !== "200") {
     throw new Error(json.error.msg);
   }
@@ -99,7 +142,11 @@ export async function postUserLogin(values: LoginForm) {
   if (!response.ok) {
     throw new Error("Request failed");
   }
-  const json = /* responseBase.parse */ await response.json();
+  const responseJson = await response.json();
+  if (responseJson.code === "401") {
+    throw new Error("401");
+  }
+  const json = userLoginResponse.parse(responseJson);
   if (json.code !== "200") {
     throw new Error(json.error.msg);
   }
@@ -118,6 +165,9 @@ export async function getUserLogout() {
     throw new Error("Request failed");
   }
   const json = responseBase.parse(await response.json());
+  if (json.code === "401") {
+    throw new Error("401");
+  }
   if (json.code !== "200") {
     throw new Error(json.error.msg);
   }
@@ -137,6 +187,9 @@ export async function postUserAirconUpdate(value: ACUpdateRequestBody) {
     throw new Error("Request failed");
   }
   const json = responseBase.parse(await response.json());
+  if (json.code === "401") {
+    throw new Error("401");
+  }
   if (json.code !== "200") {
     throw new Error(json.error.msg);
   }
@@ -162,8 +215,10 @@ export function generateGetUserAirconDetail(roomId: string) {
     if (!response.ok) {
       throw new Error("Request failed");
     }
-    // TODO: parse the response
     const json = acDetailResponse.parse(await response.json());
+    if (json.code === "401") {
+      throw new Error("401");
+    }
     if (json.code !== "200") {
       throw new Error(json.error.msg);
     }
