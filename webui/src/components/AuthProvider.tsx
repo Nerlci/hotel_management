@@ -34,9 +34,7 @@ export function AuthProvider({ children }: { children: React.ReactElement }) {
         }
       },
       logout: () => {
-        if (user) {
-          logoutMutation.mutate();
-        }
+        logoutMutation.mutate();
       },
     }),
     [user, navigate, setUser, logoutMutation],

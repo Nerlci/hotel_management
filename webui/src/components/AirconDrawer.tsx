@@ -35,6 +35,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { TempSlider, WindSlider } from "./AirconSlider";
+import { useAuth } from "@/hooks/useAuth";
 
 const AirconDrawerContent = ({
   sseData,
@@ -217,12 +218,19 @@ export function AirconDrawer() {
       }
     },
   });
+  const { logout } = useAuth()!;
   const mutation = useMutation({
     mutationFn: dataFetch.postUserAirconUpdate,
     onSuccess: () => {
       toast("空调状态更改成功");
     },
     onError: (error) => {
+      if (error.message === "401") {
+        toast("请重新登录", {
+          description: "登录状态已过期",
+        });
+        logout();
+      }
       toast(error.message, {
         description: "空调状态更改失败",
       });

@@ -15,6 +15,7 @@ import {
 import { toast } from "sonner";
 import { z } from "zod";
 import { Skeleton } from "./ui/skeleton";
+import { useAuth } from "@/hooks/useAuth";
 
 const bookingFormSchema = z.object({
   date: z.object({
@@ -25,6 +26,7 @@ const bookingFormSchema = z.object({
 
 function FormCard({ updateBookingQuery }: { updateBookingQuery: () => void }) {
   const bookingDateRange = useRef<DateRangeType | undefined>(undefined);
+  const { logout } = useAuth()!;
   const book = useMutation({
     mutationFn: dataFetch.postRoomBooking,
     onSuccess: () => {
@@ -38,6 +40,9 @@ function FormCard({ updateBookingQuery }: { updateBookingQuery: () => void }) {
       toast(error.message, {
         description: "预定失败",
       });
+      if (error.message === "401") {
+        logout();
+      }
       updateBookingQuery();
     },
   });
@@ -53,6 +58,9 @@ function FormCard({ updateBookingQuery }: { updateBookingQuery: () => void }) {
       toast(error.message, {
         description: "获取房间可用性失败",
       });
+      if (error.message === "401") {
+        logout();
+      }
     },
   });
   const disabledDays = availability.data ?? [];

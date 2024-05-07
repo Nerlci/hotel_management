@@ -13,6 +13,7 @@ import { Form, FormControl, FormField, FormItem } from "./ui/form";
 import { Button } from "./ui/button";
 import { useMutation } from "@tanstack/react-query";
 import { dataFetch } from "shared";
+import { useAuth } from "@/hooks/useAuth";
 
 const tasks: Room[] = [
   {
@@ -58,6 +59,7 @@ export default function ReceptionCheckinCheckout() {
       },
     },
   });
+  const { logout } = useAuth()!;
   const mutation = useMutation({
     mutationFn: dataFetch.getRoomAvailable,
     onSuccess: (data) => {
@@ -65,6 +67,9 @@ export default function ReceptionCheckinCheckout() {
     },
     onError: (error) => {
       console.log(error.message);
+      if (error.message === "401") {
+        logout();
+      }
     },
   });
 

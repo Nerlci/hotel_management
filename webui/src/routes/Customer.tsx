@@ -3,6 +3,7 @@ import { CustomerDashboard } from "@/components/CustomerDashboard";
 import { HomeIcon } from "@/components/HomeIcon";
 import { NavBar } from "@/components/NavBar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useAuth } from "@/hooks/useAuth";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { dataFetch } from "shared";
@@ -12,6 +13,12 @@ export const Customer: React.FC = () => {
     queryKey: ["userBooking"],
     queryFn: dataFetch.getUserRoomOrder,
   });
+  const { logout } = useAuth()!;
+  if (bookingQuery.error) {
+    if (bookingQuery.error.message === "401") {
+      logout();
+    }
+  }
   const customerBooked = bookingQuery.data
     ? bookingQuery.data.payload.roomId.length > 0
     : false;

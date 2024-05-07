@@ -209,7 +209,6 @@ const cancelOrder = async (req: Request, res: Response) => {
 const getAvailableRooms = async (req: Request, res: Response) => {
   const startDate = new Date(req.query.startDate as string);
   const endDate = new Date(req.query.endDate as string);
-  console.log(startDate, endDate);
   const availableRooms = await roomService.getAvailableRooms(
     startDate,
     endDate,
