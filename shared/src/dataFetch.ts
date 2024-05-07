@@ -9,7 +9,7 @@ import {
   userRoomOrderResponse,
 } from "./schema";
 
-export const BASE_URL = process.env.API_URL as string;
+export const BASE_URL = "http://localhost:8080";
 
 export async function getRoomAvailability(body: DateRange) {
   const response = await fetch(
