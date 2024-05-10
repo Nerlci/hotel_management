@@ -4,8 +4,8 @@
   "version": "1.0.0",
   "scripts": {
     "start": "expo start",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
+    "android": "expo run:android",
+    "ios": "expo run:ios",
     "web": "expo start --web",
     "test": "jest --watchAll",
     "format": "prettier --write .",
@@ -47,7 +47,8 @@
     "react-native-screens": "3.31.1",
     "react-native-web": "~0.19.10",
     "shared": "file:../shared",
-    "tailwind-merge": "^2.3.0"
+    "tailwind-merge": "^2.3.0",
+    "expo-dev-client": "~4.0.13"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
