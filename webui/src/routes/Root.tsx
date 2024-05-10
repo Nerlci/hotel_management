@@ -8,6 +8,8 @@ function Root() {
   } else {
     if (user.type === "customer") {
       return <Navigate to="/customer" />;
+    } else if (user.type === "reception") {
+      return <Navigate to="/reception" />;
     }
   }
 }

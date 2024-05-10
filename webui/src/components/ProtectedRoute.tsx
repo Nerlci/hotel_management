@@ -1,12 +1,18 @@
 import { useAuth } from "@/hooks/useAuth";
 import { Navigate } from "react-router-dom";
+import { UserType } from "shared";
 
-const BYPASS_AUTH = import.meta.env.VITE_BYPASS_AUTH === "true";
-
-export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
+export const ProtectedRoute = ({
+  children,
+  roles,
+}: React.PropsWithChildren<{
+  roles?: UserType[];
+}>) => {
   const { user } = useAuth()!;
-  if (!user && !BYPASS_AUTH) {
+  if (!user) {
     return <Navigate to="/login" />;
+  } else if (roles && !roles.includes(user.type)) {
+    return <Navigate to="/" />;
   }
   return children;
 };

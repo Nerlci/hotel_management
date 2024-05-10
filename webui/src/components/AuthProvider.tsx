@@ -31,6 +31,8 @@ export function AuthProvider({ children }: { children: React.ReactElement }) {
         // TODO redirect to different pages depend on usre type
         if (data!.type === "customer") {
           navigate("/customer");
+        } else if (data!.type === "reception") {
+          navigate("/reception");
         }
       },
       logout: () => {

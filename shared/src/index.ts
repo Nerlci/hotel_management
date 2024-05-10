@@ -4,8 +4,9 @@ export {
   MAX_AIRCON_TEMP,
   MIN_AIRCON_SPEED,
   MIN_AIRCON_TEMP,
+  UserType,
 } from "./consts";
-export { ChineseDateFormat } from "./utils";
+export { ChineseDateFormat, parseUserType } from "./utils";
 export * from "./schema";
 
 // client only
