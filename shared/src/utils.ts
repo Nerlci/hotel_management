@@ -12,6 +12,8 @@ export function parseUserType(type: number): UserType {
       return "admin";
     case 2:
       return "reception";
+    case 3:
+      return "aircon-manager";
     default:
       return "customer";
   }

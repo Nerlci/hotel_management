@@ -27,12 +27,15 @@ export function AuthProvider({ children }: { children: React.ReactElement }) {
     () => ({
       user,
       login: (data: LoggedinUser) => {
+        console.log(`logging in: ${JSON.stringify(data)}`);
         setUser(data);
         // TODO redirect to different pages depend on usre type
         if (data!.type === "customer") {
           navigate("/customer");
         } else if (data!.type === "reception") {
           navigate("/reception");
+        } else if (data!.type === "aircon-manager") {
+          navigate("/airconmanager");
         }
       },
       logout: () => {

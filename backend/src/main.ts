@@ -1,7 +1,6 @@
 import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
-import { UserAvailablityResponse } from "shared";
 import { apiRouter } from "./router/apiRouter";
 import { initRoom } from "./service/roomService";
 const app = express();
