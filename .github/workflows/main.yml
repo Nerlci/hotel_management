@@ -37,7 +37,6 @@ jobs:
         npm run build
         cd ../webui
         npm i
-        npm run build
         cd ../backend
         npm i
         npm run build
@@ -64,27 +63,27 @@ jobs:
       - name: Show files
         run: ls -R
       - name: Get frp authentication
-        run: curl -k -X POST -d "persist_auth=off" -d "pw=${{ secrets.FRP_PASSWORD }}" "https://45.125.46.201:60976"
+        run: curl -k -X POST -d "persist_auth=off" -d "pw=${{ secrets.FRP_PASSWORD }}" "https://${{ vars.REMOTE_HOST }}:${{ vars.REMOTE_PORT }}"
       - name: SSH Deploy
         uses: easingthemes/ssh-deploy@v5.0.3
         with:
           # Private key part of an SSH key pair
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           # Remote host
-          REMOTE_HOST: 45.125.46.201
+          REMOTE_HOST: ${{ vars.REMOTE_HOST }}
           # Remote user
           REMOTE_USER: server
           # Remote port
-          REMOTE_PORT: 60976
+          REMOTE_PORT: ${{ vars.REMOTE_PORT }}
           # Source directory, path relative to `$GITHUB_WORKSPACE` root, eg: `dist/`
           SOURCE: ./
           # Target directory
-          TARGET: ~/www/hotel_management
+          TARGET: ~/www/bumptyoj
           # paths to exclude separated by `,`, ie: `/dist/, /node_modules/`
           EXCLUDE: /shared/node_modules/, /webui/node_modules/, /backend/node_modules/
           SCRIPT_BEFORE: |
             export PATH=${{ vars.PATH }}:$PATH
-            pm2 stop 0 || true
+            pm2 stop 1 || true
           SCRIPT_AFTER: |
             export PATH=${{ vars.PATH }}:$PATH
             cd ~/www/hotel_management
@@ -96,4 +95,3 @@ jobs:
             npm i
             npx prisma generate
             pm2 start ./dist/main.js
-            
