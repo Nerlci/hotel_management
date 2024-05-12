@@ -1,6 +1,5 @@
 import React from "react";
-
-export type UserType = "customer" | "admin" | "reception" | "aircon-manager";
+import { UserType } from "shared";
 
 export type LoggedinUser = {
   username: string;

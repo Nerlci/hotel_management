@@ -3,6 +3,8 @@ import typescript from "@rollup/plugin-typescript";
 import terser from "@rollup/plugin-terser";
 import { nodeResolve } from "@rollup/plugin-node-resolve";
 import commonjs from "@rollup/plugin-commonjs";
+import replace from "@rollup/plugin-replace";
+import "dotenv/config";
 
 const config = defineConfig([
   {
@@ -24,7 +26,15 @@ const config = defineConfig([
         format: "esm",
       },
     ],
-    plugins: [typescript(), nodeResolve(), commonjs()],
+    plugins: [
+      typescript(),
+      nodeResolve(),
+      commonjs(),
+      replace({
+        VITE_API_URL: JSON.stringify(process.env.VITE_API_URL),
+        preventAssignment: true,
+      }),
+    ],
   },
 ]);
 

@@ -41,9 +41,10 @@ function FormCard({ updateBookingQuery }: { updateBookingQuery: () => void }) {
         description: "预定失败",
       });
       if (error.message === "401") {
-        logout();
+        console.log("401");
+        // logout();
       }
-      updateBookingQuery();
+      // updateBookingQuery();
     },
   });
   const availability = useMutation({

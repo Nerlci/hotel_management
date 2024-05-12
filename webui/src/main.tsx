@@ -30,14 +30,28 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
               <Route
                 path="/customer"
                 element={
-                  <ProtectedRoute>
+                  <ProtectedRoute roles={["customer"]}>
                     <Customer />
                   </ProtectedRoute>
                 }
               />
-              <Route path="/airconmanager" element={<Aircon />} />
+              <Route
+                path="/airconmanager"
+                element={
+                  <ProtectedRoute roles={["aircon-manager"]}>
+                    <Aircon />
+                  </ProtectedRoute>
+                }
+              />
               <Route path="/register" element={<Register />} />
-              <Route path="/reception" element={<Reception />} />
+              <Route
+                path="/reception"
+                element={
+                  <ProtectedRoute roles={["reception"]}>
+                    <Reception />
+                  </ProtectedRoute>
+                }
+              />
               <Route path="*" element={<ErrorPage />} />
             </Routes>
           </AuthProvider>

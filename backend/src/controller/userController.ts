@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { userService } from "../service/userService";
 import { encryptPassword, validatePassword } from "../utils/utils";
-import { responseBase } from "shared";
+import { UserType, parseUserType, responseBase } from "shared";
 import jwt from "jsonwebtoken";
 
 const registerUser = async (req: Request, res: Response) => {
@@ -78,19 +78,6 @@ const loginUser = async (req: Request, res: Response) => {
     return;
   }
 
-  function parseUserType(type: number): string {
-    switch (type) {
-      case 0:
-        return "customer";
-      case 1:
-        return "admin";
-      case 2:
-        return "reception";
-      default:
-        return "customer";
-    }
-  }
-
   const response = responseBase.parse({
     error: {
       msg: "",
@@ -108,7 +95,11 @@ const loginUser = async (req: Request, res: Response) => {
     process.env.JWT_SECRET!,
   );
 
-  res.cookie("token", token, { httpOnly: true, sameSite: "none", secure: true});
+  res.cookie("token", token, {
+    httpOnly: true,
+    sameSite: "none",
+    secure: true,
+  });
   res.json(response);
 };
 
@@ -142,6 +133,7 @@ const authUserMiddleware = async (
       code: "401",
       payload: {},
     });
+    console.log("no token");
 
     res.json(response);
     return;
@@ -158,6 +150,7 @@ const authUserMiddleware = async (
       code: "401",
       payload: {},
     });
+    console.log("token invalid");
 
     res.json(response);
     return;

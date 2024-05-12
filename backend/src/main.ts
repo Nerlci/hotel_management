@@ -6,7 +6,6 @@ import fs from "fs";
 
 import cors from "cors";
 import cookieParser from "cookie-parser";
-
 import { apiRouter } from "./router/apiRouter";
 import { initRoom } from "./service/roomService";
 const app = express();
@@ -35,7 +34,7 @@ const options = {
   key: fs.readFileSync("certs/server.key"),
   cert: fs.readFileSync("certs/server.crt"),
 };
-const httpsServer = https.createServer(options, app); 
+const httpsServer = https.createServer(options, app);
 httpsServer.listen(8443, () => {
   console.log("HTTPS Server is running on https://localhost:8443");
 });

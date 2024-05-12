@@ -11,7 +11,8 @@ import {
   userRoomOrderResponse,
 } from "./schema";
 
-export const BASE_URL = "http://localhost:8080";
+// @ts-expect-error VITE_API_URL is defined in rollup config
+export const BASE_URL = VITE_API_URL || "http://localhost:8080";
 
 export async function getRoomAvailable(body: DateRange) {
   const response = await fetch(

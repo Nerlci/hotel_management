@@ -14,6 +14,18 @@ import { Button } from "./ui/button";
 import { useMutation } from "@tanstack/react-query";
 import { dataFetch } from "shared";
 import { useAuth } from "@/hooks/useAuth";
+import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "./ui/select";
+import { useState } from "react";
+import { Input } from "./ui/input";
+import { Label } from "./ui/label";
 
 const tasks: Room[] = [
   {
@@ -42,16 +54,68 @@ const tasks: Room[] = [
   },
 ];
 
-const checkinFormSchema = z.object({
+const dateFormSchema = z.object({
   date: z.object({
     from: z.date(),
     to: z.date().optional(),
   }),
 });
+const checkinFormSchema = z.object({
+  roomId: z.string(),
+  dateRange: z.object({
+    startDate: z.date(),
+    endDate: z.date().optional(),
+  }),
+  userEmail: z.string().email(),
+});
 
-export default function ReceptionCheckinCheckout() {
+const CheckinForm = (props: {
+  room: string;
+  date: z.infer<typeof dateFormSchema>;
+}) => {
   const form = useForm<z.infer<typeof checkinFormSchema>>({
     resolver: zodResolver(checkinFormSchema),
+    defaultValues: {
+      roomId: props.room,
+      dateRange: {
+        startDate: props.date.date.from,
+        endDate: props.date.date.to,
+      },
+    },
+  });
+  function onSubmit(values: z.infer<typeof checkinFormSchema>) {
+    console.log(values);
+  }
+
+  return (
+    <Form {...form}>
+      <form
+        className="flex flex-row items-center gap-3"
+        onSubmit={form.handleSubmit(onSubmit)}
+      >
+        <Label htmlFor="username">邮箱</Label>
+        <FormField
+          control={form.control}
+          name="userEmail"
+          render={({ field }) => (
+            <FormItem>
+              <FormControl>
+                <Input placeholder="" type="email" {...field} />
+              </FormControl>
+            </FormItem>
+          )}
+        />
+        <Button type="submit" className="h-10">
+          确认入住
+        </Button>
+      </form>
+    </Form>
+  );
+};
+
+const ReceptionCheckin = () => {
+  const form = useForm<z.infer<typeof dateFormSchema>>({
+    resolver: zodResolver(dateFormSchema),
     defaultValues: {
       date: {
         from: undefined,
@@ -59,11 +123,15 @@ export default function ReceptionCheckinCheckout() {
       },
     },
   });
+  const [rooms, setRooms] = useState<string[]>([]);
+  const [selectedRoom, setSelectedRoom] = useState("");
   const { logout } = useAuth()!;
   const mutation = useMutation({
     mutationFn: dataFetch.getRoomAvailable,
     onSuccess: (data) => {
-      console.log(data.payload);
+      // console.log(data.payload);
+      setRooms(data.payload.available);
+      setSelectedRoom(data.payload.recommended);
     },
     onError: (error) => {
       console.log(error.message);
@@ -72,8 +140,12 @@ export default function ReceptionCheckinCheckout() {
       }
     },
   });
+  const [submitted, setSubmitted] = useState<z.infer<
+    typeof dateFormSchema
+  > | null>(null);
 
-  function onSubmit(values: z.infer<typeof checkinFormSchema>) {
+  function onSubmit(values: z.infer<typeof dateFormSchema>) {
+    setSubmitted(values);
     mutation.mutate({
       startDate: values.date.from.toISOString(),
       endDate: values.date.to
@@ -83,60 +155,107 @@ export default function ReceptionCheckinCheckout() {
   }
 
   return (
-    <div>
-      <div className="my-3 flex flex-row items-center gap-3">
-        <h2>查询空房</h2>
+    <Card className="">
+      <CardHeader className="flex h-24 flex-row">
+        <CardTitle>办理入住</CardTitle>
+        <div className="grow" />
         <Form {...form}>
           <form
-            className="flex flex-row items-center gap-1"
+            className="flex flex-row gap-3"
             onSubmit={form.handleSubmit(onSubmit)}
           >
-            <FormField
-              control={form.control}
-              name="date"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <DatePickerWithRange
-                      date={field.value}
-                      setDate={field.onChange}
-                      disabledDays={[]}
-                      className="w-[300px]"
-                    />
-                  </FormControl>
-                </FormItem>
+            <div className="flex flex-col gap-1">
+              <FormField
+                control={form.control}
+                name="date"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <DatePickerWithRange
+                        date={field.value}
+                        setDate={field.onChange}
+                        disabledDays={[]}
+                        className="w-[300px]"
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+              {form.formState.errors.date !== undefined ? (
+                <p className="text-sm font-medium text-destructive">
+                  需填写开始日期和结束日期
+                </p>
+              ) : (
+                <></>
               )}
-            />
-            {form.formState.errors.date !== undefined ? (
-              <p className="text-sm font-medium text-destructive">
-                需填写开始日期和结束日期
-              </p>
-            ) : (
-              <></>
-            )}
+            </div>
             <Button
               type="submit"
-              className="h-8"
+              variant="outline"
+              className="h-10"
               disabled={
                 form.formState.errors.date !== undefined || mutation.isPending
               }
             >
-              提交
+              查询
             </Button>
           </form>
         </Form>
-        {mutation.data &&
-          mutation.data.payload.available.map((roomId) => {
-            return <p key={roomId}>{roomId}</p>;
-          })}
-      </div>
-      <DataTable
-        data={tasks}
-        columns={columns}
-        getDisplayName={getDisplayName}
-        searchPlaceholder="搜索房间号..."
-        filterableColumns={filterableColumns}
-      />
+      </CardHeader>
+      <CardContent>
+        <div className="flex flex-row items-center gap-3">
+          <CardTitle className="text-lg">选择房间</CardTitle>
+          <Select disabled={rooms.length === 0}>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue
+                placeholder={
+                  selectedRoom.length === 0 ? "选择房间" : selectedRoom
+                }
+              />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                {mutation.data &&
+                  mutation.data.payload.available.map((roomId) => {
+                    return (
+                      <SelectItem key={roomId} value={roomId}>
+                        {roomId}
+                      </SelectItem>
+                    );
+                  })}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+          <div className="grow" />
+          {selectedRoom.length === 0 ? (
+            <p className="text-sm font-medium text-destructive">无可用房间</p>
+          ) : (
+            submitted && <CheckinForm room={selectedRoom} date={submitted} />
+          )}
+        </div>
+      </CardContent>
+    </Card>
+  );
+};
+
+export default function ReceptionCheckinCheckout() {
+  return (
+    <div className="flex flex-col gap-5">
+      <ReceptionCheckin />
+      <Card>
+        <CardHeader>
+          <CardTitle>管理房间</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <DataTable
+            data={tasks}
+            columns={columns}
+            getDisplayName={getDisplayName}
+            searchPlaceholder="搜索房间号..."
+            filterableColumns={filterableColumns}
+          />
+        </CardContent>
+      </Card>
     </div>
   );
 }
