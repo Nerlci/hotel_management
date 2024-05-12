@@ -97,8 +97,8 @@ const loginUser = async (req: Request, res: Response) => {
 
   res.cookie("token", token, {
     httpOnly: true,
-    // sameSite: "none",
-    // secure: false,
+    sameSite: "none",
+    secure: true,
   });
   res.json(response);
 };
