@@ -146,6 +146,7 @@ export const userLoginResponse = responseBase.extend({
     type: z.union([
       z.literal("customer"),
       z.literal("admin"),
+      z.literal("aircon-manager"),
       z.literal("reception"),
     ]),
   }),

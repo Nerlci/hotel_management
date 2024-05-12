@@ -1,7 +1,11 @@
 import express from "express";
+
+import http from "http";
+import https from "https";
+import fs from "fs";
+
 import cors from "cors";
 import cookieParser from "cookie-parser";
-import { UserAvailablityResponse } from "shared";
 import { apiRouter } from "./router/apiRouter";
 import { initRoom } from "./service/roomService";
 const app = express();
@@ -21,8 +25,18 @@ app.get("/echo", async (req, res) => {
 
 app.use("/api", apiRouter);
 
-app.listen(8080, () => {
-  console.log("Server is running on http://localhost:8080");
+const httpServer = http.createServer(app);
+httpServer.listen(8080, () => {
+  console.log("HTTP Server is running on http://localhost:8080");
+});
+
+const options = {
+  key: fs.readFileSync("certs/server.key"),
+  cert: fs.readFileSync("certs/server.crt"),
+};
+const httpsServer = https.createServer(options, app);
+httpsServer.listen(8443, () => {
+  console.log("HTTPS Server is running on https://localhost:8443");
 });
 
 // set TOTAL_ROOMS in .env file
