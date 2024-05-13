@@ -116,11 +116,7 @@ export type ACDetailResponse = z.infer<typeof acDetailResponse>;
 export const userRoomOrderResponse = responseBase
   .extend({
     payload: z.object({
-      roomId: z
-        .string()
-        .min(1, "Room ID can't be empty")
-        .max(5, "Room ID too long")
-        .or(z.literal("")),
+      roomId: z.string(),
       startDate: z.string().datetime().or(z.literal("")),
       endDate: z.string().datetime().or(z.literal("")),
     }),

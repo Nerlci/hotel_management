@@ -4,6 +4,7 @@ import {
   LoginForm,
   ReceptionCheckinRequest,
   RegisterForm,
+  UserRoomOrderResponse,
   acDetailResponse,
   receptionAvailableResponse,
   responseBase,
@@ -101,9 +102,14 @@ export async function getUserRoomOrder() {
   if (responseJson.code === "401") {
     throw new Error("401");
   }
-  const json = userRoomOrderResponse.parse(responseJson);
-  if (json.code !== "200") {
-    throw new Error(json.error.msg);
+  if (responseJson.code !== "200") {
+    throw new Error(responseJson.error.msg);
+  }
+  let json: UserRoomOrderResponse;
+  try {
+    json = userRoomOrderResponse.parse(responseJson);
+  } catch (e) {
+    throw e;
   }
   return json;
 }
@@ -147,10 +153,10 @@ export async function postUserLogin(values: LoginForm) {
   if (responseJson.code === "401") {
     throw new Error("401");
   }
-  const json = userLoginResponse.parse(responseJson);
-  if (json.code !== "200") {
-    throw new Error(json.error.msg);
+  if (responseJson.code !== "200") {
+    throw new Error(responseJson.error.msg);
   }
+  const json = userLoginResponse.parse(responseJson);
   return json;
 }
 
@@ -229,7 +235,7 @@ export function generateGetUserAirconDetail(roomId: string) {
 
 export async function postReceptionCheckin(body: ReceptionCheckinRequest) {
   const response = await fetch(
-    `${BASE_URL}/api/reception/checkin?roomId=${body.roomId}&email=${body.email}`,
+    `${BASE_URL}/api/room/checkin?roomId=${body.roomId}&email=${body.email}`,
     {
       method: "POST",
       mode: "cors",

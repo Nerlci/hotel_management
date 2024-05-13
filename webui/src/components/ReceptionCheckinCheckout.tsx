@@ -82,6 +82,7 @@ const CheckinForm = (props: {
         startDate: props.date.date.from,
         endDate: props.date.date.to,
       },
+      userEmail: "",
     },
   });
   useEffect(() => {
