@@ -2,6 +2,7 @@ import {
   ACUpdateRequestBody,
   DateRange,
   LoginForm,
+  ReceptionCheckinRequest,
   RegisterForm,
   acDetailResponse,
   receptionAvailableResponse,
@@ -12,7 +13,6 @@ import {
 } from "./schema";
 
 export const BASE_URL = process.env.VITE_API_URL || "http://localhost:8080";
-console.log(BASE_URL);
 
 export async function getRoomAvailable(body: DateRange) {
   const response = await fetch(
@@ -225,4 +225,30 @@ export function generateGetUserAirconDetail(roomId: string) {
     }
     return json;
   };
+}
+
+export async function postReceptionCheckin(body: ReceptionCheckinRequest) {
+  const response = await fetch(
+    `${BASE_URL}/api/reception/checkin?roomId=${body.roomId}&email=${body.email}`,
+    {
+      method: "POST",
+      mode: "cors",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+    },
+  );
+  if (!response.ok) {
+    throw new Error("Request failed");
+  }
+  const responseJson = await response.json();
+  if (responseJson.code === "401") {
+    throw new Error("401");
+  }
+  const json = responseBase.parse(responseJson);
+  if (json.code !== "200") {
+    throw new Error(json.error.msg);
+  }
+  return json;
 }

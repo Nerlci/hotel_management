@@ -9,7 +9,7 @@ import { DatePickerWithRange } from "./DatePickerWithRange";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Form, FormControl, FormField, FormItem } from "./ui/form";
+import { Form, FormControl, FormField, FormItem, FormMessage } from "./ui/form";
 import { Button } from "./ui/button";
 import { useMutation } from "@tanstack/react-query";
 import { dataFetch } from "shared";
@@ -23,9 +23,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./ui/select";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
+import { toast } from "sonner";
 
 const tasks: Room[] = [
   {
@@ -83,8 +84,25 @@ const CheckinForm = (props: {
       },
     },
   });
+  useEffect(() => {
+    form.setValue("roomId", props.room);
+  }, [props.room, form]);
+  const checkinMutation = useMutation({
+    mutationFn: dataFetch.postReceptionCheckin,
+    onSuccess: () => {
+      toast.success("入住成功");
+    },
+    onError: (error) => {
+      console.log(error.message);
+      toast.error("入住失败");
+    },
+  });
   function onSubmit(values: z.infer<typeof checkinFormSchema>) {
     console.log(values);
+    checkinMutation.mutate({
+      email: values.userEmail,
+      roomId: values.roomId,
+    });
   }
 
   return (
@@ -100,8 +118,14 @@ const CheckinForm = (props: {
           render={({ field }) => (
             <FormItem>
               <FormControl>
-                <Input placeholder="" type="email" {...field} />
+                <Input
+                  className="w-60"
+                  placeholder=""
+                  type="email"
+                  {...field}
+                />
               </FormControl>
+              <FormMessage />
             </FormItem>
           )}
         />
@@ -205,7 +229,7 @@ const ReceptionCheckin = () => {
       <CardContent>
         <div className="flex flex-row items-center gap-3">
           <CardTitle className="text-lg">选择房间</CardTitle>
-          <Select disabled={rooms.length === 0}>
+          <Select disabled={rooms.length === 0} onValueChange={setSelectedRoom}>
             <SelectTrigger className="w-[180px]">
               <SelectValue
                 placeholder={

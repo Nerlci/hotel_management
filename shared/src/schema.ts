@@ -152,3 +152,9 @@ export const userLoginResponse = responseBase.extend({
   }),
 });
 export type UserLoginResponse = z.infer<typeof userLoginResponse>;
+
+export const receptionCheckinRequest = z.object({
+  roomId: z.string().min(1, "Room ID can't be empty"),
+  email: z.string().email(),
+});
+export type ReceptionCheckinRequest = z.infer<typeof receptionCheckinRequest>;
