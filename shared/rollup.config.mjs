@@ -4,7 +4,9 @@ import terser from "@rollup/plugin-terser";
 import { nodeResolve } from "@rollup/plugin-node-resolve";
 import commonjs from "@rollup/plugin-commonjs";
 import replace from "@rollup/plugin-replace";
-import "dotenv/config";
+import dotenv from "dotenv";
+
+dotenv.config({ path: [".env.local", ".env"] });
 
 const config = defineConfig([
   {
@@ -31,7 +33,7 @@ const config = defineConfig([
       nodeResolve(),
       commonjs(),
       replace({
-        VITE_API_URL: JSON.stringify(process.env.VITE_API_URL),
+        "process.env.VITE_API_URL": JSON.stringify(process.env.VITE_API_URL),
         preventAssignment: true,
       }),
     ],
