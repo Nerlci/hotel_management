@@ -69,11 +69,40 @@ const getAvailableRooms = async (startDate: Date, endDate: Date) => {
   return rooms;
 };
 
+const getRoom = async (email: string) => {
+  const user = await prisma.user.findUnique({
+    where: {
+      email: email,
+    },
+  });
+  if (user === null) {
+    throw new Error("User not found");
+  }
+
+  const reservation = await prisma.reservation.findUnique({
+    where: {
+      userId: user.id,
+    },
+  });
+
+  if (reservation === null) {
+    throw new Error("No reservation");
+  }
+
+  if (reservation.roomId !== null) {
+    throw new Error("You have already checked in");
+  }
+
+  return (
+    await getAvailableRooms(reservation.startDate, reservation.endDate)
+  ).map((room) => room.roomId);
+};
+
 const roomService = {
   findBusyDays,
   checkRoomAvailability,
   getAvailableRooms,
+  getRoom,
 };
 
-export { roomService };
-export { initRoom };
+export { roomService, initRoom };
