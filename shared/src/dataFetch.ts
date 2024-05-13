@@ -11,7 +11,8 @@ import {
   userRoomOrderResponse,
 } from "./schema";
 
-export const BASE_URL = "http://localhost:8080";
+export const BASE_URL = process.env.VITE_API_URL || "http://localhost:8080";
+console.log(BASE_URL);
 
 export async function getRoomAvailable(body: DateRange) {
   const response = await fetch(
