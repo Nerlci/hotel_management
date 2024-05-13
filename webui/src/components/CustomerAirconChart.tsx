@@ -19,8 +19,16 @@ import {
 } from "recharts";
 import { Skeleton } from "./ui/skeleton";
 import { toast } from "sonner";
-import { MAX_AIRCON_SPEED, MAX_AIRCON_TEMP, dataFetch } from "shared";
+import {
+  MAX_AIRCON_SPEED,
+  MAX_AIRCON_TEMP,
+  MIN_AIRCON_SPEED,
+  MIN_AIRCON_TEMP,
+  dataFetch,
+} from "shared";
 import { useAuth } from "@/hooks/useAuth";
+
+const MAX_CHART_DATA = 40;
 
 type CostDataItem = {
   date: string;
@@ -131,6 +139,10 @@ export default function CustomerAirconChart() {
     })
     .forEach((item) => {
       airconData.push(item);
+      if (airconData.length > MAX_CHART_DATA) {
+        // limit airconData length to 100
+        airconData.shift();
+      }
       if (!item.on) {
         airconData.push({
           ...item,
@@ -139,6 +151,9 @@ export default function CustomerAirconChart() {
           风速: undefined,
           cool: undefined,
         });
+        if (airconData.length > MAX_CHART_DATA) {
+          airconData.shift();
+        }
       }
     });
 
@@ -226,11 +241,20 @@ export default function CustomerAirconChart() {
                   margin={{ top: 5, right: 40, left: 0, bottom: 5 }}
                 >
                   <XAxis dataKey="time" hide />
-                  <YAxis yAxisId="left" domain={[0, MAX_AIRCON_TEMP]} />
+                  <YAxis
+                    yAxisId="left"
+                    domain={[MIN_AIRCON_TEMP - 4, MAX_AIRCON_TEMP + 1]}
+                    ticks={[
+                      ...Array(MAX_AIRCON_TEMP - MIN_AIRCON_TEMP + 1).keys(),
+                    ].map((i) => i + MIN_AIRCON_TEMP)}
+                  />
                   <YAxis
                     yAxisId="right"
                     orientation="right"
-                    domain={[0, MAX_AIRCON_SPEED]}
+                    domain={[0.5, 7]}
+                    ticks={[
+                      ...Array(MAX_AIRCON_SPEED - MIN_AIRCON_SPEED + 1).keys(),
+                    ].map((i) => i + MIN_AIRCON_SPEED)}
                   />
                   <Area
                     yAxisId="left"

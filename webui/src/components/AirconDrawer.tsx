@@ -19,7 +19,6 @@ import {
   MAX_AIRCON_TEMP,
   MIN_AIRCON_SPEED,
   MIN_AIRCON_TEMP,
-  clientHooks,
   dataFetch,
 } from "shared";
 import AirConditionerIcon from "../assets/aircon.svg";
@@ -36,6 +35,8 @@ import {
 } from "@/components/ui/tooltip";
 import { TempSlider, WindSlider } from "./AirconSlider";
 import { useAuth } from "@/hooks/useAuth";
+import { useSSE } from "@/hooks/useSSE";
+import { useTempEmulate } from "@/hooks/tempEmulate";
 
 const AirconDrawerContent = ({
   sseData,
@@ -118,7 +119,7 @@ const AirconDrawerContent = ({
             max={MAX_AIRCON_TEMP}
             min={MIN_AIRCON_TEMP}
             step={1}
-            disabled={!start}
+            disabled={!start || sseData.on}
             onValueChange={(value) => {
               setTemperature(value[0]);
               if (value[0] < sseData.temp) {
@@ -147,7 +148,8 @@ const AirconDrawerContent = ({
                   style={{
                     transform: "scale(-1, -1)",
                     animation: `spin ${start ? 1 : 0}s linear infinite`,
-                    animationDuration: `${2 / (1.5 * windspeed)}s`,
+                    // this line works fine, but causes a warning
+                    // animationDuration: `${2 / (1.5 * windspeed)}s`,
                   }}
                 />
               </div>
@@ -165,11 +167,11 @@ const AirconDrawerContent = ({
           </div>
           <WindSlider
             className="w-full"
-            defaultValue={[temperature]}
+            defaultValue={[windspeed]}
             max={MAX_AIRCON_SPEED}
             min={MIN_AIRCON_SPEED}
             step={1}
-            disabled={!start}
+            disabled={!start || sseData.on}
             onValueChange={(value) => {
               setWindspeed(value[0]);
             }}
@@ -195,12 +197,12 @@ const AirconDrawerContent = ({
   );
 };
 
-export function AirconDrawer() {
-  const { sseData, sseReadyState, closeSource } = clientHooks.useSSE<ACStatus>(
+export default function AirconDrawer() {
+  const { sseData, sseReadyState, closeSource } = useSSE<ACStatus>(
     `${dataFetch.BASE_URL}/api/ac/status?roomId=${8103}`,
   );
   useEffect(() => closeSource, [closeSource]);
-  const currentTemp = clientHooks.useTempEmulate({
+  const currentTemp = useTempEmulate({
     startTemp: 10,
     targetTemp: sseData?.temp ?? 24,
     windSpeed: sseData?.fanSpeed ?? 1,
