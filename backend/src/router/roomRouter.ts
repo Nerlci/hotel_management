@@ -19,4 +19,6 @@ roomRouter.get(
 );
 roomRouter.post("/checkin", authUserMiddleware, roomController.checkIn);
 
+roomRouter.get("/room", authUserMiddleware, roomController.getRoom);
+
 export { roomRouter };

@@ -9,6 +9,7 @@ import {
 } from "shared";
 import { roomService } from "../service/roomService";
 import { prisma } from "../prisma";
+import { handleErrors } from "../utils/utils";
 
 const bookRoom = async (req: Request, res: Response) => {
   let reqBody: DateRange;
@@ -363,6 +364,28 @@ const checkIn = async (req: Request, res: Response) => {
   }
 };
 
+const getRoom = async (req: Request, res: Response) => {
+  try {
+    console.log(req.query);
+    const email = String(req.query.email);
+    const result = await roomService.getRoom(email);
+
+    const response = responseBase.parse({
+      code: "200",
+      payload: { available: result },
+      error: {
+        msg: "",
+      },
+    });
+
+    res.json(response);
+  } catch (error: any) {
+    handleErrors(error, res);
+    // console.log(error.message);
+    // res.send("error");
+  }
+};
+
 const roomController = {
   bookRoom,
   checkOrder,
@@ -370,6 +393,7 @@ const roomController = {
   cancelOrder,
   getAvailableRooms,
   checkIn,
+  getRoom,
 };
 
 export { roomController };
