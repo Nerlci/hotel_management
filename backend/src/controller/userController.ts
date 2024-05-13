@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { userService } from "../service/userService";
 import { encryptPassword, validatePassword } from "../utils/utils";
-import { UserType, parseUserType, responseBase } from "shared";
+import { responseBase } from "shared";
 import jwt from "jsonwebtoken";
 
 const registerUser = async (req: Request, res: Response) => {
@@ -76,6 +76,21 @@ const loginUser = async (req: Request, res: Response) => {
 
     res.json(response);
     return;
+  }
+
+  function parseUserType(type: number): string {
+    switch (type) {
+      case 0:
+        return "customer";
+      case 1:
+        return "admin";
+      case 2:
+        return "reception";
+      case 3:
+        return "aircon-manager";
+      default:
+        return "customer";
+    }
   }
 
   const response = responseBase.parse({
