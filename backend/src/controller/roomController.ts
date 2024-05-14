@@ -134,122 +134,23 @@ const getAvailableRooms = async (req: Request, res: Response) => {
 };
 
 const checkIn = async (req: Request, res: Response) => {
-  const email = req.query.email;
-  const roomId = req.query.roomId;
+  try {
+    const email = req.query.email as string;
+    const roomId = req.query.roomId as string;
 
-  const room = await prisma.room.findUnique({
-    where: {
-      roomId: roomId as string,
-    },
-  });
+    const result = await roomService.checkIn(email, roomId);
 
-  if (!room) {
     const response = responseBase.parse({
-      error: {
-        msg: "Room not found",
-      },
-      code: "400",
+      code: "200",
       payload: {},
-    });
-
-    res.json(response);
-    return;
-  } else if (room.status === "occupied") {
-    const response = responseBase.parse({
-      error: {
-        msg: "Room is occupied",
-      },
-      code: "400",
-      payload: {},
-    });
-
-    res.json(response);
-    return;
-  } else {
-    const user = await prisma.user.findUnique({
-      where: {
-        email: email as string,
-      },
-    });
-
-    if (!user) {
-      const response = responseBase.parse({
-        error: {
-          msg: "User not found",
-        },
-        code: "400",
-        payload: {},
-      });
-
-      res.json(response);
-      return;
-    }
-
-    const reservation = await prisma.reservation.findMany({
-      where: {
-        userId: user?.id,
-      },
-    });
-
-    // 是否有预定
-    if (reservation.length === 0) {
-      const response = responseBase.parse({
-        error: {
-          msg: "No reservation",
-        },
-        code: "400",
-        payload: {},
-      });
-
-      res.json(response);
-      return;
-    } else {
-      // 是否已经入住
-      if (reservation[0].roomId !== null) {
-        const response = responseBase.parse({
-          error: {
-            msg: "You have already checked in",
-          },
-          code: "400",
-          payload: {},
-        });
-
-        res.json(response);
-        return;
-      }
-    }
-
-    await prisma.room.update({
-      where: {
-        roomId: roomId as string,
-      },
-      data: {
-        status: "occupied",
-      },
-    });
-
-    await prisma.reservation.update({
-      where: {
-        userId: user?.id,
-      },
-      data: {
-        room: {
-          connect: {
-            roomId: room.roomId,
-          },
-        },
-      },
-    });
-
-    const response = responseBase.parse({
       error: {
         msg: "",
       },
-      code: "200",
-      payload: {},
     });
 
     res.json(response);
+  } catch (error) {
+    handleErrors(error, res);
   }
 };
 

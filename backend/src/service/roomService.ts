@@ -167,6 +167,53 @@ const cancelOrder = async (userId: string) => {
   }
 };
 
+const checkIn = async (email: string, roomId: string) => {
+  const room = await prisma.room.findUnique({
+    where: {
+      roomId: roomId as string,
+    },
+  });
+
+  if (room === null) {
+    throw new Error("Room not found");
+  }
+
+  if (room.status === "occupied") {
+    throw new Error("Room is occupied");
+  }
+
+  const user = await prisma.user.findUnique({
+    where: {
+      email: email as string,
+    },
+  });
+
+  if (user === null) {
+    throw new Error("User not found");
+  }
+
+  const reservation = await prisma.reservation.findMany({
+    where: {
+      userId: user.id,
+    },
+  });
+
+  if (reservation.length === 0) {
+    throw new Error("No reservation");
+  } else if (reservation[0].roomId !== null) {
+    throw new Error("You have already checked in");
+  }
+
+  return await prisma.reservation.update({
+    where: {
+      userId: user.id,
+    },
+    data: {
+      roomId: roomId,
+    },
+  });
+};
+
 const roomService = {
   findBusyDays,
   checkRoomAvailability,
@@ -176,6 +223,7 @@ const roomService = {
   checkOrder,
   checkDaysAvailability,
   cancelOrder,
+  checkIn,
 };
 
 export { roomService, initRoom };
