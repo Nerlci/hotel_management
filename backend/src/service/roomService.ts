@@ -73,10 +73,10 @@ const getAvailableRooms = async (startDate: Date, endDate: Date) => {
   return rooms;
 };
 
-const getRoom = async (email: string) => {
+const getRoom = async (userId: string) => {
   const user = await prisma.user.findUnique({
     where: {
-      email: email,
+      id: userId,
     },
   });
   if (user === null) {
@@ -167,7 +167,7 @@ const cancelOrder = async (userId: string) => {
   }
 };
 
-const checkIn = async (email: string, roomId: string) => {
+const checkIn = async (userId: string, roomId: string) => {
   const room = await prisma.room.findUnique({
     where: {
       roomId: roomId as string,
@@ -184,7 +184,7 @@ const checkIn = async (email: string, roomId: string) => {
 
   const user = await prisma.user.findUnique({
     where: {
-      email: email as string,
+      id: userId,
     },
   });
 
@@ -194,7 +194,7 @@ const checkIn = async (email: string, roomId: string) => {
 
   const reservation = await prisma.reservation.findMany({
     where: {
-      userId: user.id,
+      userId: userId,
     },
   });
 

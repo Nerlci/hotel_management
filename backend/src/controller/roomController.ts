@@ -135,10 +135,10 @@ const getAvailableRooms = async (req: Request, res: Response) => {
 
 const checkIn = async (req: Request, res: Response) => {
   try {
-    const email = req.query.email as string;
+    const userId = req.query.userId as string;
     const roomId = req.query.roomId as string;
 
-    const result = await roomService.checkIn(email, roomId);
+    const result = await roomService.checkIn(userId, roomId);
 
     const response = responseBase.parse({
       code: "200",
@@ -156,8 +156,8 @@ const checkIn = async (req: Request, res: Response) => {
 
 const getRoom = async (req: Request, res: Response) => {
   try {
-    const email = String(req.query.email);
-    const result = await roomService.getRoom(email);
+    const userId = String(req.query.userId);
+    const result = await roomService.getRoom(userId);
 
     const response = responseBase.parse({
       code: "200",
