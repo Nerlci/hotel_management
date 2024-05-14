@@ -123,12 +123,27 @@ const bookRoom = async (userId: string, startDate: Date, endDate: Date) => {
   });
 };
 
+const checkOrder = async (userId: string) => {
+  const reservation = await prisma.reservation.findMany({
+    where: {
+      userId: userId,
+    },
+  });
+
+  if (reservation.length === 0) {
+    throw new Error("No reservation");
+  }
+
+  return reservation;
+};
+
 const roomService = {
   findBusyDays,
   checkRoomAvailability,
   getAvailableRooms,
   getRoom,
   bookRoom,
+  checkOrder,
 };
 
 export { roomService, initRoom };
