@@ -173,6 +173,26 @@ const getRoom = async (req: Request, res: Response) => {
   }
 };
 
+const checkOut = async (req: Request, res: Response) => {
+  try {
+    const userId = req.query.userId as string;
+
+    const result = await roomService.checkOut(userId);
+
+    const response = responseBase.parse({
+      code: "200",
+      payload: {},
+      error: {
+        msg: "",
+      },
+    });
+
+    res.json(response);
+  } catch (error) {
+    handleErrors(error, res);
+  }
+};
+
 const roomController = {
   bookRoom,
   checkOrder,
@@ -181,6 +201,7 @@ const roomController = {
   getAvailableRooms,
   checkIn,
   getRoom,
+  checkOut,
 };
 
 export { roomController };
