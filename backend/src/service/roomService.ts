@@ -137,6 +137,13 @@ const checkOrder = async (userId: string) => {
   return reservation;
 };
 
+const checkDaysAvailability = async (startDate: Date, endDate: Date) => {
+  const busyDays = await findBusyDays(startDate, endDate);
+  return {
+    unavailableDates: busyDays,
+  };
+};
+
 const roomService = {
   findBusyDays,
   checkRoomAvailability,
@@ -144,6 +151,7 @@ const roomService = {
   getRoom,
   bookRoom,
   checkOrder,
+  checkDaysAvailability,
 };
 
 export { roomService, initRoom };

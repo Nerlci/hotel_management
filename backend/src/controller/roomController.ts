@@ -63,34 +63,24 @@ const checkDaysAvailability = async (req: Request, res: Response) => {
   let reqBody: DateRange;
   try {
     reqBody = DateRange.parse(req.query);
-  } catch (e: any) {
-    console.log(e);
-    const response = responseBase.parse({
+    const startDate = new Date(reqBody.startDate);
+    const endDate = new Date(reqBody.endDate);
+
+    const result = await roomService.checkDaysAvailability(startDate, endDate);
+
+    const response = userAvailablityResponse.parse({
       error: {
-        msg: e.message,
+        msg: "",
       },
-      code: "400",
-      payload: {},
+      code: "200",
+      payload: result,
     });
+
     res.json(response);
+  } catch (e: any) {
+    handleErrors(e, res);
     return;
   }
-  const startDate = new Date(reqBody.startDate);
-  const endDate = new Date(reqBody.endDate);
-
-  const busyDays = await roomService.findBusyDays(startDate, endDate);
-
-  const response = userAvailablityResponse.parse({
-    error: {
-      msg: "",
-    },
-    code: "200",
-    payload: {
-      unavailableDates: busyDays,
-    },
-  });
-
-  res.json(response);
 };
 
 // 客房退订
