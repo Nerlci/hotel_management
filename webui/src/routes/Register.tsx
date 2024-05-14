@@ -48,9 +48,7 @@ export const Register = () => {
     },
     onError: (error) => {
       console.log(error.message);
-      toast(error.message, {
-        description: "注册失败",
-      });
+      toast.error("注册失败");
     },
   });
 
