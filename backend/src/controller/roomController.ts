@@ -105,27 +105,17 @@ const cancelOrder = async (req: Request, res: Response) => {
 };
 
 const getAvailableRooms = async (req: Request, res: Response) => {
-  const startDate = new Date(req.query.startDate as string);
-  const endDate = new Date(req.query.endDate as string);
-  const availableRooms = await roomService.getAvailableRooms(
-    startDate,
-    endDate,
-  );
+  try {
+    let reqBody: DateRange;
+    reqBody = DateRange.parse(req.query);
 
-  if (availableRooms.length === 0) {
-    const response: ReceptionAvailableResponse = {
-      error: {
-        msg: "No room available. Please choose another date.",
-      },
-      code: "400",
-      payload: {
-        recommended: "",
-        available: [],
-      },
-    };
+    const startDate = new Date(reqBody.startDate);
+    const endDate = new Date(reqBody.endDate);
 
-    res.json(response);
-  } else {
+    const availableRooms = await roomService.getAvailableRooms(
+      startDate,
+      endDate,
+    );
     const response: ReceptionAvailableResponse = {
       error: {
         msg: "",
@@ -138,6 +128,8 @@ const getAvailableRooms = async (req: Request, res: Response) => {
     };
 
     res.json(response);
+  } catch (error) {
+    handleErrors(error, res);
   }
 };
 

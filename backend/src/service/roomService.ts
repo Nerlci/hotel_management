@@ -67,6 +67,9 @@ const getAvailableRooms = async (startDate: Date, endDate: Date) => {
     },
   });
 
+  if (rooms.length === 0) {
+    throw new Error("No available rooms");
+  }
   return rooms;
 };
 
