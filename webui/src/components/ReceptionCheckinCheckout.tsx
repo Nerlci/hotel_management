@@ -8,7 +8,7 @@ import { Room } from "@/lib/room-data/schema";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Form, FormControl, FormField, FormItem, FormMessage } from "./ui/form";
+import { Form, FormControl, FormField, FormItem } from "./ui/form";
 import { Button } from "./ui/button";
 import { useMutation } from "@tanstack/react-query";
 import { dataFetch } from "shared";
@@ -73,7 +73,7 @@ const ReceptionCheckin = () => {
     onSuccess: (data) => {
       // console.log(data.payload);
       if (data.payload.available.length === 0) {
-        toast("无可用房间");
+        toast.info("无可用房间");
       } else {
         setRooms(data.payload.available);
         setSelectedRoom(data.payload.available[0]);
@@ -120,11 +120,10 @@ const ReceptionCheckin = () => {
                 control={form.control}
                 name="email"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col items-center">
                     <FormControl>
                       <Input type="email" placeholder="" {...field} />
                     </FormControl>
-                    <FormMessage />
                   </FormItem>
                 )}
               />

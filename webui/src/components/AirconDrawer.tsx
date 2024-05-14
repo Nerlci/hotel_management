@@ -224,7 +224,7 @@ export default function AirconDrawer() {
   const mutation = useMutation({
     mutationFn: dataFetch.postUserAirconUpdate,
     onSuccess: () => {
-      toast("空调状态更改成功");
+      toast.success("空调状态更改成功");
     },
     onError: (error) => {
       if (error.message === "401") {
@@ -233,9 +233,8 @@ export default function AirconDrawer() {
         });
         logout();
       }
-      toast(error.message, {
-        description: "空调状态更改失败",
-      });
+      toast.error("空调状态更改失败");
+      console.log(error.message);
     },
   });
   const [drawerOpen, setDrawerOpen] = useState(false);

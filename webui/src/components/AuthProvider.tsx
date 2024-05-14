@@ -13,13 +13,13 @@ export function AuthProvider({ children }: { children: React.ReactElement }) {
   const logoutMutation = useMutation({
     mutationFn: dataFetch.getUserLogout,
     onSuccess: () => {
+      toast.success("退出登陆成功");
       setUser(null);
       navigate("/", { replace: true });
     },
     onError: (e) => {
-      toast(e.message, {
-        description: "退出登陆失败",
-      });
+      toast.error("退出登陆失败");
+      console.log(e.message);
     },
   });
 
