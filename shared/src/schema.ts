@@ -65,6 +65,15 @@ export type ReceptionAvailableResponse = z.infer<
   typeof receptionAvailableResponse
 >;
 
+export const receptionCheckinableResponse = responseBase.extend({
+  payload: z.object({
+    available: z.array(z.string()),
+  }),
+});
+export type ReceptionCheckinableResponse = z.infer<
+  typeof receptionCheckinableResponse
+>;
+
 export const CheckinRequest = z.object({
   roomId: z.string().min(1, "Room ID can't be empty"),
   userName: z.string().min(1, "User name can't be empty"),

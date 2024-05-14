@@ -7,6 +7,7 @@ import {
   UserRoomOrderResponse,
   acDetailResponse,
   receptionAvailableResponse,
+  receptionCheckinableResponse,
   responseBase,
   userAvailablityResponse,
   userLoginResponse,
@@ -256,5 +257,27 @@ export async function postReceptionCheckin(body: ReceptionCheckinRequest) {
   if (json.code !== "200") {
     throw new Error(json.error.msg);
   }
+  return json;
+}
+
+export async function getReceptionCheckinableRooms(email: string) {
+  const response = await fetch(`${BASE_URL}/api/room/room?email=${email}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+  });
+  if (!response.ok) {
+    throw new Error("Request failed");
+  }
+  const responseJson = await response.json();
+  if (responseJson.code === "401") {
+    throw new Error("401");
+  }
+  if (responseJson.code !== "200") {
+    throw new Error(responseJson.error.msg);
+  }
+  const json = receptionCheckinableResponse.parse(responseJson);
   return json;
 }
