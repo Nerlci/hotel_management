@@ -30,16 +30,15 @@ function FormCard({ updateBookingQuery }: { updateBookingQuery: () => void }) {
   const book = useMutation({
     mutationFn: dataFetch.postRoomBooking,
     onSuccess: () => {
-      toast("预定成功", {
+      toast.success("预定成功", {
         description: "您的预定已成功提交",
       });
       updateBookingQuery();
     },
     onError: (error) => {
       console.log(error.message);
-      toast(error.message, {
-        description: "预定失败",
-      });
+      toast.error("预定失败");
+      console.log(error.message);
       if (error.message === "401") {
         console.log("401");
         // logout();
@@ -56,9 +55,7 @@ function FormCard({ updateBookingQuery }: { updateBookingQuery: () => void }) {
     },
     onError: (error) => {
       console.log(error.message);
-      toast(error.message, {
-        description: "获取房间可用性失败",
-      });
+      toast.error("获取房间可用性失败");
       if (error.message === "401") {
         logout();
       }

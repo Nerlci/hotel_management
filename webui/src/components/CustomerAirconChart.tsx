@@ -120,9 +120,8 @@ export default function CustomerAirconChart() {
     if (error.message === "401") {
       logout();
     } else {
-      toast("获取详单信息失败", {
-        description: error.message,
-      });
+      toast.error("获取详单信息失败");
+      console.log(error.message);
     }
   }
 

@@ -43,9 +43,8 @@ const Login = () => {
       });
     },
     onError: (error) => {
-      toast(error.message, {
-        description: "请检查您的用户名和密码",
-      });
+      toast.error("登录失败");
+      console.log(error.message);
     },
   });
 
