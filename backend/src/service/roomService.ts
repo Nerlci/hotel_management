@@ -144,6 +144,26 @@ const checkDaysAvailability = async (startDate: Date, endDate: Date) => {
   };
 };
 
+const cancelOrder = async (userId: string) => {
+  const reservation = await prisma.reservation.findMany({
+    where: {
+      userId: userId,
+    },
+  });
+
+  if (reservation.length === 0) {
+    throw new Error("No reservation");
+  } else if (reservation[0].roomId !== null) {
+    throw new Error("You have already checked in");
+  } else {
+    return await prisma.reservation.delete({
+      where: {
+        userId: userId,
+      },
+    });
+  }
+};
+
 const roomService = {
   findBusyDays,
   checkRoomAvailability,
@@ -152,6 +172,7 @@ const roomService = {
   bookRoom,
   checkOrder,
   checkDaysAvailability,
+  cancelOrder,
 };
 
 export { roomService, initRoom };

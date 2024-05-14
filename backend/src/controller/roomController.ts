@@ -85,42 +85,10 @@ const checkDaysAvailability = async (req: Request, res: Response) => {
 
 // 客房退订
 const cancelOrder = async (req: Request, res: Response) => {
-  const userId = res.locals.user.userId;
+  try {
+    const userId = res.locals.user.userId;
 
-  const reservation = await prisma.reservation.findMany({
-    where: {
-      userId: userId,
-    },
-  });
-
-  if (reservation.length === 0) {
-    const response = responseBase.parse({
-      error: {
-        msg: "No reservation",
-      },
-      code: "400",
-      payload: {},
-    });
-
-    res.json(response);
-    return;
-  } else if (reservation[0].roomId !== null) {
-    const response = responseBase.parse({
-      error: {
-        msg: "You have already checked in",
-      },
-      code: "400",
-      payload: {},
-    });
-
-    res.json(response);
-    return;
-  } else {
-    await prisma.reservation.delete({
-      where: {
-        userId: userId,
-      },
-    });
+    const result = await roomService.cancelOrder(userId);
 
     const response = responseBase.parse({
       error: {
@@ -131,6 +99,8 @@ const cancelOrder = async (req: Request, res: Response) => {
     });
 
     res.json(response);
+  } catch (error) {
+    handleErrors(error, res);
   }
 };
 
