@@ -15,59 +15,11 @@ const bookRoom = async (req: Request, res: Response) => {
   let reqBody: DateRange;
   try {
     reqBody = DateRange.parse(req.body);
-  } catch (e: any) {
-    const response = responseBase.parse({
-      error: {
-        msg: e.message,
-      },
-      code: "400",
-      payload: {},
-    });
-    res.json(response);
-    return;
-  }
-  const startDate = new Date(reqBody.startDate);
-  const endDate = new Date(reqBody.endDate);
-  const userId = res.locals.user.userId;
+    const startDate = new Date(reqBody.startDate);
+    const endDate = new Date(reqBody.endDate);
+    const userId = res.locals.user.userId;
 
-  // 一个用户只能订一间房
-  const userRoom = await prisma.reservation.findMany({
-    where: {
-      userId: userId,
-    },
-  });
-
-  if (userRoom.length > 0) {
-    const response = responseBase.parse({
-      error: {
-        msg: "You have already booked a room",
-      },
-      code: "400",
-      payload: {},
-    });
-
-    res.json(response);
-    return;
-  }
-
-  if (!(await roomService.checkRoomAvailability(startDate, endDate))) {
-    const response = responseBase.parse({
-      error: {
-        msg: "No room available. Please choose another date.",
-      },
-      code: "400",
-      payload: {},
-    });
-
-    res.json(response);
-  } else {
-    await prisma.reservation.create({
-      data: {
-        userId: userId,
-        startDate: startDate,
-        endDate: endDate,
-      },
-    });
+    const result = await roomService.bookRoom(userId, startDate, endDate);
 
     const response = responseBase.parse({
       error: {
@@ -78,6 +30,8 @@ const bookRoom = async (req: Request, res: Response) => {
     });
 
     res.json(response);
+  } catch (e: any) {
+    handleErrors(e, res);
   }
 };
 

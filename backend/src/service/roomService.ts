@@ -1,3 +1,4 @@
+import { User } from "@prisma/client";
 import { prisma } from "../prisma";
 const totalRooms = parseInt(process.env.TOTAL_ROOMS || "2");
 
@@ -98,11 +99,36 @@ const getRoom = async (email: string) => {
   ).map((room) => room.roomId);
 };
 
+const bookRoom = async (userId: string, startDate: Date, endDate: Date) => {
+  const reservation = await prisma.reservation.findMany({
+    where: {
+      userId: userId,
+    },
+  });
+
+  if (reservation.length > 0) {
+    throw new Error("You have already booked a room.");
+  }
+
+  if (!(await checkRoomAvailability(startDate, endDate))) {
+    throw new Error("No available rooms.");
+  }
+
+  return await prisma.reservation.create({
+    data: {
+      userId: userId,
+      startDate: startDate,
+      endDate: endDate,
+    },
+  });
+};
+
 const roomService = {
   findBusyDays,
   checkRoomAvailability,
   getAvailableRooms,
   getRoom,
+  bookRoom,
 };
 
 export { roomService, initRoom };
