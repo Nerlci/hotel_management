@@ -17,17 +17,17 @@ export const Customer: React.FC = () => {
     ? bookingQuery.data.payload.roomId.length > 0
     : false;
   const [tabVal, setTabVal] = useState<string | "booking" | "dashboard">(
-    "booking",
+    "dashboard",
   );
 
   useEffect(() => {
-    if (bookingQuery.data) {
-      if (bookingQuery.data.payload.roomId.length > 0) {
-        setTabVal("dashboard");
-      } else {
-        setTabVal("booking");
-      }
-    }
+    // if (bookingQuery.data) {
+    //   if (bookingQuery.data.payload.roomId.length > 0) {
+    //     setTabVal("dashboard");
+    //   } else {
+    //     setTabVal("booking");
+    //   }
+    // }
   }, [bookingQuery]);
 
   if (bookingQuery.isError && bookingQuery.error.message === "401") {
