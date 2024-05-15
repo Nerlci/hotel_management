@@ -13,7 +13,7 @@ import { Label } from "@/components/ui/label";
 import { Link } from "react-router-dom";
 import { ModeToggle } from "@/components/mode-toggle";
 import { useAuth } from "@/hooks/useAuth";
-import XiaoDing from "../assets/xiaoding.jpg";
+import XiaoDing from "/xd.svg";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { LoginForm, dataFetch } from "shared";
@@ -59,9 +59,10 @@ const Login = () => {
       </div>
       <div className="min-h-screen w-full lg:grid lg:grid-cols-2">
         <div className="hidden place-content-center bg-muted lg:block">
-          <div className="max-h-[100vh]">
-            <img src={XiaoDing} />
-          </div>
+          <img
+            className="mx-auto h-32 w-32 invert dark:invert-0"
+            src={XiaoDing}
+          />
         </div>
         <div className="flex items-center justify-center py-12">
           <div className="mx-auto grid w-[350px] gap-6">
@@ -75,7 +76,7 @@ const Login = () => {
               <Form {...form}>
                 <form
                   onSubmit={form.handleSubmit(onSubmit)}
-                  className="w-80 space-y-2"
+                  className="w-full space-y-2"
                 >
                   <div className="grid gap-2">
                     <Label htmlFor="username">邮箱</Label>
