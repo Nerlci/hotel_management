@@ -27,8 +27,7 @@ import {
   dataFetch,
 } from "shared";
 import { useAuth } from "@/hooks/useAuth";
-
-const MAX_CHART_DATA = 40;
+import { useWindowSize } from "usehooks-ts";
 
 type CostDataItem = {
   date: string;
@@ -95,6 +94,8 @@ const CustomTooltip = ({ active, payload }) => {
 };
 
 export default function CustomerAirconChart() {
+  const { width } = useWindowSize();
+  const MAX_CHART_DATA = width < 700 ? 10 : 40;
   const { logout } = useAuth()!;
   const roomNumberQuery = useQuery({
     queryKey: ["customerRoomNumber"],
