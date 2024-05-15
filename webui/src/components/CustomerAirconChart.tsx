@@ -237,7 +237,7 @@ export default function CustomerAirconChart() {
               <ResponsiveContainer width="100%" height={300}>
                 <AreaChart
                   data={airconData}
-                  margin={{ top: 5, right: 40, left: 0, bottom: 5 }}
+                  margin={{ top: 5, right: 0, left: 0, bottom: 0 }}
                 >
                   <XAxis dataKey="time" hide />
                   <YAxis

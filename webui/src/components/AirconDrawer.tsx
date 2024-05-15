@@ -243,20 +243,21 @@ export default function AirconDrawer() {
     <Drawer open={drawerOpen} onOpenChange={setDrawerOpen}>
       <DrawerTrigger asChild>
         <Button
-          className="h-14 max-w-[20rem]"
+          className="h-32 w-full min-[409px]:h-14 lg:max-w-[21rem]"
           variant="outline"
           disabled={sseReadyState.key !== 1}
         >
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
-                <div className="flex w-full max-w-[20rem] flex-initial flex-row gap-5">
+                <div className="flex w-full flex-initial flex-row items-center gap-5">
                   <img
                     className="pointer-events-none w-10 select-none invert-0 dark:invert"
                     src={AirConditionerIcon}
                   />
+                  <div className="grow" />
                   <div
-                    className={`flex flex-row flex-wrap items-center justify-center gap-1 ${sseData?.on ? "" : "text-muted-foreground"}`}
+                    className={`flex max-w-[14rem] flex-row flex-wrap items-center justify-center gap-1 text-right ${sseData?.on ? "" : "text-muted-foreground"}`}
                   >
                     {sseReadyState.key !== 1 ? (
                       <Skeleton className="h-5 w-40" />
