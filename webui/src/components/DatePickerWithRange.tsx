@@ -1,7 +1,7 @@
 import { Calendar as CalendarIcon } from "lucide-react";
 import { DateRange, Matcher } from "react-day-picker";
 import { zhCN } from "date-fns/locale";
-import { cn, useWindowSize } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import {
@@ -10,6 +10,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { ChineseDateFormat } from "shared";
+import { useWindowSize } from "usehooks-ts";
 
 export type DatePickerWithRangeProps = {
   className?: string;
@@ -24,7 +25,7 @@ export function DatePickerWithRange({
   setDate,
   disabledDays,
 }: DatePickerWithRangeProps) {
-  const [width] = useWindowSize();
+  const { width } = useWindowSize();
 
   return (
     <div className={cn("grid gap-2", className)}>

@@ -40,7 +40,7 @@ export const Customer: React.FC = () => {
           <Tabs
             value={tabVal}
             onValueChange={setTabVal}
-            className="top-3 mx-auto w-10/12"
+            className="top-3 mx-auto w-11/12 md:w-10/12"
           >
             <TabsList>
               <TabsTrigger disabled={customerBooked} value="booking">
