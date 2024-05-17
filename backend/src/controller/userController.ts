@@ -198,9 +198,8 @@ const getUserByEmail = async (req: Request, res: Response) => {
     },
     code: "200",
     payload: {
-      email: user.email,
+      userId: user.id,
       username: user.username,
-      type: user.type,
     },
   });
 
