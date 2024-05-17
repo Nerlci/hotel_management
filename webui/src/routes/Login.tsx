@@ -13,7 +13,7 @@ import { Label } from "@/components/ui/label";
 import { Link } from "react-router-dom";
 import { ModeToggle } from "@/components/mode-toggle";
 import { useAuth } from "@/hooks/useAuth";
-import XiaoDing from "/xd.svg";
+import HotelBooking from "../assets/hotel-booking.svg";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { LoginForm, dataFetch } from "shared";
@@ -58,11 +58,19 @@ const Login = () => {
         <ModeToggle />
       </div>
       <div className="min-h-screen w-full lg:grid lg:grid-cols-2">
-        <div className="hidden place-content-center bg-muted lg:block">
-          <img
-            className="mx-auto h-32 w-32 invert dark:invert-0"
-            src={XiaoDing}
-          />
+        <div className="hidden h-full bg-muted lg:flex lg:flex-col">
+          <div className="mx-auto my-auto place-content-center">
+            <img
+              className="pointer-events-none mx-auto h-64 w-64 select-none"
+              src={HotelBooking}
+            />
+          </div>
+          <a
+            className="p-3 text-muted-foreground"
+            href="https://storyset.com/web"
+          >
+            Web illustrations by Storyset
+          </a>
         </div>
         <div className="flex items-center justify-center py-12">
           <div className="mx-auto grid w-[350px] gap-6">
