@@ -174,10 +174,44 @@ const authUserMiddleware = async (
   next();
 };
 
+const getUserByEmail = async (req: Request, res: Response) => {
+  const email = req.query.email as string;
+
+  const user = await userService.getUserByEmail(email);
+
+  if (!user) {
+    const response = responseBase.parse({
+      error: {
+        msg: "User not found",
+      },
+      code: "400",
+      payload: {},
+    });
+
+    res.json(response);
+    return;
+  }
+
+  const response = responseBase.parse({
+    error: {
+      msg: "",
+    },
+    code: "200",
+    payload: {
+      email: user.email,
+      username: user.username,
+      type: user.type,
+    },
+  });
+
+  res.json(response);
+};
+
 const userController = {
   registerUser,
   loginUser,
   logoutUser,
+  getUserByEmail,
 };
 
 export { userController, authUserMiddleware };
