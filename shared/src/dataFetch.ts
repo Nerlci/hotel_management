@@ -236,7 +236,7 @@ export function generateGetUserAirconDetail(roomId: string) {
 
 export async function postReceptionCheckin(body: ReceptionCheckinRequest) {
   const response = await fetch(
-    `${BASE_URL}/api/room/checkin?roomId=${body.roomId}&email=${body.email}`,
+    `${BASE_URL}/api/room/checkin?roomId=${body.roomId}&userId=${body.userId}`,
     {
       method: "POST",
       mode: "cors",
@@ -260,8 +260,8 @@ export async function postReceptionCheckin(body: ReceptionCheckinRequest) {
   return json;
 }
 
-export async function getReceptionCheckinableRooms(email: string) {
-  const response = await fetch(`${BASE_URL}/api/room/room?email=${email}`, {
+export async function getReceptionCheckinableRooms(userId: string) {
+  const response = await fetch(`${BASE_URL}/api/room/room?userId=${userId}`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",

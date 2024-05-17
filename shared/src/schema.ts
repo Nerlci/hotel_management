@@ -160,6 +160,6 @@ export type UserLoginResponse = z.infer<typeof userLoginResponse>;
 
 export const receptionCheckinRequest = z.object({
   roomId: z.string().min(1, "Room ID can't be empty"),
-  email: z.string().email(),
+  userId: z.string().min(1, "User ID can't be empty"),
 });
 export type ReceptionCheckinRequest = z.infer<typeof receptionCheckinRequest>;
