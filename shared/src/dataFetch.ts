@@ -16,6 +16,27 @@ import {
 
 export const BASE_URL = process.env.VITE_API_URL || "http://localhost:8080";
 
+export async function getUserIdByEmail(email: string) {
+  const response = await fetch(`${BASE_URL}/api/user/email?email=${email}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+  });
+  if (!response.ok) {
+    throw new Error("Request failed");
+  }
+  const responseJson = await response.json();
+  if (responseJson.code === "401") {
+    throw new Error("401");
+  }
+  if (responseJson.code !== "200") {
+    throw new Error(responseJson.error.msg);
+  }
+  return responseJson.payload.userId as string;
+}
+
 export async function getRoomAvailable(body: DateRange) {
   const response = await fetch(
     `${BASE_URL}/api/room/available?startDate=${body.startDate}&endDate=${body.endDate}`,

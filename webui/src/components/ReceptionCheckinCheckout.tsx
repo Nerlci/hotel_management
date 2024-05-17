@@ -22,7 +22,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./ui/select";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { toast } from "sonner";
@@ -67,6 +67,7 @@ const ReceptionCheckin = () => {
   });
   const [rooms, setRooms] = useState<string[]>([]);
   const [selectedRoom, setSelectedRoom] = useState("");
+  const userId = useRef("");
   const { logout } = useAuth()!;
   const mutation = useMutation({
     mutationFn: dataFetch.getReceptionCheckinableRooms,
@@ -80,9 +81,27 @@ const ReceptionCheckin = () => {
       }
     },
     onError: (error) => {
-      console.log(error.message);
       if (error.message === "401") {
         logout();
+      } else {
+        console.log(error.message);
+        toast.error("获取可用房间失败");
+      }
+    },
+  });
+  const checkEmailMutation = useMutation({
+    mutationFn: dataFetch.getUserIdByEmail,
+    onSuccess: (data) => {
+      console.log(`userId: ${data}`);
+      userId.current = data;
+      mutation.mutate(data);
+    },
+    onError: (error) => {
+      if (error.message === "401") {
+        logout();
+      } else {
+        console.log(error.message);
+        toast.error("根据邮箱查找用户失败");
       }
     },
   });
@@ -90,7 +109,8 @@ const ReceptionCheckin = () => {
 
   function onSubmit(values: z.infer<typeof emailFormSchema>) {
     setSubmitted(values.email);
-    mutation.mutate(values.email);
+    // mutation.mutate(values.email);
+    checkEmailMutation.mutate(values.email);
   }
 
   const checkinMutation = useMutation({
@@ -168,7 +188,7 @@ const ReceptionCheckin = () => {
                 className="h-10"
                 onClick={() => {
                   checkinMutation.mutate({
-                    email: submitted,
+                    userId: userId.current,
                     roomId: selectedRoom,
                   });
                 }}
