@@ -17,17 +17,17 @@ export const Customer: React.FC = () => {
     ? bookingQuery.data.payload.roomId.length > 0
     : false;
   const [tabVal, setTabVal] = useState<string | "booking" | "dashboard">(
-    "booking",
+    "dashboard",
   );
 
   useEffect(() => {
-    if (bookingQuery.data) {
-      if (bookingQuery.data.payload.roomId.length > 0) {
-        setTabVal("dashboard");
-      } else {
-        setTabVal("booking");
-      }
-    }
+    // if (bookingQuery.data) {
+    //   if (bookingQuery.data.payload.roomId.length > 0) {
+    //     setTabVal("dashboard");
+    //   } else {
+    //     setTabVal("booking");
+    //   }
+    // }
   }, [bookingQuery]);
 
   if (bookingQuery.isError && bookingQuery.error.message === "401") {
@@ -40,7 +40,7 @@ export const Customer: React.FC = () => {
           <Tabs
             value={tabVal}
             onValueChange={setTabVal}
-            className="top-3 mx-auto w-10/12"
+            className="top-3 mx-auto w-11/12 md:w-10/12"
           >
             <TabsList>
               <TabsTrigger disabled={customerBooked} value="booking">

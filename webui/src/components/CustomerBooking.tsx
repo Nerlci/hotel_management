@@ -98,7 +98,7 @@ function FormCard({ updateBookingQuery }: { updateBookingQuery: () => void }) {
 
   return (
     <>
-      <Card className="ml-auto mr-auto mt-5">
+      <Card className="mt-5">
         <CardHeader>
           <CardTitle>填写必要信息</CardTitle>
         </CardHeader>
@@ -106,7 +106,7 @@ function FormCard({ updateBookingQuery }: { updateBookingQuery: () => void }) {
           <Form {...form}>
             <form
               onSubmit={form.handleSubmit(onSubmit)}
-              className="flex flex-row items-center gap-10"
+              className="flex flex-row flex-wrap items-center gap-3 space-x-7"
             >
               <FormField
                 control={form.control}
@@ -175,7 +175,7 @@ function FormCard({ updateBookingQuery }: { updateBookingQuery: () => void }) {
               )}
               <Button
                 type="submit"
-                className="h-8"
+                className="h-8 w-[230px] sm:w-auto"
                 disabled={
                   form.formState.errors.date !== undefined ||
                   disabledDays.length > 0

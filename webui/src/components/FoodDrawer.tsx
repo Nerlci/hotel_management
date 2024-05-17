@@ -56,20 +56,17 @@ export function FoodDrawer() {
   return (
     <Drawer>
       <DrawerTrigger asChild>
-        <Button className="h-14 w-52" variant="outline">
+        <Button className="h-14 w-full lg:w-52" variant="outline">
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
-                <div className="flex flex-initial flex-row gap-5">
+                <div className="flex w-full flex-initial flex-row items-center gap-5">
                   <img
                     className="pointer-events-none w-10 select-none invert-0 dark:invert"
                     src={FoodIcon}
                   />
-                  <div
-                    className={`flex flex-row flex-wrap items-center justify-center gap-1`}
-                  >
-                    <p className="w-24">共消费：10 ￥</p>
-                  </div>
+                  <div className="grow" />
+                  <p>共消费：10 ￥</p>
                 </div>
               </TooltipTrigger>
               <TooltipContent className="mb-2">
