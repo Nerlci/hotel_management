@@ -98,6 +98,7 @@ export function RoomSelect({
 
 export default function ReceptionBill() {
   const [selectedRoom, setSelectedRoom] = useState("");
+  const [selectedTab, setSelectedTab] = useState<"bill" | "detail">("bill");
 
   return (
     <div>
@@ -109,16 +110,39 @@ export default function ReceptionBill() {
               setSelectedRoom={setSelectedRoom}
             />
           </div>
-          <Button variant="outline">生成账单 & 详单</Button>
+          <div className="inline-flex rounded-md shadow-sm" role="group">
+            <Button
+              variant="outline"
+              onClick={() => setSelectedTab("bill")}
+              className={
+                selectedTab === "bill" ? "bg-blue-500 text-white" : ""
+              }
+            >
+              生成账单
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => setSelectedTab("detail")}
+              className={
+                selectedTab === "detail" ? "bg-blue-500 text-white" : ""
+              }
+            >
+              生成详单
+            </Button>
+          </div>
         </div>
       </div>
       <div className="mt-3 flex gap-3">
-        <div className="grow">
-          <ReceptionOrderDetail roomId={selectedRoom} />
-        </div>
-        <div className="grow">
-          <ReceptionBillingDetail roomId={selectedRoom} />
-        </div>
+        {selectedTab === 'bill' && (
+          <div className="grow">
+            <ReceptionOrderDetail roomId={selectedRoom} />
+          </div>
+        )}
+        {selectedTab === 'detail' && (
+          <div className="grow">
+            <ReceptionBillingDetail roomId={selectedRoom} />
+          </div>
+        )}
       </div>
     </div>
   );
