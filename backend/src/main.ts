@@ -7,8 +7,10 @@ import fs from "fs";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import { apiRouter } from "./router/apiRouter";
-import { initRoom } from "./service/roomService";
+import { init } from "./utils/init";
 const app = express();
+
+init();
 
 app.use(cors({ credentials: true, preflightContinue: true, origin: true }));
 app.use(cookieParser());
@@ -38,6 +40,3 @@ const httpsServer = https.createServer(options, app);
 httpsServer.listen(8443, () => {
   console.log("HTTPS Server is running on https://localhost:8443");
 });
-
-// set TOTAL_ROOMS in .env file
-initRoom();

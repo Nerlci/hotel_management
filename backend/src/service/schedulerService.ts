@@ -1,14 +1,15 @@
 import { ACUpdateRequest, acStatus } from "shared";
 import { prisma } from "../prisma";
 import { statusService } from "./statusService";
+import { configService } from "./configService";
 
 interface SchedulerItem extends ACUpdateRequest {
   onTimestamp: Date;
   timestamp: Date;
 }
 
-const SERVE_LIMIT = Number(process.env.SERVE_LIMIT);
-const ROUND_ROBIN_INTERVAL = Number(process.env.ROUND_ROBIN_INTERVAL);
+const SERVE_LIMIT = configService.getConfig().serveLimit;
+const ROUND_ROBIN_INTERVAL = configService.getConfig().roundRobinInterval;
 
 const waitingList: SchedulerItem[] = [];
 const servingList: SchedulerItem[] = [];
@@ -155,6 +156,23 @@ const schedulerStep = (item: SchedulerItem) => {
       onTimestamp: servingList[servingItemIdx].onTimestamp,
       timestamp: now,
     };
+
+    const previousFanSpeed = servingList[servingItemIdx].fanSpeed;
+
+    if (item.fanSpeed < previousFanSpeed) {
+      // 先修改服务列表为新的风速，再检查等待队列
+      servingList[servingItemIdx] = modifiedItem;
+      checkWaitingList();
+
+      // 如果已经被抢占了，不需要再次修改状态
+      const nowIdx = servingList.findIndex(
+        (servingItem) => servingItem.roomId === item.roomId,
+      );
+      if (nowIdx === -1) {
+        return;
+      }
+    }
+
     statusChange(modifiedItem);
 
     if (!item.on) {
@@ -164,11 +182,7 @@ const schedulerStep = (item: SchedulerItem) => {
       return;
     }
 
-    const previousFanSpeed = servingList[servingItemIdx].fanSpeed;
     servingList[servingItemIdx] = modifiedItem;
-    if (item.fanSpeed < previousFanSpeed) {
-      checkWaitingList();
-    }
 
     return;
   }
