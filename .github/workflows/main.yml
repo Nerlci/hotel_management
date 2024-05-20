@@ -37,6 +37,7 @@ jobs:
         npm run build
         cd ../webui
         npm i
+        npm run build
         cd ../backend
         npm i
         npm run build
