@@ -29,25 +29,25 @@ import { toast } from "sonner";
 
 const tasks: Room[] = [
   {
-    id: "1001",
+    id: "8101",
     status: "occupied",
     startDate: new Date(2024, 0, 1).toLocaleString().split(" ")[0],
     endDate: new Date(2024, 0, 2).toLocaleString().split(" ")[0],
   },
   {
-    id: "1002",
+    id: "8102",
     status: "empty",
     startDate: "-",
     endDate: "-",
   },
   {
-    id: "1003",
+    id: "8103",
     status: "occupied",
     startDate: new Date(2024, 0, 4).toLocaleString().split(" ")[0],
     endDate: new Date(2024, 0, 5).toLocaleString().split(" ")[0],
   },
   {
-    id: "2001",
+    id: "8201",
     status: "occupied",
     startDate: new Date(2024, 0, 5).toLocaleString().split(" ")[0],
     endDate: new Date(2024, 0, 6).toLocaleString().split(" ")[0],

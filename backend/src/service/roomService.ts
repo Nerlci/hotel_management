@@ -1,6 +1,6 @@
 import { User } from "@prisma/client";
 import { prisma } from "../prisma";
-const totalRooms = parseInt(process.env.TOTAL_ROOMS || "2");
+import { configService } from "./configService";
 
 async function checkRoomAvailability(
   checkInDate: Date,
@@ -19,7 +19,7 @@ async function checkRoomAvailability(
   });
 
   // 如果冲突的预定数小于房间总数，则有空房
-  return countConflictingReservations < totalRooms;
+  return countConflictingReservations < configService.getConfig().rooms.length;
 }
 
 async function findBusyDays(startDate: Date, endDate: Date) {
@@ -34,19 +34,6 @@ async function findBusyDays(startDate: Date, endDate: Date) {
 
   return busyDays;
 }
-
-const initRoom = async () => {
-  const rooms = await prisma.room.findMany();
-  if (rooms.length === 0) {
-    for (let i = 0; i < totalRooms; i++) {
-      await prisma.room.create({
-        data: {
-          roomId: `100${i}`,
-        },
-      });
-    }
-  }
-};
 
 const getAvailableRooms = async (startDate: Date, endDate: Date) => {
   // 查询room的reservation中是否有冲突的预定
@@ -301,4 +288,4 @@ const roomService = {
   checkOut,
 };
 
-export { roomService, initRoom };
+export { roomService };
