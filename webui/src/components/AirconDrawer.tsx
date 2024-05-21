@@ -290,7 +290,7 @@ export default function AirconDrawer() {
             onUserUpdate={(temperature, windspeed, cool, start) => {
               mutation.mutate({
                 roomId: "8103",
-                temp: temperature,
+                target: temperature,
                 fanSpeed: windspeed,
                 mode: cool ? 1 : 0,
                 on: start,

@@ -130,7 +130,7 @@ export default function CustomerAirconChart() {
   airconDetail?.payload.details
     .map((item) => {
       return {
-        温度: item.temp,
+        温度: item.target,
         time: new Date(item.timestamp).getTime(),
         风速: item.fanSpeed,
         cool: item.mode === 1,
