@@ -1,13 +1,20 @@
-import { Request, Response } from "express";
-import { ACStatus, acStatus } from "shared";
 import { prisma } from "../prisma";
+import { Request, Response } from "express";
 import SseChannel from "sse-channel";
+
+import { ACStatus, acStatus } from "shared";
+import { tempService } from "./tempService";
+import { configService } from "./configService";
 
 const channels: Map<string, SseChannel> = new Map();
 const globalChannel = new SseChannel();
 
 const getChannel = (roomId: string) => {
-  // TODO: Check if the room is valid
+  const rooms = configService.getConfig().rooms.map((room) => room.roomId);
+  if (rooms.includes(roomId)) {
+    throw new Error("Room not found");
+  }
+
   if (!channels.has(roomId)) {
     channels.set(roomId, new SseChannel());
   }
@@ -30,7 +37,8 @@ const getInitialStatus = async (roomId: string) => {
     ? acStatus.parse(status)
     : acStatus.parse({
         roomId: roomId,
-        temp: 25,
+        target: 25,
+        temp: tempService.getTemp(roomId, new Date()),
         mode: 0,
         fanSpeed: 1,
         on: false,

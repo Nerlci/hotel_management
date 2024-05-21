@@ -15,6 +15,7 @@ const ROUND_ROBIN_INTERVAL = configService.getConfig().roundRobinInterval;
 const waitingList: SchedulerItem[] = [];
 const servingList: SchedulerItem[] = [];
 const rrList: { interval: NodeJS.Timeout; item: SchedulerItem }[] = [];
+const shutdownList: { timeout: NodeJS.Timeout; item: SchedulerItem }[] = [];
 
 const modifyTimestamps = (item: ACUpdateRequest, now: Date) => {
   return {
@@ -57,9 +58,18 @@ const statusChange = async (status: SchedulerItem) => {
     configService.getConfig().rate[data.fanSpeed * (data.on ? 1 : 0)];
   tempService.updateTemp(data.roomId, data.temp, rate, data.timestamp);
 
-  if (status.on) {
-    const interval = ((data.target - data.temp) / rate) * 1000;
-    setTimeout(shutdownRoom, interval, data.roomId);
+  if (data.on) {
+    const targetTime =
+      ((data.target - data.temp) / rate) * 1000 + data.timestamp.getTime() - 50;
+    const timeout = setTimeout(
+      shutdownRoom,
+      targetTime - Date.now(),
+      data.roomId,
+    );
+    shutdownList.push({
+      timeout: timeout,
+      item: status,
+    });
   }
 };
 
@@ -132,7 +142,13 @@ const preemptService = (item: SchedulerItem, preemptedItem: SchedulerItem) => {
     });
   }
 
-  // TODO: remove shutdown timer for preemptedItem
+  const shutdownIdx = shutdownList.findIndex(
+    (item) => item.item.roomId === preemptedItem.roomId,
+  );
+  if (shutdownIdx !== -1) {
+    clearTimeout(shutdownList[shutdownIdx].timeout);
+    shutdownList.splice(shutdownIdx, 1);
+  }
 };
 
 const rrPreempt = (roomId: string) => {
