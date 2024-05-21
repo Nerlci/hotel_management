@@ -7,6 +7,3 @@ npm i
 cd ..
 cd ./backend
 npm i
-cd ..
-cd ./nativeui
-npm i
