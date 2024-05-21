@@ -2,6 +2,7 @@ import { ACUpdateRequest, acStatus } from "shared";
 import { prisma } from "../prisma";
 import { statusService } from "./statusService";
 import { configService } from "./configService";
+import { tempService } from "./tempService";
 
 interface SchedulerItem extends ACUpdateRequest {
   onTimestamp: Date;
@@ -42,6 +43,7 @@ const statusChange = async (status: SchedulerItem) => {
       },
     },
     ...rest,
+    temp: tempService.getTemp(status.roomId, status.timestamp),
     type: 1,
   };
   await prisma.aCRecord.create({
@@ -50,6 +52,15 @@ const statusChange = async (status: SchedulerItem) => {
 
   const statusMessage = acStatus.parse(data);
   statusService.updateStatus(statusMessage);
+
+  const rate =
+    configService.getConfig().rate[data.fanSpeed * (data.on ? 1 : 0)];
+  tempService.updateTemp(data.roomId, data.temp, rate, data.timestamp);
+
+  if (status.on) {
+    const interval = ((data.target - data.temp) / rate) * 1000;
+    setTimeout(shutdownRoom, interval, data.roomId);
+  }
 };
 
 const checkWaitingList = () => {
@@ -120,6 +131,8 @@ const preemptService = (item: SchedulerItem, preemptedItem: SchedulerItem) => {
       item: modifyTimestamps(preemptedItem, now),
     });
   }
+
+  // TODO: remove shutdown timer for preemptedItem
 };
 
 const rrPreempt = (roomId: string) => {
@@ -141,6 +154,22 @@ const rrPreempt = (roomId: string) => {
 
   const preemptedItem = sameFanSpeedItems[0];
   preemptService(item, preemptedItem);
+};
+
+const shutdownRoom = (roomId: string) => {
+  const now = new Date();
+  const servingIdx = servingList.findIndex(
+    (item) => item.roomId === roomId && item.on,
+  );
+  if (servingIdx === -1) {
+    return;
+  }
+
+  schedulerStep({
+    ...servingList[servingIdx],
+    on: false,
+    timestamp: now,
+  });
 };
 
 const schedulerStep = (item: SchedulerItem) => {
@@ -293,6 +322,7 @@ const addUpdateRequest = async (request: ACUpdateRequest) => {
       },
     },
     ...rest,
+    temp: tempService.getTemp(request.roomId, now),
     type: 0,
     timestamp: now,
   };
