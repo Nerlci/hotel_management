@@ -178,9 +178,6 @@ const checkIn = async (userId: string, roomId: string) => {
   if (reservation[0].roomId !== null)
     throw new Error("You have already checked in");
 
-  console.log(room);
-  console.log(reservation);
-
   await updateRoomStatus(room.id, "occupied");
   return await updateReservation(reservation[0].id, roomId);
 };
