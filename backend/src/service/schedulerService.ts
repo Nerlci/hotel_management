@@ -10,7 +10,7 @@ interface SchedulerItem extends ACUpdateRequest {
 }
 
 const SERVE_LIMIT = configService.getConfig().serveLimit;
-const ROUND_ROBIN_INTERVAL = configService.getConfig().roundRobinInterval;
+const ROUND_ROBIN_INTERVAL = configService.getConfig().roundRobinInterval - 50;
 
 const waitingList: SchedulerItem[] = [];
 const servingList: SchedulerItem[] = [];
@@ -98,7 +98,7 @@ const checkWaitingList = () => {
 };
 
 const preemptService = (item: SchedulerItem, preemptedItem: SchedulerItem) => {
-  const now = item.timestamp;
+  const now = new Date();
   const servingIdx = servingList.findIndex(
     (item) => item.roomId === preemptedItem.roomId,
   );

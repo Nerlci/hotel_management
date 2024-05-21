@@ -10,6 +10,7 @@ type Config = {
     price: number;
   }[];
   rate: number[];
+  acPriceRate: number[];
 };
 
 let config: Config;
@@ -20,6 +21,7 @@ const loadConfig = () => {
 
   config = conf;
   config.rate = config.rate.map((rate) => rate / 60);
+  config.acPriceRate = config.acPriceRate.map((price) => price / 60);
 
   return conf;
 };

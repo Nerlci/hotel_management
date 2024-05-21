@@ -3,6 +3,8 @@ import { acUpdateRequest, responseBase } from "shared";
 import { schedulerService } from "../service/schedulerService";
 import { statusService } from "../service/statusService";
 import { acService } from "../service/acService";
+import { handleErrors } from "../utils/utils";
+import { statementService } from "../service/statementService";
 
 const updateAC = async (req: Request, res: Response) => {
   // TODO: Call service to check if the user has permission to update the AC
@@ -25,35 +27,39 @@ const updateAC = async (req: Request, res: Response) => {
 };
 
 const statusAC = async (req: Request, res: Response) => {
-  const roomId = req.query.roomId;
+  try {
+    const roomId = req.query.roomId;
 
-  if (typeof roomId !== "string" && roomId !== undefined) {
-    const response = responseBase.parse({
-      code: "400",
-      error: {
-        msg: "Invalid room ID",
-      },
-      payload: {},
-    });
-    res.json(response);
-    return;
-  }
-
-  if (roomId === undefined) {
-    if (res.locals.user.type !== 1) {
+    if (typeof roomId !== "string" && roomId !== undefined) {
       const response = responseBase.parse({
         code: "400",
         error: {
-          msg: "Permission denied",
+          msg: "Invalid room ID",
         },
         payload: {},
       });
       res.json(response);
       return;
     }
-  }
 
-  statusService.listenStatus(req, res, roomId);
+    if (roomId === undefined) {
+      if (res.locals.user.type !== 1) {
+        const response = responseBase.parse({
+          code: "400",
+          error: {
+            msg: "Permission denied",
+          },
+          payload: {},
+        });
+        res.json(response);
+        return;
+      }
+    }
+
+    statusService.listenStatus(req, res, roomId);
+  } catch (e) {
+    handleErrors(e, res);
+  }
 };
 
 const detailAC = async (req: Request, res: Response) => {
@@ -86,5 +92,86 @@ const detailAC = async (req: Request, res: Response) => {
   res.json(response);
 };
 
-const acController = { updateAC, statusAC, detailAC };
+const statementAC = async (req: Request, res: Response) => {
+  const roomId = req.query.roomId;
+  const startTime = req.query.startTime
+    ? new Date(req.query.startTime as string)
+    : undefined;
+  const endTime = req.query.endTime
+    ? new Date(req.query.endTime as string)
+    : undefined;
+
+  if (typeof roomId !== "string") {
+    const response = responseBase.parse({
+      code: "400",
+      error: {
+        msg: "Invalid room ID",
+      },
+      payload: {},
+    });
+    res.json(response);
+    return;
+  }
+
+  const statement = await statementService.getStatement(
+    roomId,
+    startTime,
+    endTime,
+  );
+
+  const response = responseBase.parse({
+    code: "200",
+    error: {
+      msg: "",
+    },
+    payload: {
+      roomId: roomId,
+      statement,
+    },
+  });
+  res.json(response);
+};
+
+const statementTableAC = async (req: Request, res: Response) => {
+  const roomId = req.query.roomId;
+  const startTime = req.query.startTime
+    ? new Date(req.query.startTime as string)
+    : undefined;
+  const endTime = req.query.endTime
+    ? new Date(req.query.endTime as string)
+    : undefined;
+
+  if (typeof roomId !== "string") {
+    const response = responseBase.parse({
+      code: "400",
+      error: {
+        msg: "Invalid room ID",
+      },
+      payload: {},
+    });
+    res.json(response);
+    return;
+  }
+
+  const csv = await statementService.getStatementTable(
+    roomId,
+    startTime,
+    endTime,
+  );
+
+  res.setHeader("Content-Type", "application/octet-stream");
+  res.setHeader(
+    "Content-Disposition",
+    `attachment; filename="statement_${roomId}_${Date.now()}.csv"`,
+  );
+  res.status(200).send(csv);
+};
+
+const acController = {
+  updateAC,
+  statusAC,
+  detailAC,
+  statementAC,
+  statementTableAC,
+};
 export { acController };

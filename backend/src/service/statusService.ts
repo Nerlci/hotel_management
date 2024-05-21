@@ -10,8 +10,8 @@ const channels: Map<string, SseChannel> = new Map();
 const globalChannel = new SseChannel();
 
 const getChannel = (roomId: string) => {
-  const rooms = configService.getConfig().rooms.map((room) => room.roomId);
-  if (rooms.includes(roomId)) {
+  const roomIds = configService.getConfig().rooms.map((room) => room.roomId);
+  if (roomIds.indexOf(roomId) === -1) {
     throw new Error("Room not found");
   }
 

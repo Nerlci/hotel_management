@@ -164,3 +164,17 @@ export const receptionCheckinRequest = z.object({
   userId: z.string().min(1, "User ID can't be empty"),
 });
 export type ReceptionCheckinRequest = z.infer<typeof receptionCheckinRequest>;
+
+export const statementItem = z.object({
+  roomId: z.string(),
+  requestTime: z.date().nullable(),
+  startTime: z.date(),
+  endTime: z.date(),
+  duration: z.number(),
+  fanSpeed: z.number(),
+  price: z.number(),
+  priceRate: z.number(),
+  target: z.number(),
+  temp: z.number(),
+});
+export type StatementItem = z.infer<typeof statementItem>;
