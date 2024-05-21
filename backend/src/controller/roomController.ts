@@ -2,6 +2,8 @@ import { Request, Response } from "express";
 import {
   DateRange,
   ReceptionAvailableResponse,
+  ReceptionCheckinRequest,
+  receptionCheckinRequest,
   UserRoomOrderResponse,
   responseBase,
   userAvailablityResponse,
@@ -135,8 +137,12 @@ const getAvailableRooms = async (req: Request, res: Response) => {
 
 const checkIn = async (req: Request, res: Response) => {
   try {
-    const userId = req.query.userId as string;
-    const roomId = req.query.roomId as string;
+    const data: ReceptionCheckinRequest = receptionCheckinRequest.parse(
+      req.body,
+    );
+
+    const userId = data.userId;
+    const roomId = data.roomId;
 
     const result = await roomService.checkIn(userId, roomId);
 
