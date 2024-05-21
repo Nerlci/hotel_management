@@ -14,12 +14,12 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  username  String?
-  type      Int      @default(0)
-  password  String
-  acRecords ACRecord[]
+  id           String        @id @default(cuid())
+  email        String        @unique
+  username     String?
+  type         Int           @default(0)
+  password     String
+  acRecords    ACRecord[]
   reservations Reservation[]
 }
 
@@ -28,6 +28,7 @@ model ACRecord {
   user      User     @relation(fields: [userId], references: [id])
   userId    String
   roomId    String
+  target    Float
   temp      Float
   fanSpeed  Int
   mode      Int
@@ -37,18 +38,18 @@ model ACRecord {
 }
 
 model Room {
-  id        String   @id @default(cuid())
-  roomId    String   @unique
-  status    String   @default("available")
+  id           String        @id @default(cuid())
+  roomId       String        @unique
+  status       String        @default("available")
   reservations Reservation[]
 }
 
 model Reservation {
   id        String   @id @default(cuid())
   room      Room?    @relation(fields: [roomId], references: [id])
-  roomId    String?      
+  roomId    String?
   user      User     @relation(fields: [userId], references: [id])
   userId    String   @unique
-  startDate DateTime 
+  startDate DateTime
   endDate   DateTime
 }
