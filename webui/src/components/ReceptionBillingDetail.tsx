@@ -1,4 +1,4 @@
-import { Copy, MoreVertical, Truck } from "lucide-react";
+import { Copy, MoreVertical } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -100,7 +100,9 @@ export default function ReceptionBillingDetail({ roomId }: DetailProps) {
                 <span>￥20.00</span>
               </li>
               <li className="flex items-center justify-between">
-                <span className="text-muted-foreground">家庭式晚餐套餐 x 1</span>
+                <span className="text-muted-foreground">
+                  家庭式晚餐套餐 x 1
+                </span>
                 <span>￥140.00</span>
               </li>
             </ul>

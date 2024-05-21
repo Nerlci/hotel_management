@@ -1,4 +1,4 @@
-import { Copy, MoreVertical, Truck } from "lucide-react";
+import { Copy, MoreVertical } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
