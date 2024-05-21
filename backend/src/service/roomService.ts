@@ -147,6 +147,11 @@ const findReservation = async (userId: string) => {
   return reservation;
 };
 
+const findUserRoom = async (userId: string) => {
+  const reservation = await findReservation(userId);
+  return reservation[0].roomId;
+};
+
 const updateRoomStatus = async (roomId: string, status: string) => {
   return await prisma.room.update({
     where: { id: roomId },
@@ -211,6 +216,7 @@ const roomService = {
   cancelOrder,
   checkIn,
   checkOut,
+  findUserRoom,
 };
 
 export { roomService };
