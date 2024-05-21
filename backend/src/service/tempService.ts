@@ -40,7 +40,7 @@ const getTemp = (roomId: string, timestamp: Date) => {
       .rooms.find((room) => room.roomId === roomId)!.initTemp;
     temp.temp = Math.min(initTemp, temp.temp + temp.rate * interval);
   } else {
-    temp.temp += (temp.rate * interval) / 10;
+    temp.temp += temp.rate * interval;
   }
 
   return temp.temp;
