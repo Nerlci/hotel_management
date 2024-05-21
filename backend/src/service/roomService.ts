@@ -191,36 +191,25 @@ const checkIn = async (userId: string, roomId: string) => {
     throw new Error("You have already checked in");
   }
 
-  if (await prisma.reservation.findFirst({ where: { roomId: roomId } })) {
+const checkIn = async (userId: string, roomId: string) => {
+  const room = await findRoom(roomId);
+  if (
+    room.status === "occupied" ||
+    (await prisma.reservation.findFirst({ where: { roomId } }))
+  ) {
     throw new Error("Room is occupied");
   }
 
-  const currentDate = new Date("2024-04-14");
-  const result = reservation.map(async (r) => {
-    if (r.startDate <= currentDate && r.endDate >= currentDate) {
-      await prisma.room.update({
-        where: {
-          roomId: roomId,
-        },
-        data: {
-          status: "occupied",
-        },
-      });
-      return await prisma.reservation.update({
-        where: {
-          id: r.id,
-        },
-        data: {
-          roomId: room.id,
-        },
-      });
-    }
-  });
-  if (result.length === 0) {
-    throw new Error("No reservation to check in today");
-  } else {
-    return result;
-  }
+  const user = await findUser(userId);
+  const reservation = await findReservation(userId);
+  if (reservation[0].roomId !== null)
+    throw new Error("You have already checked in");
+
+  console.log(room);
+  console.log(reservation);
+
+  await updateRoomStatus(room.id, "occupied");
+  return await updateReservation(reservation[0].id, roomId);
 };
 
 const checkOut = async (userId: string) => {
