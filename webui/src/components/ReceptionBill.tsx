@@ -114,9 +114,7 @@ export default function ReceptionBill() {
             <Button
               variant="outline"
               onClick={() => setSelectedTab("bill")}
-              className={
-                selectedTab === "bill" ? "bg-blue-500 text-white" : ""
-              }
+              className={selectedTab === "bill" ? "bg-blue-500 text-white" : ""}
             >
               生成账单
             </Button>
@@ -133,12 +131,12 @@ export default function ReceptionBill() {
         </div>
       </div>
       <div className="mt-3 flex gap-3">
-        {selectedTab === 'bill' && (
+        {selectedTab === "bill" && (
           <div className="grow">
             <ReceptionOrderDetail roomId={selectedRoom} />
           </div>
         )}
-        {selectedTab === 'detail' && (
+        {selectedTab === "detail" && (
           <div className="grow">
             <ReceptionBillingDetail roomId={selectedRoom} />
           </div>
