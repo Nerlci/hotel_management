@@ -36,7 +36,6 @@ import {
 import { TempSlider, WindSlider } from "./AirconSlider";
 import { useAuth } from "@/hooks/useAuth";
 import { useSSE } from "@/hooks/useSSE";
-import { useTempEmulate } from "@/hooks/tempEmulate";
 
 const AirconDrawerContent = ({
   sseData,
@@ -50,7 +49,7 @@ const AirconDrawerContent = ({
     start: boolean,
   ) => void;
 }) => {
-  const [temperature, setTemperature] = useState(sseData.temp);
+  const [temperature, setTemperature] = useState(sseData.target);
   const [windspeed, setWindspeed] = useState(sseData.fanSpeed);
   const [start, setstart] = useState(sseData.on);
   const [cool, setcool] = useState(sseData.mode === 1);
@@ -202,24 +201,6 @@ export default function AirconDrawer(props: { roomId: string }) {
     `${dataFetch.BASE_URL}/api/ac/status?roomId=${props.roomId}`,
   );
   useEffect(() => closeSource, [closeSource]);
-  const currentTemp = useTempEmulate({
-    startTemp: 10,
-    targetTemp: sseData?.temp ?? 24,
-    windSpeed: sseData?.fanSpeed ?? 1,
-    mode: sseData?.mode === 1 ? "cool" : "heat",
-    start: sseData?.on ?? false,
-    onTempTied: () => {
-      // close aircon if current temp is the same as target temp
-      if (sseData) {
-        if (currentTemp === sseData.temp && sseData.on) {
-          mutation.mutate({
-            ...sseData,
-            on: false,
-          });
-        }
-      }
-    },
-  });
   const { logout } = useAuth()!;
   const mutation = useMutation({
     mutationFn: dataFetch.postUserAirconUpdate,
@@ -263,10 +244,12 @@ export default function AirconDrawer(props: { roomId: string }) {
                       <Skeleton className="h-5 w-40" />
                     ) : (
                       <>
-                        <p className="w-28">目标温度：{sseData?.temp}&deg;C</p>
+                        <p className="w-28">
+                          目标温度：{sseData?.target}&deg;C
+                        </p>
                         <p className="w-24">目标风速：{sseData?.fanSpeed}</p>
                         <p className="w-28">
-                          当前温度：{currentTemp.toFixed(2)}&deg;C
+                          当前温度：{sseData?.temp.toFixed(2)}&deg;C
                         </p>
                         <p className="w-24">
                           模式：{sseData?.mode === 0 ? "制热" : "制冷"}
@@ -289,7 +272,7 @@ export default function AirconDrawer(props: { roomId: string }) {
             sseData={sseData}
             onUserUpdate={(temperature, windspeed, cool, start) => {
               mutation.mutate({
-                roomId: "8103",
+                roomId: props.roomId,
                 target: temperature,
                 fanSpeed: windspeed,
                 mode: cool ? 1 : 0,
