@@ -12,49 +12,49 @@ import { GearIcon } from "@radix-ui/react-icons";
 const tasks = JSON.parse(`
 [
   {
-    "id": "1001",
+    "id": "8101",
     "temperature": "30",
     "windspeed": "3",
     "mode": "heat",
     "status": "on"
   },
   {
-    "id": "1002",
+    "id": "8102",
     "temperature": "30",
     "windspeed": "4",
     "mode": "heat",
     "status": "on"
   },
   {
-    "id": "1003",
+    "id": "8103",
     "temperature": "30",
     "windspeed": "2",
     "mode": "heat",
     "status": "on"
   },
   {
-    "id": "1004",
+    "id": "8104",
     "temperature": "30",
     "windspeed": "1",
     "mode": "heat",
     "status": "on"
   },
   {
-    "id": "1005",
+    "id": "8105",
     "temperature": "-",
     "windspeed": "-",
     "mode": "-",
     "status": "off"
   },
   {
-    "id": "2001",
+    "id": "8201",
     "temperature": "-",
     "windspeed": "-",
     "mode": "-",
     "status": "off"
   },
   {
-    "id": "2002",
+    "id": "8202",
     "temperature": "20",
     "windspeed": "2",
     "mode": "cool",
