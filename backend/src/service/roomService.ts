@@ -61,31 +61,16 @@ const getAvailableRooms = async (startDate: Date, endDate: Date) => {
 };
 
 const getRoom = async (userId: string) => {
-  const user = await prisma.user.findUnique({
-    where: {
-      id: userId,
-    },
-  });
-  if (user === null) {
-    throw new Error("User not found");
-  }
+  const user = await findUser(userId);
 
-  const reservation = await prisma.reservation.findUnique({
-    where: {
-      userId: user.id,
-    },
-  });
+  const reservation = await findReservation(userId);
 
-  if (reservation === null) {
-    throw new Error("No reservation");
-  }
-
-  if (reservation.roomId !== null) {
+  if (reservation[0].roomId !== null) {
     throw new Error("You have already checked in");
   }
 
   return (
-    await getAvailableRooms(reservation.startDate, reservation.endDate)
+    await getAvailableRooms(reservation[0].startDate, reservation[0].endDate)
   ).map((room) => room.roomId);
 };
 
@@ -114,17 +99,7 @@ const bookRoom = async (userId: string, startDate: Date, endDate: Date) => {
 };
 
 const checkOrder = async (userId: string) => {
-  const reservation = await prisma.reservation.findMany({
-    where: {
-      userId: userId,
-    },
-  });
-
-  if (reservation.length === 0) {
-    throw new Error("No reservation");
-  }
-
-  return reservation;
+  return await findReservation(userId);
 };
 
 const checkDaysAvailability = async (startDate: Date, endDate: Date) => {
@@ -135,15 +110,8 @@ const checkDaysAvailability = async (startDate: Date, endDate: Date) => {
 };
 
 const cancelOrder = async (userId: string) => {
-  const reservation = await prisma.reservation.findMany({
-    where: {
-      userId: userId,
-    },
-  });
-
-  if (reservation.length === 0) {
-    throw new Error("No reservation");
-  } else if (reservation[0].roomId !== null) {
+  const reservation = await findReservation(userId);
+  if (reservation[0].roomId !== null) {
     throw new Error("You have already checked in");
   } else {
     return await prisma.reservation.delete({
@@ -154,125 +122,87 @@ const cancelOrder = async (userId: string) => {
   }
 };
 
-const checkIn = async (userId: string, roomId: string) => {
+const findRoom = async (roomId: string) => {
   const room = await prisma.room.findUnique({
-    where: {
-      roomId: roomId as string,
-    },
+    where: { roomId },
   });
+  if (!room) throw new Error("Room not found");
+  return room;
+};
 
-  if (room === null) {
-    throw new Error("Room not found");
-  }
-
-  if (room.status === "occupied") {
-    throw new Error("Room is occupied");
-  }
-
+const findUser = async (userId: string) => {
   const user = await prisma.user.findUnique({
-    where: {
-      id: userId,
-    },
+    where: { id: userId },
   });
+  if (!user) throw new Error("User not found");
+  return user;
+};
 
-  if (user === null) {
-    throw new Error("User not found");
-  }
-
+const findReservation = async (userId: string) => {
   const reservation = await prisma.reservation.findMany({
-    where: {
-      userId: userId,
-    },
+    where: { userId },
   });
+  if (reservation.length === 0) throw new Error("No reservation");
+  if (reservation.length > 1) throw new Error("You have multiple reservations");
+  return reservation;
+};
 
-  if (reservation.length === 0) {
-    throw new Error("No reservation");
-  } else if (reservation[0].roomId !== null) {
-    throw new Error("You have already checked in");
-  }
+const findUserRoom = async (userId: string) => {
+  const reservation = await findReservation(userId);
+  return reservation[0].roomId;
+};
 
-  if (await prisma.reservation.findFirst({ where: { roomId: roomId } })) {
+const updateRoomStatus = async (roomId: string, status: string) => {
+  return await prisma.room.update({
+    where: { id: roomId },
+    data: { status },
+  });
+};
+
+const updateReservation = async (
+  reservationId: string,
+  roomId: string | null,
+) => {
+  return await prisma.reservation.update({
+    where: { id: reservationId },
+    data: { roomId },
+  });
+};
+
+const checkIn = async (userId: string, roomId: string) => {
+  const room = await findRoom(roomId);
+  if (
+    room.status === "occupied" ||
+    (await prisma.reservation.findFirst({ where: { roomId } }))
+  ) {
     throw new Error("Room is occupied");
   }
 
-  const currentDate = new Date("2024-04-14");
-  const result = reservation.map(async (r) => {
-    if (r.startDate <= currentDate && r.endDate >= currentDate) {
-      await prisma.room.update({
-        where: {
-          roomId: roomId,
-        },
-        data: {
-          status: "occupied",
-        },
-      });
-      return await prisma.reservation.update({
-        where: {
-          id: r.id,
-        },
-        data: {
-          roomId: room.id,
-        },
-      });
-    }
-  });
-  if (result.length === 0) {
-    throw new Error("No reservation to check in today");
-  } else {
-    return result;
-  }
+  const user = await findUser(userId);
+  const reservation = await findReservation(userId);
+  if (reservation[0].roomId !== null)
+    throw new Error("You have already checked in");
+
+  await updateRoomStatus(room.id, "occupied");
+  return await updateReservation(reservation[0].id, roomId);
 };
 
 const checkOut = async (userId: string) => {
-  const user = await prisma.user.findUnique({
-    where: {
-      id: userId,
-    },
-  });
+  const user = await findUser(userId);
 
-  if (user === null) {
-    throw new Error("User not found");
-  }
+  const reservation = await findReservation(userId);
 
-  const reservation = await prisma.reservation.findMany({
-    where: {
-      userId: userId,
-    },
-  });
-
-  if (reservation.length === 0) {
-    throw new Error("No reservation");
-  } else if (reservation[0].roomId === null) {
+  if (reservation[0].roomId === null) {
     throw new Error("You have not checked in");
   }
 
-  const room = await prisma.room.findUnique({
-    where: {
-      id: reservation[0].roomId,
-    },
-  });
+  const room = await findRoom(reservation[0].roomId);
 
-  if (room === null) {
-    throw new Error("Room not found");
-  }
+  const result = await updateReservation(reservation[0].id, null);
 
-  await prisma.room.update({
-    where: {
-      id: room.id,
-    },
-    data: {
-      status: "available",
-    },
-  });
+  await updateRoomStatus(room.id, "available");
 
-  return await prisma.reservation.update({
-    where: {
-      id: reservation[0].id,
-    },
-    data: {
-      roomId: null,
-    },
-  });
+  return result;
 };
 
 const roomService = {
@@ -286,6 +216,7 @@ const roomService = {
   cancelOrder,
   checkIn,
   checkOut,
+  findUserRoom,
 };
 
 export { roomService };

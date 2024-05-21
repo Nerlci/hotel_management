@@ -11,7 +11,7 @@ const createUser = async (data: {
 };
 
 const getUserByEmail = (email: string) => {
-  return prisma.user.findFirst({
+  return prisma.user.findUnique({
     where: {
       email,
     },
@@ -19,7 +19,7 @@ const getUserByEmail = (email: string) => {
 };
 
 const getUserById = (id: string) => {
-  return prisma.user.findFirst({
+  return prisma.user.findUnique({
     where: {
       id,
     },

@@ -7,8 +7,9 @@ type Config = {
     roomId: string;
     initTemp: number;
     type: number;
+    price: number;
   }[];
-  price: number[];
+  rate: number[];
 };
 
 let config: Config;
@@ -18,6 +19,7 @@ const loadConfig = () => {
   const conf = JSON.parse(fs.readFileSync(configFilePath, "utf-8"));
 
   config = conf;
+  config.rate = config.rate.map((rate) => rate / 60);
 
   return conf;
 };
