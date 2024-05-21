@@ -197,9 +197,9 @@ const AirconDrawerContent = ({
   );
 };
 
-export default function AirconDrawer() {
+export default function AirconDrawer(props: { roomId: string }) {
   const { sseData, sseReadyState, closeSource } = useSSE<ACStatus>(
-    `${dataFetch.BASE_URL}/api/ac/status?roomId=${8103}`,
+    `${dataFetch.BASE_URL}/api/ac/status?roomId=${props.roomId}`,
   );
   useEffect(() => closeSource, [closeSource]);
   const currentTemp = useTempEmulate({
