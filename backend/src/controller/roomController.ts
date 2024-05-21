@@ -138,7 +138,7 @@ const getAvailableRooms = async (req: Request, res: Response) => {
 const checkIn = async (req: Request, res: Response) => {
   try {
     const data: ReceptionCheckinRequest = receptionCheckinRequest.parse(
-      req.body,
+      req.query,
     );
 
     const userId = data.userId;
