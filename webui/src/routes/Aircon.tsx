@@ -8,6 +8,7 @@ import {
   getDisplayName,
 } from "@/lib/aircon-data/data";
 import { GearIcon } from "@radix-ui/react-icons";
+import AirconConfig from "@/components/AirconConfig";
 
 const tasks = JSON.parse(`
 [
@@ -68,10 +69,11 @@ export const Aircon = () => {
     <>
       <NavBar title={<GearIcon />} />
       <div className="mt-3 justify-center">
-        <Tabs defaultValue="overview" className="top-3 mx-auto w-10/12">
+        <Tabs defaultValue="config" className="top-3 mx-auto w-10/12">
           <TabsList>
             <TabsTrigger value="overview">概览</TabsTrigger>
             <TabsTrigger value="aircon">空调管理</TabsTrigger>
+            <TabsTrigger value="config">空调配置</TabsTrigger>
           </TabsList>
           <TabsContent value="aircon">
             <div className="mb-4 hidden h-full flex-1 flex-col md:flex">
@@ -87,6 +89,11 @@ export const Aircon = () => {
           <TabsContent value="overview">
             <div className="mb-4 hidden h-full flex-1 flex-col md:flex">
               <AirconOverview />
+            </div>
+          </TabsContent>
+          <TabsContent value="config">
+            <div className="mb-4 hidden h-full flex-1 flex-col md:flex">
+              <AirconConfig />
             </div>
           </TabsContent>
         </Tabs>
