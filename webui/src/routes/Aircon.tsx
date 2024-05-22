@@ -9,8 +9,12 @@ import {
 } from "@/lib/aircon-data/data";
 import { GearIcon } from "@radix-ui/react-icons";
 import AirconConfig from "@/components/AirconConfig";
+import { useSSE } from "@/hooks/useSSE";
+import { ACStatus, dataFetch } from "shared";
+import { useEffect, useState } from "react";
+import { Aircon as AirconType } from "@/lib/aircon-data/schema";
 
-const tasks = JSON.parse(`
+const initTasks: AirconType[] = JSON.parse(`
 [
   {
     "id": "8101",
@@ -48,6 +52,13 @@ const tasks = JSON.parse(`
     "status": "off"
   },
   {
+    "id": "8106",
+    "temperature": "-",
+    "windspeed": "-",
+    "mode": "-",
+    "status": "off"
+  },
+  {
     "id": "8201",
     "temperature": "-",
     "windspeed": "-",
@@ -65,6 +76,34 @@ const tasks = JSON.parse(`
 `);
 
 export const Aircon = () => {
+  const { sseData, sseReadyState, closeSource } = useSSE<ACStatus>(
+    `${dataFetch.BASE_URL}/api/ac/status`,
+  );
+  useEffect(() => closeSource, [closeSource]);
+  const [tasks, setTasks] = useState(initTasks);
+  useEffect(() => {
+    if (sseReadyState.key === 1 && sseData) {
+      // console.log(sseData);
+      setTasks((prevTasks) => {
+        return prevTasks.map((task) => {
+          if (task.id === sseData.roomId) {
+            task.status = sseData.on ? "on" : "off";
+            if (sseData.on) {
+              task.temperature = `${sseData.target}`;
+              task.windspeed = `${sseData.fanSpeed}`;
+              task.mode = sseData.mode === 1 ? "cool" : "heat";
+            } else {
+              task.temperature = "-";
+              task.windspeed = "-";
+              task.mode = "-";
+            }
+          }
+          return task;
+        });
+      });
+    }
+  }, [sseData, sseReadyState]);
+
   return (
     <>
       <NavBar title={<GearIcon />} />
