@@ -78,6 +78,10 @@ const getPriceRate = (fanSpeed: number) => {
   return config.ac.priceRate[fanSpeed];
 };
 
+const getPriceRates = () => {
+  return config.ac.priceRate;
+};
+
 const setTargetRange = (
   minTarget: number | undefined,
   maxTarget: number | undefined,
@@ -100,6 +104,7 @@ const configService = {
   getRate,
   setPriceRate,
   getPriceRate,
+  getPriceRates,
   setTargetRange,
   getTargetRange,
 };

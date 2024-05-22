@@ -5,6 +5,7 @@ import { statusService } from "../service/statusService";
 import { acService } from "../service/acService";
 import { handleErrors } from "../utils/utils";
 import { tempService } from "../service/tempService";
+import { configService } from "../service/configService";
 
 const updateAC = async (req: Request, res: Response) => {
   // TODO: Call service to check if the user has permission to update the AC
@@ -192,6 +193,99 @@ const statementTableAC = async (req: Request, res: Response) => {
   res.status(200).send(csv);
 };
 
+const getPriceRateAC = async (req: Request, res: Response) => {
+  const priceRate = await configService.getPriceRates();
+
+  const response = responseBase.parse({
+    code: "200",
+    error: {
+      msg: "",
+    },
+    payload: {
+      priceRate,
+    },
+  });
+  res.json(response);
+};
+
+const setPriceRateAC = async (req: Request, res: Response) => {
+  const priceRate = req.body.priceRate;
+
+  if (!Array.isArray(priceRate) || priceRate.length !== 4) {
+    const response = responseBase.parse({
+      code: "400",
+      error: {
+        msg: "Invalid price rate",
+      },
+      payload: {},
+    });
+    res.json(response);
+    return;
+  }
+
+  configService.setPriceRate(priceRate);
+
+  const response = responseBase.parse({
+    code: "200",
+    error: {
+      msg: "",
+    },
+    payload: {},
+  });
+  res.json(response);
+};
+
+const getTargetRangeAC = async (req: Request, res: Response) => {
+  const targetRange = await configService.getTargetRange();
+
+  const response = responseBase.parse({
+    code: "200",
+    error: {
+      msg: "",
+    },
+    payload: {
+      minTarget: targetRange.min,
+      maxTarget: targetRange.max,
+    },
+  });
+  res.json(response);
+};
+
+const setTargetRangeAC = async (req: Request, res: Response) => {
+  const minTarget = req.body.minTarget;
+  const maxTarget = req.body.maxTarget;
+
+  if (
+    typeof minTarget !== "number" ||
+    typeof maxTarget !== "number" ||
+    minTarget > maxTarget
+  ) {
+    const response = responseBase.parse({
+      code: "400",
+      error: {
+        msg: "Invalid target range",
+      },
+      payload: {},
+    });
+    res.json(response);
+    return;
+  }
+
+  configService.setTargetRange(minTarget, maxTarget);
+
+  const response = responseBase.parse({
+    code: "200",
+    error: {
+      msg: "",
+    },
+    payload: {
+      minTarget,
+      maxTarget,
+    },
+  });
+  res.json(response);
+};
+
 const acController = {
   updateAC,
   statusAC,
@@ -199,5 +293,9 @@ const acController = {
   tempAC,
   statementAC,
   statementTableAC,
+  getPriceRateAC,
+  setPriceRateAC,
+  getTargetRangeAC,
+  setTargetRangeAC,
 };
 export { acController };
