@@ -36,7 +36,9 @@ const getInitialStatus = async (roomId: string) => {
   return status
     ? acStatus.parse({
         ...status,
-        rate: configService.getRate(status.fanSpeed),
+        rate:
+          configService.getRate(status.fanSpeed * (status.on ? 1 : 0)) *
+          (!status.on || status.mode === 0 ? 1 : -1),
         initTemp: configService.getRoom(roomId)?.initTemp,
       })
     : acStatus.parse({
