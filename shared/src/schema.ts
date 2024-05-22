@@ -114,10 +114,21 @@ export const acStatus = acUpdateRequest.omit({ userId: true }).extend({
 export type ACStatus = z.infer<typeof acStatus>;
 
 export const acDetailResponse = responseBase.extend({
-  payload: acUpdateRequest.extend({
-    timestamp: z.date(),
-    subtotal: z.number(),
+  payload: z.object({
+    roomId: z.string(),
+    userId: z.string(),
     total: z.number(),
+    details: z.array(
+      z.object({
+        target: z.number().int(),
+        fanSpeed: z.number().int(),
+        mode: z.literal(0).or(z.literal(1)),
+        on: z.boolean(),
+        type: z.literal(0).or(z.literal(1)),
+        timestamp: z.string().datetime(),
+        subtotal: z.number(),
+      }),
+    ),
   }),
 });
 export type ACDetailResponse = z.infer<typeof acDetailResponse>;
