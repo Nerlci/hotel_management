@@ -15,9 +15,9 @@ acRouter.get("/temp", authUserMiddleware, acController.tempAC);
 acRouter.get("/statement", authUserMiddleware, acController.statementAC);
 
 acRouter.get(
-  "/statement-table",
+  "/statement-file",
   authUserMiddleware,
-  acController.statementTableAC,
+  acController.statementFileAC,
 );
 
 acRouter.get("/price-rate", authUserMiddleware, acController.getPriceRateAC);

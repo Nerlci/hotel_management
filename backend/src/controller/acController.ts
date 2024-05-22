@@ -162,7 +162,7 @@ const statementAC = async (req: Request, res: Response) => {
   res.json(response);
 };
 
-const statementTableAC = async (req: Request, res: Response) => {
+const statementFileAC = async (req: Request, res: Response) => {
   const roomId = req.query.roomId;
   const startTime = req.query.startTime
     ? new Date(req.query.startTime as string)
@@ -292,7 +292,7 @@ const acController = {
   detailAC,
   tempAC,
   statementAC,
-  statementTableAC,
+  statementFileAC,
   getPriceRateAC,
   setPriceRateAC,
   getTargetRangeAC,
