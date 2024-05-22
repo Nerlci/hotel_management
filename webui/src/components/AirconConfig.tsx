@@ -9,20 +9,21 @@ import { Button } from "./ui/button";
 import { useMutation } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
+import { dataFetch } from "shared";
+import { useEffect } from "react";
 
 const airconConfigForm = z
   .object({
     minTemperature: z.coerce.number().int(),
     maxTemperature: z.coerce.number().int(),
-    minWindspeed: z.coerce.number().int(),
-    maxWindspeed: z.coerce.number().int(),
+    rate: z.coerce.number(),
   })
   .refine((data) => {
-    return (
-      data.minTemperature < data.maxTemperature &&
-      data.minWindspeed < data.maxWindspeed
-    );
-  }, "最小值必须小于最大值");
+    return data.minTemperature < data.maxTemperature;
+  }, "最小值必须小于最大值")
+  .refine((data) => {
+    return data.rate >= 0.5 && data.rate <= 2.0;
+  }, "费率必须在0.5到2.0之间");
 type AirconConfigForm = z.infer<typeof airconConfigForm>;
 
 export default function AirconConfig() {
@@ -31,14 +32,34 @@ export default function AirconConfig() {
     defaultValues: {
       minTemperature: 18,
       maxTemperature: 30,
-      minWindspeed: 1,
-      maxWindspeed: 3,
+      rate: 1.0,
     },
   });
+  const { setValue } = form;
   const { logout } = useAuth()!;
+
+  useEffect(() => {
+    async function fetchConfig() {
+      try {
+        const tempRange = await dataFetch.getAirconTempRange();
+        const priceRate = await dataFetch.getAirconPriceRate();
+        setValue("minTemperature", tempRange.minTarget);
+        setValue("maxTemperature", tempRange.maxTarget);
+        setValue("rate", priceRate.priceRate);
+      } catch (error: any) {
+        toast.error("配置数据加载失败");
+      }
+    }
+    fetchConfig();
+  }, [setValue]);
+
   const submitMutation = useMutation({
-    mutationFn: async (values: AirconConfigForm) =>
-      console.log(JSON.stringify(values)),
+    mutationFn: async (values: AirconConfigForm) => {
+      await Promise.all([
+        dataFetch.putAirconTempRange(values.minTemperature, values.maxTemperature),
+        dataFetch.putAirconPriceRate(values.rate),
+      ]);
+    },
     onError: (error) => {
       if (error.message === "401") {
         logout();
@@ -97,38 +118,28 @@ export default function AirconConfig() {
                 </div>
               </div>
               <div>
-                <Label className="text-xl">风速</Label>
+                <Label className="text-xl">费率</Label>
                 <div className="flex items-center gap-3">
-                  <Label>最小</Label>
                   <div className="w-20">
                     <FormField
                       control={form.control}
-                      name="minWindspeed"
+                      name="rate"
                       render={({ field }) => (
                         <FormItem>
                           <FormControl>
-                            <Input type="number" placeholder="" {...field} />
+                            <Input
+                              type="number"
+                              step="0.1"
+                              placeholder=""
+                              {...field}
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
                       )}
                     />
                   </div>
-                  <Label className="ml-3">最大</Label>
-                  <div className="w-20">
-                    <FormField
-                      control={form.control}
-                      name="maxWindspeed"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormControl>
-                            <Input type="number" placeholder="" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
+                  <label>(￥/kWh)</label>
                 </div>
               </div>
             </div>

@@ -315,3 +315,89 @@ export async function getReceptionCheckinableRooms(userId: string) {
   const json = receptionCheckinableResponse.parse(responseJson);
   return json;
 }
+
+export async function getAirconTempRange() {
+  const response = await fetch(`${BASE_URL}/api/ac/target-range`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+  });
+  if (!response.ok) {
+    throw new Error("Request failed");
+  }
+  const responseJson = await response.json();
+  if (responseJson.code === "401") {
+    throw new Error("401");
+  }
+  if (responseJson.code !== "200") {
+    throw new Error(responseJson.error.msg);
+  }
+  return responseJson.payload;
+}
+
+export async function getAirconPriceRate(){
+  const response = await fetch(`${BASE_URL}/api/ac/price-rate`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+  });
+  if (!response.ok) {
+    throw new Error("Request failed");
+  }
+  const responseJson = await response.json();
+  if (responseJson.code === "401") {
+    throw new Error("401");
+  }
+  if (responseJson.code !== "200") {
+    throw new Error(responseJson.error.msg);
+  }
+  return responseJson.payload;
+}
+
+export async function putAirconTempRange(minTarget: number, maxTarget: number){
+  const response = await fetch(`${BASE_URL}/api/ac/target-range`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({minTarget, maxTarget}),
+    credentials: "include",
+  });
+  if (!response.ok) {
+    throw new Error("Request failed");
+  }
+  const json = responseBase.parse(await response.json());
+  if (json.code === "401") {
+    throw new Error("401");
+  }
+  if (json.code !== "200") {
+    throw new Error(json.error.msg);
+  }
+  return json;
+}
+
+export async function putAirconPriceRate(priceRate: number){
+  const response = await fetch(`${BASE_URL}/api/ac/price-rate`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({priceRate}),
+    credentials: "include",
+  });
+  if (!response.ok) {
+    throw new Error("Request failed");
+  }
+  const json = responseBase.parse(await response.json());
+  if (json.code === "401") {
+    throw new Error("401");
+  }
+  if (json.code !== "200") {
+    throw new Error(json.error.msg);
+  }
+  return json;
+}
