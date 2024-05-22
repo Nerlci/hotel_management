@@ -36,7 +36,9 @@ const getInitialStatus = async (roomId: string) => {
   return status
     ? acStatus.parse({
         ...status,
-        rate: configService.getRate(status.fanSpeed),
+        rate:
+          configService.getRate(status.fanSpeed * (status.on ? 1 : 0)) *
+          (!status.on || status.mode === 0 ? 1 : -1),
         initTemp: configService.getRoom(roomId)?.initTemp,
       })
     : acStatus.parse({
@@ -44,10 +46,9 @@ const getInitialStatus = async (roomId: string) => {
         target: 25,
         temp: tempService.getTemp(roomId, new Date()),
         mode: 0,
-        fanSpeed: 1,
+        fanSpeed: 2,
         on: false,
-        rate: configService.getRate(1),
-        priceRate: configService.getPriceRate(1),
+        rate: configService.getRate(2),
         initTemp: configService.getRoom(roomId)?.initTemp,
         timestamp: new Date(),
       });
@@ -62,8 +63,8 @@ const listenStatus = async (
     globalChannel.addClient(req, res);
 
     const status: ACStatus[] = [];
-    for (const roomId of channels.keys()) {
-      status.push(await getInitialStatus(roomId));
+    for (const room of configService.getRooms()) {
+      status.push(await getInitialStatus(room.roomId));
     }
     globalChannel.send(JSON.stringify(status), [res]);
 

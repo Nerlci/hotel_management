@@ -1,16 +1,41 @@
 import { parse } from "json2csv";
 import { prisma } from "../prisma";
-import { ACStatus, StatementItem, acStatus, statementItem } from "shared";
+import { StatementItem, statementItem } from "shared";
+import { ACRecord } from "@prisma/client";
+import { configService } from "./configService";
 
 const getDetailByRoomId = async (roomId: string) => {
   const ac = await prisma.aCRecord.findMany({
+    orderBy: {
+      timestamp: "desc",
+    },
+    take: 1,
     where: {
       roomId: roomId,
       type: 1,
     },
   });
 
-  return ac;
+  const now = new Date();
+  const { id, temp, priceRate, ...rest } = ac[0];
+  const subtotal =
+    Math.ceil((now.getTime() - rest.timestamp.getTime()) / 1000) *
+    priceRate *
+    (rest.on ? 1 : 0);
+  const total =
+    (await getStatement(roomId, undefined, undefined)).reduce(
+      (sum, item) => sum + item.price,
+      0,
+    ) + subtotal;
+
+  const detail = {
+    ...rest,
+    timestamp: now,
+    subtotal,
+    total,
+  };
+
+  return detail;
 };
 
 const getStatement = async (
@@ -32,13 +57,13 @@ const getStatement = async (
   });
 
   const statement: StatementItem[] = [];
-  let lastRequest: ACStatus | null = null; // 上一个状态对应的请求
-  let lastStatus: ACStatus | null = null; // 上一个状态
-  let currentRequest: ACStatus | null = null; // 当前状态对应的请求
+  let lastRequest: ACRecord | null = null; // 上一个状态对应的请求
+  let lastStatus: ACRecord | null = null; // 上一个状态
+  let currentRequest: ACRecord | null = null; // 当前状态对应的请求
 
   for (const acRecord of acRecords) {
     if (acRecord.type === 0) {
-      currentRequest = acStatus.parse({ ...acRecord, initTemp: 0, rate: 0 });
+      currentRequest = acRecord;
       continue;
     }
 
@@ -57,7 +82,8 @@ const getStatement = async (
           duration,
           fanSpeed: lastStatus.fanSpeed,
           price: duration * lastStatus.priceRate,
-          priceRate: lastStatus.priceRate,
+          priceRate:
+            lastStatus.priceRate / configService.getRate(lastStatus.fanSpeed),
           target: lastStatus.target,
           temp: acRecord.temp,
           mode: lastStatus.mode,
@@ -71,7 +97,7 @@ const getStatement = async (
     }
 
     // 记录新的状态的开始
-    lastStatus = acStatus.parse({ ...acRecord, initTemp: 0, rate: 0 });
+    lastStatus = acRecord;
     lastRequest = currentRequest;
   }
 
@@ -102,9 +128,9 @@ const getStatementTable = async (
   for (const item of statement) {
     table.push([
       item.roomId,
-      item.requestTime?.toISOString() || "",
-      item.startTime.toISOString(),
-      item.endTime.toISOString(),
+      item.requestTime?.toLocaleString() || "",
+      item.startTime.toLocaleString(),
+      item.endTime.toLocaleString(),
       item.duration.toString(),
       item.fanSpeed.toString(),
       item.price.toString(),
@@ -119,7 +145,11 @@ const getStatementTable = async (
   return csv;
 };
 
-const getInvoice = async (roomId: string, startTime: Date, endTime: Date) => {
+const getInvoice = async (
+  roomId: string,
+  startTime: Date | undefined,
+  endTime: Date | undefined,
+) => {
   const statement = await getStatement(roomId, startTime, endTime);
 
   const priceRates = new Set(statement.map((item) => item.priceRate));

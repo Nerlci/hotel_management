@@ -47,7 +47,7 @@ const statusChange = async (status: SchedulerItem) => {
     },
     ...rest,
     temp: tempService.getTemp(status.roomId, status.timestamp),
-    priceRate: configService.getPriceRate(status.fanSpeed),
+    priceRate: configService.getFanSpeedPriceRate(status.fanSpeed),
     type: 1,
   };
   await prisma.aCRecord.create({
@@ -354,7 +354,7 @@ const addUpdateRequest = async (request: ACUpdateRequest) => {
     },
     ...rest,
     temp: tempService.getTemp(request.roomId, now),
-    priceRate: configService.getPriceRate(request.fanSpeed),
+    priceRate: configService.getFanSpeedPriceRate(request.fanSpeed),
     type: 0,
     timestamp: now,
   };

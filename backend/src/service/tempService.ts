@@ -32,8 +32,10 @@ const getTemp = (roomId: string, timestamp: Date) => {
     throw new Error("Room not found");
   }
 
+  const newTemp = { ...temp };
+
   const interval = Math.ceil(
-    (timestamp.getTime() - temp.timestamp.getTime()) / 1000,
+    (timestamp.getTime() - newTemp.timestamp.getTime()) / 1000,
   );
 
   const rate = temp.rate;
@@ -42,16 +44,16 @@ const getTemp = (roomId: string, timestamp: Date) => {
     const initTemp = configService
       .getConfig()
       .rooms.find((room) => room.roomId === roomId)!.initTemp;
-    if (temp.temp < initTemp) {
-      temp.temp = Math.min(initTemp, temp.temp + rate * interval);
+    if (newTemp.temp < initTemp) {
+      newTemp.temp = Math.min(initTemp, newTemp.temp + rate * interval);
     } else {
-      temp.temp = Math.max(initTemp, temp.temp - rate * interval);
+      newTemp.temp = Math.max(initTemp, newTemp.temp - rate * interval);
     }
   } else {
-    temp.temp += rate * interval;
+    newTemp.temp += rate * interval;
   }
 
-  return temp.temp;
+  return newTemp.temp;
 };
 
 const updateTemp = (temp: Temp) => {
