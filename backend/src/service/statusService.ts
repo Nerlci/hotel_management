@@ -10,8 +10,8 @@ const channels: Map<string, SseChannel> = new Map();
 const globalChannel = new SseChannel();
 
 const getChannel = (roomId: string) => {
-  const rooms = configService.getConfig().rooms.map((room) => room.roomId);
-  if (rooms.includes(roomId)) {
+  const roomIds = configService.getConfig().rooms.map((room) => room.roomId);
+  if (roomIds.indexOf(roomId) === -1) {
     throw new Error("Room not found");
   }
 
@@ -34,7 +34,11 @@ const getInitialStatus = async (roomId: string) => {
   });
 
   return status
-    ? acStatus.parse(status)
+    ? acStatus.parse({
+        ...status,
+        rate: configService.getRate(status.fanSpeed),
+        initTemp: configService.getRoom(roomId)?.initTemp,
+      })
     : acStatus.parse({
         roomId: roomId,
         target: 25,
@@ -42,6 +46,9 @@ const getInitialStatus = async (roomId: string) => {
         mode: 0,
         fanSpeed: 1,
         on: false,
+        rate: configService.getRate(1),
+        priceRate: configService.getPriceRate(1),
+        initTemp: configService.getRoom(roomId)?.initTemp,
         timestamp: new Date(),
       });
 };

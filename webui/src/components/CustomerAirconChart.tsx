@@ -93,28 +93,18 @@ const CustomTooltip = ({ active, payload }) => {
   }
 };
 
-export default function CustomerAirconChart() {
+export default function CustomerAirconChart(props: { roomId: string }) {
   const { width } = useWindowSize();
   const MAX_CHART_DATA = width < 700 ? 10 : 40;
   const { logout } = useAuth()!;
-  const roomNumberQuery = useQuery({
-    queryKey: ["customerRoomNumber"],
-    queryFn: dataFetch.getUserRoomNumber,
-  });
-  const roomId = roomNumberQuery?.data;
-  if (roomNumberQuery.error) {
-    if (roomNumberQuery.error.message === "401") {
-      logout();
-    }
-  }
   const {
     isLoading,
     error,
     data: airconDetail,
   } = useQuery({
     queryKey: ["customerAirconChartData"],
-    queryFn: dataFetch.generateGetUserAirconDetail(roomId!),
-    enabled: !!roomId,
+    queryFn: dataFetch.generateGetUserAirconDetail(props.roomId),
+    enabled: !!props.roomId,
     refetchInterval: 1000,
   });
   if (error) {
@@ -130,7 +120,7 @@ export default function CustomerAirconChart() {
   airconDetail?.payload.details
     .map((item) => {
       return {
-        温度: item.temp,
+        温度: item.target,
         time: new Date(item.timestamp).getTime(),
         风速: item.fanSpeed,
         cool: item.mode === 1,

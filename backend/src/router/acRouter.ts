@@ -10,4 +10,14 @@ acRouter.get("/status", authUserMiddleware, acController.statusAC);
 
 acRouter.get("/detail", authUserMiddleware, acController.detailAC);
 
+acRouter.get("/temp", authUserMiddleware, acController.tempAC);
+
+acRouter.get("/statement", authUserMiddleware, acController.statementAC);
+
+acRouter.get(
+  "/statement_table",
+  authUserMiddleware,
+  acController.statementTableAC,
+);
+
 export { acRouter };
