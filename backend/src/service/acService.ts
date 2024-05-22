@@ -38,7 +38,7 @@ const getStatement = async (
 
   for (const acRecord of acRecords) {
     if (acRecord.type === 0) {
-      currentRequest = acStatus.parse(acRecord);
+      currentRequest = acStatus.parse({ ...acRecord, initTemp: 0, rate: 0 });
       continue;
     }
 
@@ -71,7 +71,7 @@ const getStatement = async (
     }
 
     // 记录新的状态的开始
-    lastStatus = acStatus.parse(acRecord);
+    lastStatus = acStatus.parse({ ...acRecord, initTemp: 0, rate: 0 });
     lastRequest = currentRequest;
   }
 
