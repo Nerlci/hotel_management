@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { acUpdateRequest, responseBase } from "shared";
+import { acDetailResponse, acUpdateRequest, responseBase } from "shared";
 import { schedulerService } from "../service/schedulerService";
 import { statusService } from "../service/statusService";
 import { acService } from "../service/acService";
@@ -78,16 +78,15 @@ const detailAC = async (req: Request, res: Response) => {
     return;
   }
 
-  const details = await acService.getDetailByRoomId(roomId);
+  const detail = await acService.getDetailByRoomId(roomId);
 
-  const response = responseBase.parse({
+  const response = acDetailResponse.parse({
     code: "200",
     error: {
       msg: "",
     },
     payload: {
-      roomId: roomId,
-      details,
+      ...detail,
     },
   });
   res.json(response);
@@ -162,7 +161,7 @@ const statementAC = async (req: Request, res: Response) => {
   res.json(response);
 };
 
-const statementTableAC = async (req: Request, res: Response) => {
+const statementFileAC = async (req: Request, res: Response) => {
   const roomId = req.query.roomId;
   const startTime = req.query.startTime
     ? new Date(req.query.startTime as string)
@@ -194,7 +193,7 @@ const statementTableAC = async (req: Request, res: Response) => {
 };
 
 const getPriceRateAC = async (req: Request, res: Response) => {
-  const priceRate = await configService.getPriceRates();
+  const priceRate = await configService.getPriceRate();
 
   const response = responseBase.parse({
     code: "200",
@@ -211,7 +210,7 @@ const getPriceRateAC = async (req: Request, res: Response) => {
 const setPriceRateAC = async (req: Request, res: Response) => {
   const priceRate = req.body.priceRate;
 
-  if (!Array.isArray(priceRate) || priceRate.length !== 4) {
+  if (typeof priceRate !== "number") {
     const response = responseBase.parse({
       code: "400",
       error: {
@@ -292,7 +291,7 @@ const acController = {
   detailAC,
   tempAC,
   statementAC,
-  statementTableAC,
+  statementFileAC,
   getPriceRateAC,
   setPriceRateAC,
   getTargetRangeAC,
