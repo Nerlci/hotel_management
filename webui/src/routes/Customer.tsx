@@ -2,6 +2,7 @@ import { CustomerBooking } from "@/components/CustomerBooking";
 import { CustomerDashboard } from "@/components/CustomerDashboard";
 import { HomeIcon } from "@/components/HomeIcon";
 import { NavBar } from "@/components/NavBar";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
@@ -30,6 +31,8 @@ export const Customer: React.FC = () => {
     }
   }, [bookingQuery]);
 
+  const roomId = bookingQuery.data?.payload.roomId;
+
   if (bookingQuery.isError && bookingQuery.error.message === "401") {
     return <Navigate to="/login" />;
   } else {
@@ -54,7 +57,11 @@ export const Customer: React.FC = () => {
               <CustomerBooking bookingQuery={bookingQuery} />
             </TabsContent>
             <TabsContent value="dashboard">
-              <CustomerDashboard />
+              {roomId ? (
+                <CustomerDashboard roomId={roomId} />
+              ) : (
+                <Skeleton className="h-80 w-full rounded-xl" />
+              )}
             </TabsContent>
           </Tabs>
         </div>
