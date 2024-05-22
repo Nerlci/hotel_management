@@ -78,7 +78,7 @@ const detailAC = async (req: Request, res: Response) => {
     return;
   }
 
-  const details = await acService.getDetailByRoomId(roomId);
+  const detail = await acService.getDetailByRoomId(roomId);
 
   const response = responseBase.parse({
     code: "200",
@@ -86,8 +86,7 @@ const detailAC = async (req: Request, res: Response) => {
       msg: "",
     },
     payload: {
-      roomId: roomId,
-      details,
+      ...detail,
     },
   });
   res.json(response);
@@ -194,7 +193,7 @@ const statementFileAC = async (req: Request, res: Response) => {
 };
 
 const getPriceRateAC = async (req: Request, res: Response) => {
-  const priceRate = await configService.getPriceRates();
+  const priceRate = await configService.getPriceRate();
 
   const response = responseBase.parse({
     code: "200",
@@ -211,7 +210,7 @@ const getPriceRateAC = async (req: Request, res: Response) => {
 const setPriceRateAC = async (req: Request, res: Response) => {
   const priceRate = req.body.priceRate;
 
-  if (!Array.isArray(priceRate) || priceRate.length !== 4) {
+  if (typeof priceRate !== "number") {
     const response = responseBase.parse({
       code: "400",
       error: {

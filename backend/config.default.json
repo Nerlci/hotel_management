@@ -5,7 +5,7 @@
     "serveLimit": 1,
     "roundRobinInterval": 3000,
     "rate": [3, 2, 3, 6],
-    "priceRate": [0, 2, 3, 6]
+    "priceRate": 1
   },
   "rooms": [
     {
