@@ -59,7 +59,7 @@ export const receptionAvailableResponse = responseBase
     {
       message:
         "Recommanded and available should be both empty or both have values",
-    },
+    }
   );
 export type ReceptionAvailableResponse = z.infer<
   typeof receptionAvailableResponse
@@ -106,7 +106,10 @@ export const acUpdateRequestBody = acUpdateRequest.omit({
 export type ACUpdateRequestBody = z.infer<typeof acUpdateRequestBody>;
 
 export const acStatus = acUpdateRequest.omit({ userId: true }).extend({
+  priceRate: z.number(),
   temp: z.number(),
+  initTemp: z.number(),
+  rate: z.number(),
   timestamp: z.date(),
 });
 export type ACStatus = z.infer<typeof acStatus>;
@@ -116,7 +119,7 @@ export const acDetailResponse = responseBase.extend({
     details: z.array(
       acUpdateRequest.omit({ userId: true }).extend({
         timestamp: z.string().datetime(),
-      }),
+      })
     ),
     roomId: z.string().min(1, "Room ID can't be empty"),
   }),
@@ -141,7 +144,7 @@ export const userRoomOrderResponse = responseBase
     },
     {
       message: "Start date must be earlier than or equal to the end date",
-    },
+    }
   );
 
 export type UserRoomOrderResponse = z.infer<typeof userRoomOrderResponse>;
@@ -164,3 +167,17 @@ export const receptionCheckinRequest = z.object({
   userId: z.string().min(1, "User ID can't be empty"),
 });
 export type ReceptionCheckinRequest = z.infer<typeof receptionCheckinRequest>;
+
+export const statementItem = z.object({
+  roomId: z.string(),
+  requestTime: z.date().nullable(),
+  startTime: z.date(),
+  endTime: z.date(),
+  duration: z.number(),
+  fanSpeed: z.number(),
+  price: z.number(),
+  priceRate: z.number(),
+  target: z.number(),
+  temp: z.number(),
+});
+export type StatementItem = z.infer<typeof statementItem>;

@@ -34,7 +34,11 @@ const getInitialStatus = async (roomId: string) => {
   });
 
   return status
-    ? acStatus.parse(status)
+    ? acStatus.parse({
+        ...status,
+        rate: configService.getRate(status.fanSpeed),
+        initTemp: configService.getRoom(roomId)?.initTemp,
+      })
     : acStatus.parse({
         roomId: roomId,
         target: 25,
@@ -42,6 +46,9 @@ const getInitialStatus = async (roomId: string) => {
         mode: 0,
         fanSpeed: 1,
         on: false,
+        rate: configService.getRate(1),
+        priceRate: configService.getPriceRate(1),
+        initTemp: configService.getRoom(roomId)?.initTemp,
         timestamp: new Date(),
       });
 };

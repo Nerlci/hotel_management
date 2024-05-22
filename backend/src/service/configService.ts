@@ -1,25 +1,43 @@
 import fs from "fs";
 
-type Config = {
-  serveLimit: number;
-  roundRobinInterval: number;
-  rooms: {
-    roomId: string;
-    initTemp: number;
-    type: number;
-    price: number;
-  }[];
-  rate: number[];
+type Room = {
+  roomId: string;
+  initTemp: number;
+  type: number;
+  price: number;
 };
 
-let config: Config;
+type Config = {
+  ac: {
+    minTarget: number;
+    maxTarget: number;
+    serveLimit: number;
+    roundRobinInterval: number;
+    rate: number[];
+    priceRate: number[];
+  };
+  rooms: Room[];
+};
+
+const defaultConfigFilePath = "./config.default.json";
 const configFilePath = process.env.CONFIG_FILE_PATH || "./config.json";
+let config: Config;
+let rooms: Map<string, Room>;
 
 const loadConfig = () => {
+  const defaultConf = JSON.parse(
+    fs.readFileSync(defaultConfigFilePath, "utf-8"),
+  );
   const conf = JSON.parse(fs.readFileSync(configFilePath, "utf-8"));
 
-  config = conf;
-  config.rate = config.rate.map((rate) => rate / 60);
+  config = { ...defaultConf, ...conf };
+  config.ac.rate = config.ac.rate.map((rate) => rate / 60);
+  config.ac.priceRate = config.ac.priceRate.map((price) => price / 60);
+
+  rooms = new Map();
+  for (const room of config.rooms) {
+    rooms.set(room.roomId, room);
+  }
 
   return conf;
 };
@@ -40,11 +58,55 @@ const saveConfig = () => {
   fs.writeFileSync(configFilePath, JSON.stringify(config, null, 2));
 };
 
+const getRoom = (roomId: string) => {
+  return rooms.get(roomId);
+};
+
+const getRooms = () => {
+  return config.rooms;
+};
+
+const getRate = (fanSpeed: number) => {
+  return config.ac.rate[fanSpeed];
+};
+
+const setPriceRate = (priceRate: number[]) => {
+  config.ac.priceRate = priceRate;
+};
+
+const getPriceRate = (fanSpeed: number) => {
+  return config.ac.priceRate[fanSpeed];
+};
+
+const getPriceRates = () => {
+  return config.ac.priceRate;
+};
+
+const setTargetRange = (
+  minTarget: number | undefined,
+  maxTarget: number | undefined,
+) => {
+  config.ac.minTarget = minTarget || config.ac.minTarget;
+  config.ac.maxTarget = maxTarget || config.ac.maxTarget;
+};
+
+const getTargetRange = () => {
+  return { min: config.ac.minTarget, max: config.ac.maxTarget };
+};
+
 const configService = {
   loadConfig,
   getConfig,
   modifyConfig,
   saveConfig,
+  getRoom,
+  getRooms,
+  getRate,
+  setPriceRate,
+  getPriceRate,
+  getPriceRates,
+  setTargetRange,
+  getTargetRange,
 };
 
 export { configService };
