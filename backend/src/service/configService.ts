@@ -19,14 +19,18 @@ type Config = {
   rooms: Room[];
 };
 
+const defaultConfigFilePath = "./config.default.json";
 const configFilePath = process.env.CONFIG_FILE_PATH || "./config.json";
 let config: Config;
 let rooms: Map<string, Room>;
 
 const loadConfig = () => {
+  const defaultConf = JSON.parse(
+    fs.readFileSync(defaultConfigFilePath, "utf-8"),
+  );
   const conf = JSON.parse(fs.readFileSync(configFilePath, "utf-8"));
 
-  config = conf;
+  config = { ...defaultConf, ...conf };
   config.ac.rate = config.ac.rate.map((rate) => rate / 60);
   config.ac.priceRate = config.ac.priceRate.map((price) => price / 60);
 

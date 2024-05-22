@@ -1,0 +1,192 @@
+{
+  "ac": {
+    "minTarget": 18,
+    "maxTarget": 30,
+    "serveLimit": 1,
+    "roundRobinInterval": 3000,
+    "rate": [3, 2, 3, 6],
+    "priceRate": [0, 2, 3, 6]
+  },
+  "rooms": [
+    {
+      "roomId": "8101",
+      "initTemp": 32,
+      "type": 0,
+      "price": 100
+    },
+    {
+      "roomId": "8102",
+      "initTemp": 28,
+      "type": 0,
+      "price": 125
+    },
+    {
+      "roomId": "8103",
+      "initTemp": 30,
+      "type": 1,
+      "price": 150
+    },
+    {
+      "roomId": "8104",
+      "initTemp": 29,
+      "type": 1,
+      "price": 200
+    },
+    {
+      "roomId": "8105",
+      "initTemp": 35,
+      "type": 0,
+      "price": 100
+    },
+    {
+      "roomId": "8106",
+      "initTemp": 24,
+      "type": 0,
+      "price": 100
+    },
+    {
+      "roomId": "8107",
+      "initTemp": 24,
+      "type": 0,
+      "price": 100
+    },
+    {
+      "roomId": "8108",
+      "initTemp": 24,
+      "type": 0,
+      "price": 100
+    },
+    {
+      "roomId": "8109",
+      "initTemp": 24,
+      "type": 0,
+      "price": 100
+    },
+    {
+      "roomId": "8110",
+      "initTemp": 24,
+      "type": 1,
+      "price": 150
+    },
+    {
+      "roomId": "8201",
+      "initTemp": 24,
+      "type": 1,
+      "price": 150
+    },
+    {
+      "roomId": "8202",
+      "initTemp": 24,
+      "type": 0,
+      "price": 100
+    },
+    {
+      "roomId": "8203",
+      "initTemp": 24,
+      "type": 0,
+      "price": 100
+    },
+    {
+      "roomId": "8204",
+      "initTemp": 24,
+      "type": 0,
+      "price": 100
+    },
+    {
+      "roomId": "8205",
+      "initTemp": 24,
+      "type": 1,
+      "price": 150
+    },
+    {
+      "roomId": "8206",
+      "initTemp": 24,
+      "type": 0,
+      "price": 100
+    },
+    {
+      "roomId": "8207",
+      "initTemp": 24,
+      "type": 0,
+      "price": 100
+    },
+    {
+      "roomId": "8208",
+      "initTemp": 24,
+      "type": 0,
+      "price": 100
+    },
+    {
+      "roomId": "8209",
+      "initTemp": 24,
+      "type": 0,
+      "price": 100
+    },
+    {
+      "roomId": "8210",
+      "initTemp": 24,
+      "type": 1,
+      "price": 150
+    },
+    {
+      "roomId": "8301",
+      "initTemp": 24,
+      "type": 1,
+      "price": 150
+    },
+    {
+      "roomId": "8302",
+      "initTemp": 24,
+      "type": 0,
+      "price": 100
+    },
+    {
+      "roomId": "8303",
+      "initTemp": 24,
+      "type": 0,
+      "price": 100
+    },
+    {
+      "roomId": "8304",
+      "initTemp": 24,
+      "type": 0,
+      "price": 100
+    },
+    {
+      "roomId": "8305",
+      "initTemp": 24,
+      "type": 1,
+      "price": 150
+    },
+    {
+      "roomId": "8306",
+      "initTemp": 24,
+      "type": 1,
+      "price": 150
+    },
+    {
+      "roomId": "8307",
+      "initTemp": 24,
+      "type": 0,
+      "price": 100
+    },
+    {
+      "roomId": "8308",
+      "initTemp": 24,
+      "type": 0,
+      "price": 100
+    },
+    {
+      "roomId": "8309",
+      "initTemp": 24,
+      "type": 0,
+      "price": 100
+    },
+    {
+      "roomId": "8310",
+      "initTemp": 24,
+      "type": 1,
+      "price": 150
+    }
+  ]
+}
