@@ -16,6 +16,7 @@ import { toast } from "sonner";
 import { z } from "zod";
 import { Skeleton } from "./ui/skeleton";
 import { useAuth } from "@/hooks/useAuth";
+import { Badge } from "./ui/badge";
 
 const bookingFormSchema = z.object({
   date: z.object({
@@ -191,6 +192,49 @@ function FormCard({ updateBookingQuery }: { updateBookingQuery: () => void }) {
   );
 }
 
+function ReservationDataItem(props: {
+  startDate: string;
+  endDate: string;
+  updateBookingQuery: () => void;
+}) {
+  const { logout } = useAuth()!;
+
+  const deleteBooking = useMutation({
+    mutationFn: dataFetch.deleteUserBooking,
+    onSuccess: () => {
+      toast.success("取消预定成功", {
+        description: "您的预定已成功取消",
+      });
+      props.updateBookingQuery();
+    },
+    onError: (error) => {
+      console.log(error.message);
+      toast.error("取消预定失败");
+      if (error.message === "401") {
+        logout();
+      }
+    },
+  });
+
+  return (
+    <div className="flex gap-3">
+      <p>
+        {new Date(props.startDate).toLocaleDateString()} -{" "}
+        {new Date(props.endDate).toLocaleDateString()}
+      </p>
+      <Badge
+        onClick={() => {
+          deleteBooking.mutate();
+        }}
+        variant="destructive"
+        className="cursor-pointer"
+      >
+        取消预定
+      </Badge>
+    </div>
+  );
+}
+
 function DataCard({
   bookingQuery,
 }: {
@@ -211,13 +255,11 @@ function DataCard({
         ) : bookingQuery.data?.payload.startDate === "" ? (
           <p>暂无预定</p>
         ) : (
-          <p>
-            {new Date(
-              bookingQuery.data?.payload.startDate,
-            ).toLocaleDateString()}{" "}
-            -{" "}
-            {new Date(bookingQuery.data?.payload.endDate).toLocaleDateString()}
-          </p>
+          <ReservationDataItem
+            startDate={bookingQuery.data.payload.startDate}
+            endDate={bookingQuery.data.payload.endDate}
+            updateBookingQuery={bookingQuery.refetch}
+          />
         )}
       </CardContent>
     </Card>

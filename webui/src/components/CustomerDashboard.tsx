@@ -5,7 +5,7 @@ import { useAuth } from "@/hooks/useAuth";
 import CustomerAirconChart from "./CustomerAirconChart";
 import AirconDrawer from "./AirconDrawer";
 
-export const CustomerDashboard: React.FC = () => {
+export const CustomerDashboard = (props: { roomId: string }) => {
   const { user } = useAuth()!;
 
   return (
@@ -16,14 +16,14 @@ export const CustomerDashboard: React.FC = () => {
         </CardHeader>
         <CardContent>
           <div className="flex flex-col gap-2 lg:flex-row">
-            <AirconDrawer />
+            <AirconDrawer roomId={props.roomId} />
             <div className="my-[-4px] h-0 grow" />
             <FoodDrawer />
             <RoomDrawer />
           </div>
         </CardContent>
       </Card>
-      <CustomerAirconChart />
+      <CustomerAirconChart roomId={props.roomId} />
     </>
   );
 };

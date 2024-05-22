@@ -16,6 +16,26 @@ import {
 
 export const BASE_URL = process.env.VITE_API_URL || "http://localhost:8080";
 
+export async function deleteUserBooking() {
+  const response = await fetch(`${BASE_URL}/api/room/book`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+  });
+  if (!response.ok) {
+    throw new Error("Request failed");
+  }
+  const responseJson = await response.json();
+  if (responseJson.code === "401") {
+    throw new Error("401");
+  }
+  if (responseJson.code !== "200") {
+    throw new Error(responseJson.error.msg);
+  }
+}
+
 export async function getUserIdByEmail(email: string) {
   const response = await fetch(`${BASE_URL}/api/user/email?email=${email}`, {
     method: "GET",
@@ -223,13 +243,6 @@ export async function postUserAirconUpdate(value: ACUpdateRequestBody) {
     throw new Error(json.error.msg);
   }
   return json;
-}
-
-export async function getUserRoomNumber() {
-  // TODO: call api
-  return new Promise<string>((resolve) => {
-    resolve("8103");
-  });
 }
 
 export function generateGetUserAirconDetail(roomId: string) {
