@@ -16,25 +16,26 @@ export const useTempEmulate = (props: {
    * 3. 当温度达到 targetTemp 时，调用 onTempTied 回调。
    * 4. 可能会增加其他的回调函数。
    */
-  const { startTemp, targetTemp, start, windSpeed, mode } = props;
+  const { startTemp } = props;
+  const { temp, timestamp, on, rate, initTemp } = {
+    on: true,
+    temp: 25,
+    rate: -0.5,
+    initTemp: 30,
+    timestamp: new Date("2024-05-21T14:51:00.260Z"),
+  };
   const [currentTemp, setCurrentTemp] = useState(startTemp);
 
-  const speed = 0.1;
-
   useInterval(() => {
-    if (start) {
-      if (Math.abs(currentTemp - targetTemp) <= 0.1) {
-        setCurrentTemp(targetTemp);
-        props.onTempTied && props.onTempTied();
-      } else if (mode === "cool" && currentTemp > targetTemp) {
-        setCurrentTemp(
-          (prev) => prev - windSpeed * (prev - targetTemp) * speed,
-        );
-      } else if (mode === "heat" && currentTemp < targetTemp) {
-        setCurrentTemp(
-          (prev) => prev + windSpeed * (targetTemp - prev) * speed,
-        );
+    const interval = Math.ceil((timestamp.getTime() - Date.now()) / 1000);
+    if (!on) {
+      if (temp < initTemp) {
+        setCurrentTemp(() => Math.min(initTemp, temp + rate * interval));
+      } else {
+        setCurrentTemp(() => Math.max(initTemp, temp - rate * interval));
       }
+    } else {
+      setCurrentTemp(() => temp + rate * interval);
     }
   }, 1000);
 

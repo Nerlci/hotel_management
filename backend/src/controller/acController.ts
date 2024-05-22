@@ -4,7 +4,7 @@ import { schedulerService } from "../service/schedulerService";
 import { statusService } from "../service/statusService";
 import { acService } from "../service/acService";
 import { handleErrors } from "../utils/utils";
-import { statementService } from "../service/statementService";
+import { tempService } from "../service/tempService";
 
 const updateAC = async (req: Request, res: Response) => {
   // TODO: Call service to check if the user has permission to update the AC
@@ -92,6 +92,39 @@ const detailAC = async (req: Request, res: Response) => {
   res.json(response);
 };
 
+const tempAC = async (req: Request, res: Response) => {
+  const roomId = req.query.roomId;
+
+  if (typeof roomId !== "string") {
+    const response = responseBase.parse({
+      code: "400",
+      error: {
+        msg: "Invalid room ID",
+      },
+      payload: {},
+    });
+    res.json(response);
+    return;
+  }
+
+  const now = new Date();
+
+  const temp = tempService.getTemp(roomId, now);
+
+  const response = responseBase.parse({
+    code: "200",
+    error: {
+      msg: "",
+    },
+    payload: {
+      roomId: roomId,
+      temp,
+      timestamp: now,
+    },
+  });
+  res.json(response);
+};
+
 const statementAC = async (req: Request, res: Response) => {
   const roomId = req.query.roomId;
   const startTime = req.query.startTime
@@ -113,11 +146,7 @@ const statementAC = async (req: Request, res: Response) => {
     return;
   }
 
-  const statement = await statementService.getStatement(
-    roomId,
-    startTime,
-    endTime,
-  );
+  const statement = await acService.getStatement(roomId, startTime, endTime);
 
   const response = responseBase.parse({
     code: "200",
@@ -153,11 +182,7 @@ const statementTableAC = async (req: Request, res: Response) => {
     return;
   }
 
-  const csv = await statementService.getStatementTable(
-    roomId,
-    startTime,
-    endTime,
-  );
+  const csv = await acService.getStatementTable(roomId, startTime, endTime);
 
   res.setHeader("Content-Type", "application/octet-stream");
   res.setHeader(
@@ -171,6 +196,7 @@ const acController = {
   updateAC,
   statusAC,
   detailAC,
+  tempAC,
   statementAC,
   statementTableAC,
 };

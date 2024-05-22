@@ -3,14 +3,16 @@ import { prisma } from "../prisma";
 import { statusService } from "./statusService";
 import { configService } from "./configService";
 import { tempService } from "./tempService";
+import { acService } from "./acService";
 
 interface SchedulerItem extends ACUpdateRequest {
   onTimestamp: Date;
   timestamp: Date;
 }
 
-const SERVE_LIMIT = configService.getConfig().serveLimit;
-const ROUND_ROBIN_INTERVAL = configService.getConfig().roundRobinInterval - 50;
+const SERVE_LIMIT = configService.getConfig().ac.serveLimit;
+const ROUND_ROBIN_INTERVAL =
+  configService.getConfig().ac.roundRobinInterval - 50;
 
 const waitingList: SchedulerItem[] = [];
 const servingList: SchedulerItem[] = [];
@@ -45,18 +47,31 @@ const statusChange = async (status: SchedulerItem) => {
     },
     ...rest,
     temp: tempService.getTemp(status.roomId, status.timestamp),
+    priceRate: configService.getPriceRate(status.fanSpeed),
     type: 1,
   };
   await prisma.aCRecord.create({
     data: data,
   });
 
-  const statusMessage = acStatus.parse(data);
+  const rate =
+    configService.getRate(data.fanSpeed * (data.on ? 1 : 0)) *
+    (!data.on || data.mode === 0 ? 1 : -1);
+
+  const statusMessage = acStatus.parse({
+    ...data,
+    initTemp: configService.getRoom(data.roomId)?.initTemp,
+    rate,
+  });
   statusService.updateStatus(statusMessage);
 
-  const rate =
-    configService.getConfig().rate[data.fanSpeed * (data.on ? 1 : 0)];
-  tempService.updateTemp(data.roomId, data.temp, rate, data.timestamp);
+  tempService.updateTemp({
+    roomId: status.roomId,
+    temp: data.temp,
+    rate: rate,
+    on: data.on,
+    timestamp: status.timestamp,
+  });
 
   if (data.on) {
     const targetTime =
@@ -339,6 +354,7 @@ const addUpdateRequest = async (request: ACUpdateRequest) => {
     },
     ...rest,
     temp: tempService.getTemp(request.roomId, now),
+    priceRate: configService.getPriceRate(request.fanSpeed),
     type: 0,
     timestamp: now,
   };

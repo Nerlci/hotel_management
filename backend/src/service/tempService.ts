@@ -5,6 +5,7 @@ type Temp = {
   roomId: string;
   temp: number;
   rate: number;
+  on: boolean;
   timestamp: Date;
 };
 
@@ -12,13 +13,14 @@ const roomTemps: Temp[] = [];
 
 const initTemp = () => {
   const timestamp = new Date();
-  const config = configService.getConfig();
+  const rooms = configService.getRooms();
 
-  for (let room of config.rooms) {
+  for (let room of rooms) {
     roomTemps.push({
       roomId: room.roomId,
       temp: room.initTemp,
-      rate: config.rate[0],
+      rate: configService.getRate(0),
+      on: false,
       timestamp,
     });
   }
@@ -34,34 +36,34 @@ const getTemp = (roomId: string, timestamp: Date) => {
     (timestamp.getTime() - temp.timestamp.getTime()) / 1000,
   );
 
-  if (temp.rate == configService.getConfig().rate[0]) {
+  const rate = temp.rate;
+
+  if (!temp.on) {
     const initTemp = configService
       .getConfig()
       .rooms.find((room) => room.roomId === roomId)!.initTemp;
-    temp.temp = Math.min(initTemp, temp.temp + temp.rate * interval);
+    if (temp.temp < initTemp) {
+      temp.temp = Math.min(initTemp, temp.temp + rate * interval);
+    } else {
+      temp.temp = Math.max(initTemp, temp.temp - rate * interval);
+    }
   } else {
-    temp.temp += temp.rate * interval;
+    temp.temp += rate * interval;
   }
 
   return temp.temp;
 };
 
-const updateTemp = (
-  roomId: string,
-  temp: number,
-  rate: number,
-  timestamp: Date,
-) => {
-  const tempIdx = roomTemps.findIndex((temp) => temp.roomId === roomId);
+const updateTemp = (temp: Temp) => {
+  const tempIdx = roomTemps.findIndex(
+    (roomTemp) => roomTemp.roomId === temp.roomId,
+  );
   if (tempIdx === -1) {
     throw new Error("Room not found");
   }
 
   roomTemps[tempIdx] = {
-    roomId,
-    temp,
-    rate,
-    timestamp,
+    ...temp,
   };
 };
 

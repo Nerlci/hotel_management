@@ -33,6 +33,7 @@ model ACRecord {
   fanSpeed  Int
   mode      Int
   on        Boolean
+  priceRate Float
   type      Int
   timestamp DateTime @default(now())
 }
