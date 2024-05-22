@@ -337,7 +337,7 @@ export async function getAirconTempRange() {
   return responseJson.payload;
 }
 
-export async function getAirconPriceRate(){
+export async function getAirconPriceRate() {
   const response = await fetch(`${BASE_URL}/api/ac/price-rate`, {
     method: "GET",
     headers: {
@@ -358,13 +358,13 @@ export async function getAirconPriceRate(){
   return responseJson.payload;
 }
 
-export async function putAirconTempRange(minTarget: number, maxTarget: number){
+export async function putAirconTempRange(minTarget: number, maxTarget: number) {
   const response = await fetch(`${BASE_URL}/api/ac/target-range`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({minTarget, maxTarget}),
+    body: JSON.stringify({ minTarget, maxTarget }),
     credentials: "include",
   });
   if (!response.ok) {
@@ -380,13 +380,13 @@ export async function putAirconTempRange(minTarget: number, maxTarget: number){
   return json;
 }
 
-export async function putAirconPriceRate(priceRate: number){
+export async function putAirconPriceRate(priceRate: number) {
   const response = await fetch(`${BASE_URL}/api/ac/price-rate`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({priceRate}),
+    body: JSON.stringify({ priceRate }),
     credentials: "include",
   });
   if (!response.ok) {

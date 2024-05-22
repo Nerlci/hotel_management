@@ -6,11 +6,11 @@ import { Label } from "./ui/label";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "./ui/form";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 import { dataFetch } from "shared";
-import { useEffect } from "react";
+import { Skeleton } from "./ui/skeleton";
 
 const airconConfigForm = z
   .object({
@@ -35,28 +35,22 @@ export default function AirconConfig() {
       rate: 1.0,
     },
   });
-  const { setValue } = form;
   const { logout } = useAuth()!;
-
-  useEffect(() => {
-    async function fetchConfig() {
-      try {
-        const tempRange = await dataFetch.getAirconTempRange();
-        const priceRate = await dataFetch.getAirconPriceRate();
-        setValue("minTemperature", tempRange.minTarget);
-        setValue("maxTemperature", tempRange.maxTarget);
-        setValue("rate", priceRate.priceRate);
-      } catch (error: any) {
-        toast.error("配置数据加载失败");
-      }
-    }
-    fetchConfig();
-  }, [setValue]);
-
+  const tempQuery = useQuery({
+    queryKey: ["airconTempRange"],
+    queryFn: dataFetch.getAirconTempRange,
+  });
+  const rateQuery = useQuery({
+    queryKey: ["airconPriceRate"],
+    queryFn: dataFetch.getAirconPriceRate,
+  });
   const submitMutation = useMutation({
     mutationFn: async (values: AirconConfigForm) => {
       await Promise.all([
-        dataFetch.putAirconTempRange(values.minTemperature, values.maxTemperature),
+        dataFetch.putAirconTempRange(
+          values.minTemperature,
+          values.maxTemperature,
+        ),
         dataFetch.putAirconPriceRate(values.rate),
       ]);
     },
@@ -84,60 +78,72 @@ export default function AirconConfig() {
             <div className="flex gap-10">
               <div className="">
                 <Label className="text-xl">温度</Label>
-                <div className="flex items-center gap-3">
+                <div className="mt-2 flex items-center gap-3">
                   <Label>最小</Label>
                   <div className="w-20">
-                    <FormField
-                      control={form.control}
-                      name="minTemperature"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormControl>
-                            <Input type="number" placeholder="" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                    {tempQuery.isLoading ? (
+                      <Skeleton className="h-8 w-20" />
+                    ) : (
+                      <FormField
+                        control={form.control}
+                        name="minTemperature"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormControl>
+                              <Input type="number" placeholder="" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    )}
                   </div>
                   <Label className="ml-3">最大</Label>
                   <div className="w-20">
-                    <FormField
-                      control={form.control}
-                      name="maxTemperature"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormControl>
-                            <Input type="number" placeholder="" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                    {tempQuery.isLoading ? (
+                      <Skeleton className="h-8 w-20" />
+                    ) : (
+                      <FormField
+                        control={form.control}
+                        name="maxTemperature"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormControl>
+                              <Input type="number" placeholder="" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    )}
                   </div>
                 </div>
               </div>
               <div>
                 <Label className="text-xl">费率</Label>
-                <div className="flex items-center gap-3">
+                <div className="mt-2 flex items-center gap-3">
                   <div className="w-20">
-                    <FormField
-                      control={form.control}
-                      name="rate"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormControl>
-                            <Input
-                              type="number"
-                              step="0.1"
-                              placeholder=""
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                    {rateQuery.isLoading ? (
+                      <Skeleton className="h-8 w-20" />
+                    ) : (
+                      <FormField
+                        control={form.control}
+                        name="rate"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormControl>
+                              <Input
+                                type="number"
+                                step="0.1"
+                                placeholder=""
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    )}
                   </div>
                   <label>(￥/kWh)</label>
                 </div>
