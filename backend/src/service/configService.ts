@@ -14,7 +14,7 @@ type Config = {
     serveLimit: number;
     roundRobinInterval: number;
     rate: number[];
-    priceRate: number[];
+    priceRate: number;
   };
   rooms: Room[];
 };
@@ -32,7 +32,6 @@ const loadConfig = () => {
 
   config = { ...defaultConf, ...conf };
   config.ac.rate = config.ac.rate.map((rate) => rate / 60);
-  config.ac.priceRate = config.ac.priceRate.map((price) => price / 60);
 
   rooms = new Map();
   for (const room of config.rooms) {
@@ -70,15 +69,15 @@ const getRate = (fanSpeed: number) => {
   return config.ac.rate[fanSpeed];
 };
 
-const setPriceRate = (priceRate: number[]) => {
+const setPriceRate = (priceRate: number) => {
   config.ac.priceRate = priceRate;
 };
 
-const getPriceRate = (fanSpeed: number) => {
-  return config.ac.priceRate[fanSpeed];
+const getFanSpeedPriceRate = (fanSpeed: number) => {
+  return config.ac.rate[fanSpeed] * config.ac.priceRate;
 };
 
-const getPriceRates = () => {
+const getPriceRate = () => {
   return config.ac.priceRate;
 };
 
@@ -103,8 +102,8 @@ const configService = {
   getRooms,
   getRate,
   setPriceRate,
+  getFanSpeedPriceRate,
   getPriceRate,
-  getPriceRates,
   setTargetRange,
   getTargetRange,
 };

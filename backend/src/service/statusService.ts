@@ -47,7 +47,6 @@ const getInitialStatus = async (roomId: string) => {
         fanSpeed: 1,
         on: false,
         rate: configService.getRate(1),
-        priceRate: configService.getPriceRate(1),
         initTemp: configService.getRoom(roomId)?.initTemp,
         timestamp: new Date(),
       });
