@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { acUpdateRequest, responseBase } from "shared";
+import { acDetailResponse, acUpdateRequest, responseBase } from "shared";
 import { schedulerService } from "../service/schedulerService";
 import { statusService } from "../service/statusService";
 import { acService } from "../service/acService";
@@ -80,7 +80,7 @@ const detailAC = async (req: Request, res: Response) => {
 
   const detail = await acService.getDetailByRoomId(roomId);
 
-  const response = responseBase.parse({
+  const response = acDetailResponse.parse({
     code: "200",
     error: {
       msg: "",
