@@ -59,7 +59,7 @@ export const receptionAvailableResponse = responseBase
     {
       message:
         "Recommanded and available should be both empty or both have values",
-    }
+    },
   );
 export type ReceptionAvailableResponse = z.infer<
   typeof receptionAvailableResponse
@@ -140,7 +140,7 @@ export const userRoomOrderResponse = responseBase
     },
     {
       message: "Start date must be earlier than or equal to the end date",
-    }
+    },
   );
 
 export type UserRoomOrderResponse = z.infer<typeof userRoomOrderResponse>;

@@ -10,6 +10,10 @@ function Root() {
       return <Navigate to="/customer" />;
     } else if (user.type === "reception") {
       return <Navigate to="/reception" />;
+    } else if (user.type === "aircon-manager") {
+      return <Navigate to="/airconmanager" />;
+    } else {
+      return <Navigate to="/login" />;
     }
   }
 }

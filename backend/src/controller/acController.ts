@@ -44,7 +44,7 @@ const statusAC = async (req: Request, res: Response) => {
     }
 
     if (roomId === undefined) {
-      if (res.locals.user.type !== 1) {
+      if (res.locals.user.type !== 3) {
         const response = responseBase.parse({
           code: "400",
           error: {
