@@ -2,6 +2,7 @@ import { parse } from "json2csv";
 import { prisma } from "../prisma";
 import { StatementItem, statementItem } from "shared";
 import { ACRecord } from "@prisma/client";
+import { configService } from "./configService";
 
 const getDetailByRoomId = async (roomId: string) => {
   const ac = await prisma.aCRecord.findMany({
@@ -29,6 +30,7 @@ const getDetailByRoomId = async (roomId: string) => {
 
   const detail = {
     ...rest,
+    timestamp: now,
     subtotal,
     total,
   };
@@ -80,7 +82,8 @@ const getStatement = async (
           duration,
           fanSpeed: lastStatus.fanSpeed,
           price: duration * lastStatus.priceRate,
-          priceRate: lastStatus.priceRate,
+          priceRate:
+            lastStatus.priceRate / configService.getRate(lastStatus.fanSpeed),
           target: lastStatus.target,
           temp: acRecord.temp,
           mode: lastStatus.mode,
