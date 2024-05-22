@@ -36,4 +36,20 @@ acRouter.put(
   acController.setTargetRangeAC,
 );
 
+acRouter.get("/price-rate", authUserMiddleware, acController.getPriceRateAC);
+
+acRouter.put("/price-rate", authUserMiddleware, acController.setPriceRateAC);
+
+acRouter.get(
+  "/target-range",
+  authUserMiddleware,
+  acController.getTargetRangeAC,
+);
+
+acRouter.put(
+  "/target-range",
+  authUserMiddleware,
+  acController.setTargetRangeAC,
+);
+
 export { acRouter };
