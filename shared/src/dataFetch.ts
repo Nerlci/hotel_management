@@ -16,6 +16,26 @@ import {
 
 export const BASE_URL = process.env.VITE_API_URL || "http://localhost:8080";
 
+export async function deleteUserBooking() {
+  const response = await fetch(`${BASE_URL}/api/room/book`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+  });
+  if (!response.ok) {
+    throw new Error("Request failed");
+  }
+  const responseJson = await response.json();
+  if (responseJson.code === "401") {
+    throw new Error("401");
+  }
+  if (responseJson.code !== "200") {
+    throw new Error(responseJson.error.msg);
+  }
+}
+
 export async function getUserIdByEmail(email: string) {
   const response = await fetch(`${BASE_URL}/api/user/email?email=${email}`, {
     method: "GET",
@@ -225,13 +245,6 @@ export async function postUserAirconUpdate(value: ACUpdateRequestBody) {
   return json;
 }
 
-export async function getUserRoomNumber() {
-  // TODO: call api
-  return new Promise<string>((resolve) => {
-    resolve("8103");
-  });
-}
-
 export function generateGetUserAirconDetail(roomId: string) {
   return async () => {
     const response = await fetch(`${BASE_URL}/api/ac/detail?roomId=${roomId}`, {
@@ -300,5 +313,91 @@ export async function getReceptionCheckinableRooms(userId: string) {
     throw new Error(responseJson.error.msg);
   }
   const json = receptionCheckinableResponse.parse(responseJson);
+  return json;
+}
+
+export async function getAirconTempRange() {
+  const response = await fetch(`${BASE_URL}/api/ac/target-range`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+  });
+  if (!response.ok) {
+    throw new Error("Request failed");
+  }
+  const responseJson = await response.json();
+  if (responseJson.code === "401") {
+    throw new Error("401");
+  }
+  if (responseJson.code !== "200") {
+    throw new Error(responseJson.error.msg);
+  }
+  return responseJson.payload;
+}
+
+export async function getAirconPriceRate() {
+  const response = await fetch(`${BASE_URL}/api/ac/price-rate`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+  });
+  if (!response.ok) {
+    throw new Error("Request failed");
+  }
+  const responseJson = await response.json();
+  if (responseJson.code === "401") {
+    throw new Error("401");
+  }
+  if (responseJson.code !== "200") {
+    throw new Error(responseJson.error.msg);
+  }
+  return responseJson.payload;
+}
+
+export async function putAirconTempRange(minTarget: number, maxTarget: number) {
+  const response = await fetch(`${BASE_URL}/api/ac/target-range`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ minTarget, maxTarget }),
+    credentials: "include",
+  });
+  if (!response.ok) {
+    throw new Error("Request failed");
+  }
+  const json = responseBase.parse(await response.json());
+  if (json.code === "401") {
+    throw new Error("401");
+  }
+  if (json.code !== "200") {
+    throw new Error(json.error.msg);
+  }
+  return json;
+}
+
+export async function putAirconPriceRate(priceRate: number) {
+  const response = await fetch(`${BASE_URL}/api/ac/price-rate`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ priceRate }),
+    credentials: "include",
+  });
+  if (!response.ok) {
+    throw new Error("Request failed");
+  }
+  const json = responseBase.parse(await response.json());
+  if (json.code === "401") {
+    throw new Error("401");
+  }
+  if (json.code !== "200") {
+    throw new Error(json.error.msg);
+  }
   return json;
 }

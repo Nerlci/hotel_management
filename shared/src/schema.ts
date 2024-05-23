@@ -107,18 +107,17 @@ export type ACUpdateRequestBody = z.infer<typeof acUpdateRequestBody>;
 
 export const acStatus = acUpdateRequest.omit({ userId: true }).extend({
   temp: z.number(),
+  initTemp: z.number(),
+  rate: z.number(),
   timestamp: z.date(),
 });
 export type ACStatus = z.infer<typeof acStatus>;
 
 export const acDetailResponse = responseBase.extend({
-  payload: z.object({
-    details: z.array(
-      acUpdateRequest.omit({ userId: true }).extend({
-        timestamp: z.string().datetime(),
-      }),
-    ),
-    roomId: z.string().min(1, "Room ID can't be empty"),
+  payload: acUpdateRequest.extend({
+    timestamp: z.date(),
+    subtotal: z.number(),
+    total: z.number(),
   }),
 });
 export type ACDetailResponse = z.infer<typeof acDetailResponse>;
@@ -164,3 +163,17 @@ export const receptionCheckinRequest = z.object({
   userId: z.string().min(1, "User ID can't be empty"),
 });
 export type ReceptionCheckinRequest = z.infer<typeof receptionCheckinRequest>;
+
+export const statementItem = z.object({
+  roomId: z.string(),
+  requestTime: z.date().nullable(),
+  startTime: z.date(),
+  endTime: z.date(),
+  duration: z.number(),
+  fanSpeed: z.number(),
+  price: z.number(),
+  priceRate: z.number(),
+  target: z.number(),
+  temp: z.number(),
+});
+export type StatementItem = z.infer<typeof statementItem>;

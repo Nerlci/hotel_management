@@ -10,8 +10,8 @@ const channels: Map<string, SseChannel> = new Map();
 const globalChannel = new SseChannel();
 
 const getChannel = (roomId: string) => {
-  const rooms = configService.getConfig().rooms.map((room) => room.roomId);
-  if (rooms.includes(roomId)) {
+  const roomIds = configService.getConfig().rooms.map((room) => room.roomId);
+  if (roomIds.indexOf(roomId) === -1) {
     throw new Error("Room not found");
   }
 
@@ -34,14 +34,22 @@ const getInitialStatus = async (roomId: string) => {
   });
 
   return status
-    ? acStatus.parse(status)
+    ? acStatus.parse({
+        ...status,
+        rate:
+          configService.getRate(status.fanSpeed * (status.on ? 1 : 0)) *
+          (!status.on || status.mode === 0 ? 1 : -1),
+        initTemp: configService.getRoom(roomId)?.initTemp,
+      })
     : acStatus.parse({
         roomId: roomId,
         target: 25,
         temp: tempService.getTemp(roomId, new Date()),
         mode: 0,
-        fanSpeed: 1,
+        fanSpeed: 2,
         on: false,
+        rate: configService.getRate(2),
+        initTemp: configService.getRoom(roomId)?.initTemp,
         timestamp: new Date(),
       });
 };
@@ -55,8 +63,8 @@ const listenStatus = async (
     globalChannel.addClient(req, res);
 
     const status: ACStatus[] = [];
-    for (const roomId of channels.keys()) {
-      status.push(await getInitialStatus(roomId));
+    for (const room of configService.getRooms()) {
+      status.push(await getInitialStatus(room.roomId));
     }
     globalChannel.send(JSON.stringify(status), [res]);
 
