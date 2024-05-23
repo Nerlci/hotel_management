@@ -25,5 +25,5 @@ export const useTempEmulate = (props: {
     }
   }, 1000);
 
-  return currentTemp;
+  return currentTemp.toFixed(2);
 };

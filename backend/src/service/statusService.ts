@@ -40,6 +40,7 @@ const getInitialStatus = async (roomId: string) => {
           configService.getRate(status.fanSpeed * (status.on ? 1 : 0)) *
           (!status.on || status.mode === 0 ? 1 : -1),
         initTemp: configService.getRoom(roomId)?.initTemp,
+        timestamp: status.timestamp.toISOString(),
       })
     : acStatus.parse({
         roomId: roomId,
@@ -50,7 +51,7 @@ const getInitialStatus = async (roomId: string) => {
         on: false,
         rate: configService.getRate(2),
         initTemp: configService.getRoom(roomId)?.initTemp,
-        timestamp: new Date(),
+        timestamp: new Date().toISOString(),
       });
 };
 

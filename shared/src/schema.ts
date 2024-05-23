@@ -109,7 +109,7 @@ export const acStatus = acUpdateRequest.omit({ userId: true }).extend({
   temp: z.number(),
   initTemp: z.number(),
   rate: z.number(),
-  timestamp: z.date(),
+  timestamp: z.string().datetime(),
 });
 export type ACStatus = z.infer<typeof acStatus>;
 

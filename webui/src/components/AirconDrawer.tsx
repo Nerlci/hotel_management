@@ -220,13 +220,14 @@ export default function AirconDrawer(props: { roomId: string }) {
     },
   });
   const [drawerOpen, setDrawerOpen] = useState(false);
+  // TODO: behavior is still not correct
   const currentTemp = useTempEmulate({
     startTemp: sseData?.temp || 25,
-    on: true,
-    temp: 25,
-    rate: -0.5,
+    on: sseData?.on || false,
+    temp: sseData?.temp || 25,
+    rate: sseData?.rate || 0.1,
     initTemp: 30,
-    timestamp: new Date("2024-05-21T14:51:00.260Z"),
+    timestamp: sseData ? new Date(sseData.timestamp) : new Date(),
   });
 
   return (
