@@ -1,15 +1,11 @@
 import { parse } from "json2csv";
 import { prisma } from "../prisma";
-import { StatementItem, statementItem } from "shared";
 import { ACRecord } from "@prisma/client";
+import { StatementItem, statementItem } from "shared";
 import { configService } from "./configService";
 
 const getDetailByRoomId = async (roomId: string) => {
   const ac = await prisma.aCRecord.findMany({
-    orderBy: {
-      timestamp: "desc",
-    },
-    take: 1,
     where: {
       roomId: roomId,
       type: 1,
@@ -17,25 +13,36 @@ const getDetailByRoomId = async (roomId: string) => {
   });
 
   const now = new Date();
-  const { id, temp, priceRate, ...rest } = ac[0];
+  const current = ac[ac.length - 1];
   const subtotal =
-    Math.ceil((now.getTime() - rest.timestamp.getTime()) / 1000) *
-    priceRate *
-    (rest.on ? 1 : 0);
-  const total =
-    (await getStatement(roomId, undefined, undefined)).reduce(
-      (sum, item) => sum + item.price,
-      0,
-    ) + subtotal;
+    Math.ceil((now.getTime() - current.timestamp.getTime()) / 1000) *
+    current.priceRate *
+    (current.on ? 1 : 0);
+  let total = 0;
 
-  const detail = {
-    ...rest,
-    timestamp: now,
-    subtotal,
-    total,
-  };
+  const details = [];
 
-  return detail;
+  for (let i = 0; i < ac.length; i++) {
+    const item = ac[i];
+
+    if (i != 0) {
+      const duration = Math.ceil(
+        (item.timestamp.getTime() - ac[i - 1].timestamp.getTime()) / 1000,
+      );
+      total += duration * ac[i - 1].priceRate * (ac[i - 1].on ? 1 : 0);
+    }
+
+    details.push({
+      target: item.target,
+      fanSpeed: item.fanSpeed,
+      mode: item.mode,
+      on: item.on,
+      timestamp: item.timestamp,
+      total: total,
+    });
+  }
+
+  return { roomId, subtotal, details };
 };
 
 const getStatement = async (
@@ -178,10 +185,44 @@ const getInvoice = async (
   return invoice;
 };
 
+const getDays = async (
+  roomId: string,
+  startTime: Date | undefined,
+  endTime: Date | undefined,
+) => {
+  const requests = await prisma.aCRecord.findMany({
+    where: {
+      roomId: roomId,
+      type: 0,
+      timestamp: {
+        gte: startTime,
+        lte: endTime,
+      },
+    },
+  });
+
+  let days = 0;
+  let on = false;
+
+  for (const request of requests) {
+    if (request.on) {
+      on = true;
+    } else {
+      if (on) {
+        days++;
+        on = false;
+      }
+    }
+  }
+
+  return days;
+};
+
 const acService = {
   getDetailByRoomId,
   getStatement,
   getStatementTable,
   getInvoice,
+  getDays,
 };
 export { acService };
