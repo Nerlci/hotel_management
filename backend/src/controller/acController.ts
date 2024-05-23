@@ -1,5 +1,10 @@
 import { Request, Response } from "express";
-import { acDetailResponse, acUpdateRequest, responseBase } from "shared";
+import {
+  ACDetailResponse,
+  acDetailResponse,
+  acUpdateRequest,
+  responseBase,
+} from "shared";
 import { schedulerService } from "../service/schedulerService";
 import { statusService } from "../service/statusService";
 import { acService } from "../service/acService";
@@ -87,6 +92,12 @@ const detailAC = async (req: Request, res: Response) => {
     },
     payload: {
       ...detail,
+      details: detail.details.map((d) => {
+        return {
+          ...d,
+          timestamp: d.timestamp.toISOString(),
+        };
+      }),
     },
   });
   res.json(response);

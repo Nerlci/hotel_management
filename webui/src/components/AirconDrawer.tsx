@@ -36,6 +36,7 @@ import {
 import { TempSlider, WindSlider } from "./AirconSlider";
 import { useAuth } from "@/hooks/useAuth";
 import { useSSE } from "@/hooks/useSSE";
+import { useTempEmulate } from "@/hooks/tempEmulate";
 
 const AirconDrawerContent = ({
   sseData,
@@ -219,6 +220,14 @@ export default function AirconDrawer(props: { roomId: string }) {
     },
   });
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const currentTemp = useTempEmulate({
+    startTemp: sseData?.temp || 25,
+    on: sseData?.on || false,
+    temp: sseData?.temp || 25,
+    rate: sseData?.rate || 0.1,
+    initTemp: sseData?.initTemp || 30,
+    timestamp: sseData ? new Date(sseData.timestamp) : new Date(),
+  });
 
   return (
     <Drawer open={drawerOpen} onOpenChange={setDrawerOpen}>
@@ -240,7 +249,7 @@ export default function AirconDrawer(props: { roomId: string }) {
                   <div
                     className={`flex max-w-[14rem] flex-row flex-wrap items-center justify-center gap-1 text-right ${sseData?.on ? "" : "text-muted-foreground"}`}
                   >
-                    {sseReadyState.key !== 1 ? (
+                    {sseData === undefined || sseReadyState.key !== 1 ? (
                       <Skeleton className="h-5 w-40" />
                     ) : (
                       <>
@@ -248,9 +257,7 @@ export default function AirconDrawer(props: { roomId: string }) {
                           目标温度：{sseData?.target}&deg;C
                         </p>
                         <p className="w-24">目标风速：{sseData?.fanSpeed}</p>
-                        <p className="w-28">
-                          当前温度：{sseData?.temp.toFixed(2)}&deg;C
-                        </p>
+                        <p className="w-28">当前温度：{currentTemp}&deg;C</p>
                         <p className="w-24">
                           模式：{sseData?.mode === 0 ? "制热" : "制冷"}
                         </p>
