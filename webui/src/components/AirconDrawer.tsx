@@ -228,7 +228,6 @@ export default function AirconDrawer(props: { roomId: string }) {
     initTemp: sseData?.initTemp || 30,
     timestamp: sseData ? new Date(sseData.timestamp) : new Date(),
   });
-  console.log(sseData === undefined || sseReadyState.key !== 1);
 
   return (
     <Drawer open={drawerOpen} onOpenChange={setDrawerOpen}>
