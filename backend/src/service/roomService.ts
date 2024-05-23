@@ -238,15 +238,13 @@ const calculateLodgingFee = async (
   return roomBill;
 };
 
-const getBill = async (userId: string) => {
-  const user = await findUser(userId);
-  const reservation = await findReservation(userId);
-  const roomId = reservation[0].roomId;
-  const checkInDate = reservation[0].checkInDate;
-  const checkOutDate = reservation[0].checkOutDate;
-  if (roomId === null) {
-    throw new Error("You have not checked in");
-  }
+const getBill = async (roomId: string) => {
+  const reservation = await prisma.reservation.findFirst({
+    where: { roomId },
+  });
+  if (!reservation) throw new Error("No record found.");
+  const checkInDate = reservation.checkInDate;
+  const checkOutDate = reservation.checkOutDate;
   if (!checkOutDate || !checkInDate) {
     throw new Error("Illegal check in date or check out date");
   }
@@ -283,8 +281,8 @@ const getBill = async (userId: string) => {
   return result;
 };
 
-const getBillFile = async (userId: string) => {
-  const { bill, roomId, checkInDate, checkOutDate } = await getBill(userId);
+const getBillFile = async (roomId: string) => {
+  const { bill, checkInDate, checkOutDate } = await getBill(roomId);
 
   const lodgingBill = bill[0];
   const acBill = bill.slice(1);
