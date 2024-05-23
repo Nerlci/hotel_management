@@ -23,4 +23,6 @@ roomRouter.get("/room", authUserMiddleware, roomController.getRoom);
 
 roomRouter.post("/checkout", authUserMiddleware, roomController.checkOut);
 
+roomRouter.get("/bill", authUserMiddleware, roomController.getBill);
+
 export { roomRouter };

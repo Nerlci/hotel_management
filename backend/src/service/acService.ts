@@ -163,12 +163,12 @@ const getInvoice = async (
 
   const invoice = [];
 
-  for (const priceRate of priceRates) {
-    const items = statement.filter((item) => item.priceRate === priceRate);
+  for (const price of priceRates) {
+    const items = statement.filter((item) => item.priceRate === price);
     const quantity = items.reduce((sum, item) => sum + item.duration, 0);
     const subtotal = items.reduce((sum, item) => sum + item.price, 0);
     invoice.push({
-      priceRate,
+      price,
       quantity,
       subtotal,
     });

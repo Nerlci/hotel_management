@@ -65,6 +65,10 @@ const getRooms = () => {
   return config.rooms;
 };
 
+const getRoomPrice = (roomId: string) => {
+  return rooms.get(roomId)?.price;
+};
+
 const getRate = (fanSpeed: number) => {
   return config.ac.rate[fanSpeed];
 };
@@ -99,6 +103,7 @@ const configService = {
   modifyConfig,
   saveConfig,
   getRoom,
+  getRoomPrice,
   getRooms,
   getRate,
   setPriceRate,
