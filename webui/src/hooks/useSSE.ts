@@ -26,12 +26,13 @@ export function useSSE<T, I = T>(url: string, specialFirst = false) {
       };
       source.current.onmessage = (e) => {
         if (isFirst.current) {
-          setFirstData({ ...JSON.parse(e.data) });
+          setFirstData(JSON.parse(e.data));
+          isFirst.current = false;
           if (specialFirst) {
             return;
           }
         }
-        setSseData({ ...JSON.parse(e.data) });
+        setSseData(JSON.parse(e.data));
       };
     } catch (error) {
       console.log(error);
