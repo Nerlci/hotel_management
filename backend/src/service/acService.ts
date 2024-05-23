@@ -13,6 +13,11 @@ const getDetailByRoomId = async (roomId: string) => {
   });
 
   const now = new Date();
+
+  if (ac.length === 0) {
+    return { roomId, subtotal: 0, details: [] };
+  }
+
   const current = ac[ac.length - 1];
   const subtotal =
     Math.ceil((now.getTime() - current.timestamp.getTime()) / 1000) *
