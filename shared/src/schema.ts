@@ -115,18 +115,12 @@ export type ACStatus = z.infer<typeof acStatus>;
 
 export const acDetailResponse = responseBase.extend({
   payload: z.object({
-    roomId: z.string(),
-    userId: z.string(),
-    total: z.number(),
+    roomId: z.string().min(1, "Room ID can't be empty"),
+    subtotal: z.number(),
     details: z.array(
-      z.object({
-        target: z.number().int(),
-        fanSpeed: z.number().int(),
-        mode: z.literal(0).or(z.literal(1)),
-        on: z.boolean(),
-        type: z.literal(0).or(z.literal(1)),
-        timestamp: z.string().datetime(),
-        subtotal: z.number(),
+      acUpdateRequest.omit({ userId: true, roomId: true }).extend({
+        timestamp: z.date(),
+        total: z.number(),
       }),
     ),
   }),
