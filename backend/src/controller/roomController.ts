@@ -219,6 +219,23 @@ const getBill = async (req: Request, res: Response) => {
   }
 };
 
+const getBillFile = async (req: Request, res: Response) => {
+  try {
+    const userId = req.query.userId as string;
+
+    const csv = await roomService.getBillFile(userId);
+
+    res.setHeader("Content-Type", "text/csv");
+    res.setHeader(
+      "Content-Disposition",
+      `attachment; filename=bill-${userId}.csv`,
+    );
+    res.send(csv);
+  } catch (error) {
+    handleErrors(error, res);
+  }
+};
+
 const roomController = {
   bookRoom,
   checkOrder,
@@ -229,6 +246,7 @@ const roomController = {
   getRoom,
   checkOut,
   getBill,
+  getBillFile,
 };
 
 export { roomController };

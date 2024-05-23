@@ -2,6 +2,8 @@ import { User } from "@prisma/client";
 import { prisma } from "../prisma";
 import { configService } from "./configService";
 import { acService } from "./acService";
+import { parse } from "json2csv";
+import { get } from "http";
 
 async function checkRoomAvailability(
   checkInDate: Date,
@@ -260,10 +262,20 @@ const getBill = async (userId: string) => {
     checkInDate,
     checkOutDate,
   );
-  const acBill = {
-    name: "AC Fee",
-    ...acDetail,
-  };
+  const acBill: {
+    name: string;
+    price: number;
+    quantity: number;
+    subtotal: number;
+  }[] = [];
+  acDetail.map((item) => {
+    acBill.push({
+      name: "AC Fee",
+      price: item.price,
+      quantity: item.quantity,
+      subtotal: item.price * item.quantity,
+    });
+  });
   const bill = [roomBill, acBill];
   const result = {
     roomId: roomId,
@@ -272,6 +284,38 @@ const getBill = async (userId: string) => {
     bill,
   };
   return result;
+};
+
+const getBillFile = async (userId: string) => {
+  const bill = await getBill(userId);
+
+  const lodgingFee = (
+    await calculateLodgingFee((await findUserRoom(userId)) as string)
+  ).subtotal;
+  const fields = ["房间号", "入住日期", "退房日期", "空调总费用", "住宿总费用"];
+  const acBill = bill.bill[1] as {
+    name: string;
+    price: number;
+    quantity: number;
+    subtotal: number;
+  }[];
+  const acTotalFee = acBill.reduce(
+    (total: any, item: { subtotal: any }) => total + item.subtotal,
+    0,
+  );
+
+  const data = [
+    {
+      房间号: bill.roomId,
+      入住日期: bill.checkInDate,
+      退房日期: bill.checkOutDate,
+      空调总费用: acTotalFee,
+      住宿总费用: lodgingFee,
+    },
+  ];
+
+  const csv = parse(data, { fields });
+  return csv;
 };
 
 const roomService = {
@@ -287,6 +331,7 @@ const roomService = {
   checkOut,
   findUserRoom,
   getBill,
+  getBillFile,
 };
 
 export { roomService };
