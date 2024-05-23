@@ -220,15 +220,15 @@ export default function AirconDrawer(props: { roomId: string }) {
     },
   });
   const [drawerOpen, setDrawerOpen] = useState(false);
-  // TODO: behavior is still not correct
   const currentTemp = useTempEmulate({
     startTemp: sseData?.temp || 25,
     on: sseData?.on || false,
     temp: sseData?.temp || 25,
     rate: sseData?.rate || 0.1,
-    initTemp: 30,
+    initTemp: sseData?.initTemp || 30,
     timestamp: sseData ? new Date(sseData.timestamp) : new Date(),
   });
+  console.log(sseData === undefined || sseReadyState.key !== 1);
 
   return (
     <Drawer open={drawerOpen} onOpenChange={setDrawerOpen}>
@@ -250,7 +250,7 @@ export default function AirconDrawer(props: { roomId: string }) {
                   <div
                     className={`flex max-w-[14rem] flex-row flex-wrap items-center justify-center gap-1 text-right ${sseData?.on ? "" : "text-muted-foreground"}`}
                   >
-                    {sseReadyState.key !== 1 ? (
+                    {sseData === undefined || sseReadyState.key !== 1 ? (
                       <Skeleton className="h-5 w-40" />
                     ) : (
                       <>
