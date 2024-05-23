@@ -174,5 +174,6 @@ const acService = {
   getDetailByRoomId,
   getStatement,
   getStatementTable,
+  getInvoice,
 };
 export { acService };
