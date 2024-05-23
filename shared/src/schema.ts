@@ -119,7 +119,7 @@ export const acDetailResponse = responseBase.extend({
     subtotal: z.number(),
     details: z.array(
       acUpdateRequest.omit({ userId: true, roomId: true }).extend({
-        timestamp: z.date(),
+        timestamp: z.string().datetime(),
         total: z.number(),
       }),
     ),
