@@ -266,10 +266,10 @@ const getBill = async (userId: string) => {
     checkOutDate,
   );
   const acBill = acDetail.map((item) => ({
-    name: "AC Fee",
+    name: `AC Fee (${item.price} per second)`,
     ...item,
   }));
-  const bill = [roomBill, acBill];
+  const bill = [roomBill, ...acBill];
   const result = {
     roomId: roomId,
     checkInDate: checkInDate,
@@ -282,18 +282,8 @@ const getBill = async (userId: string) => {
 const getBillFile = async (userId: string) => {
   const { bill, roomId, checkInDate, checkOutDate } = await getBill(userId);
 
-  const lodgingBill = bill[0] as {
-    price: number;
-    quantity: number;
-    subtotal: number;
-    name: string;
-  };
-  const acBill = bill[1] as {
-    price: number;
-    quantity: number;
-    subtotal: number;
-    name: string;
-  }[];
+  const lodgingBill = bill[0];
+  const acBill = bill.slice(1);
   const lodgingFee = lodgingBill.subtotal;
   const acTotalFee = acBill.reduce(
     (total: any, item: { subtotal: any }) => total + item.subtotal,
