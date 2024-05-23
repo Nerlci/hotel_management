@@ -184,6 +184,11 @@ const checkIn = async (userId: string, roomId: string) => {
   if (reservation[0].roomId !== null)
     throw new Error("You have already checked in");
 
+  await prisma.reservation.update({
+    where: { id: reservation[0].id },
+    data: { checkInDate: new Date(), checkOutDate: null },
+  });
+
   await updateRoomStatus(room.id, "occupied");
   return await updateReservation(reservation[0].id, roomId);
 };
@@ -198,29 +203,30 @@ const checkOut = async (userId: string) => {
   }
 
   const room = await findRoom(reservation[0].roomId);
-
-  const result = await updateReservation(reservation[0].id, null);
-
+  await prisma.reservation.update({
+    where: { id: reservation[0].id },
+    data: { checkOutDate: new Date() },
+  });
+  // const result = await updateReservation(reservation[0].id, null);
+  const result = await prisma.reservation.update({
+    where: { id: reservation[0].id },
+    data: { checkOutDate: new Date() },
+  });
   await updateRoomStatus(room.id, "available");
 
   return result;
 };
 
-const calculateLodgingFee = async (userId: string) => {
-  const reservation = await findReservation(userId);
-  if (reservation[0].roomId === null) {
-    throw new Error("You have not checked in");
-  }
+const calculateLodgingFee = async (roomId: string) => {
+  // TODO: replace with days from ac
+  // const days = Math.floor(
+  //   (reservation[0].endDate.getDay() - reservation[0].startDate.getDay()) /
+  //     (1000 * 60 * 60 * 24) +
+  //     1,
+  // );
+  const days = 1;
 
-  const room = await findRoom(reservation[0].roomId);
-
-  const days = Math.floor(
-    (reservation[0].endDate.getDay() - reservation[0].startDate.getDay()) /
-      (1000 * 60 * 60 * 24) +
-      1,
-  );
-
-  const price = configService.getRoomPrice(room.roomId);
+  const price = configService.getRoomPrice(roomId);
   if (!price) throw new Error("Room price not found");
 
   const roomBill = {
@@ -234,25 +240,38 @@ const calculateLodgingFee = async (userId: string) => {
 const getBill = async (userId: string) => {
   const user = await findUser(userId);
   const reservation = await findReservation(userId);
-  if (reservation[0].roomId === null) {
+  const roomId = reservation[0].roomId;
+  const checkInDate = reservation[0].checkInDate;
+  const checkOutDate = reservation[0].checkOutDate;
+  if (roomId === null) {
     throw new Error("You have not checked in");
   }
-  const roomDetail = await calculateLodgingFee(userId);
+  if (!checkOutDate || !checkInDate) {
+    throw new Error("Illegal check in date or check out date");
+  }
+  const roomDetail = await calculateLodgingFee(roomId);
   const roomBill = {
     name: "Lodging Fee",
     ...roomDetail,
   };
+
   const acDetail = await acService.getInvoice(
-    reservation[0].roomId,
-    reservation[0].startDate,
-    reservation[0].endDate,
+    roomId,
+    checkInDate,
+    checkOutDate,
   );
   const acBill = {
     name: "AC Fee",
     ...acDetail,
   };
   const bill = [roomBill, acBill];
-  return bill;
+  const result = {
+    roomId: roomId,
+    checkInDate: checkInDate,
+    checkOutDate: checkOutDate,
+    bill,
+  };
+  return result;
 };
 
 const roomService = {
