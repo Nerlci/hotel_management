@@ -16,7 +16,7 @@ const ROUND_ROBIN_INTERVAL =
 
 const waitingList: SchedulerItem[] = [];
 const servingList: SchedulerItem[] = [];
-const rrList: { interval: NodeJS.Timeout; item: SchedulerItem }[] = [];
+const rrList: { timeout: NodeJS.Timeout; item: SchedulerItem }[] = [];
 const shutdownList: { timeout: NodeJS.Timeout; item: SchedulerItem }[] = [];
 
 const modifyTimestamps = (item: ACUpdateRequest, now: Date) => {
@@ -33,7 +33,7 @@ const stopRR = (roomId: string) => {
     return;
   }
 
-  clearInterval(rrList[idx].interval);
+  clearTimeout(rrList[idx].timeout);
   rrList.splice(idx, 1);
 };
 
@@ -137,26 +137,37 @@ const preemptService = (item: SchedulerItem, preemptedItem: SchedulerItem) => {
   });
   waitingList.push(modifyTimestamps(preemptedItem, now));
 
+  // 如果当前对象在时间片调度中，清除他的定时器
   const rrIdx = rrList.findIndex(
     (rrItem) => rrItem.item.roomId === item.roomId,
   );
   if (rrIdx !== -1) {
-    clearInterval(rrList[rrIdx].interval);
+    clearTimeout(rrList[rrIdx].timeout);
     rrList.splice(rrIdx, 1);
   }
 
-  if (rrIdx !== -1 && item.fanSpeed === preemptedItem.fanSpeed) {
-    const newInterval = setInterval(
-      rrPreempt,
-      ROUND_ROBIN_INTERVAL,
-      preemptedItem.roomId,
+  // 如果被抢占的对象的风速还有其他服务对象在使用，为被抢占对象设置定时器
+  const sameFanSpeedItems = servingList.filter(
+    (servingItem) => servingItem.fanSpeed === preemptedItem.fanSpeed,
+  );
+  if (sameFanSpeedItems.length !== 0) {
+    const rrIdx = rrList.findIndex(
+      (rrItem) => rrItem.item.roomId === preemptedItem.roomId,
     );
-    rrList.push({
-      interval: newInterval,
-      item: modifyTimestamps(preemptedItem, now),
-    });
+    if (rrIdx === -1) {
+      const newTimeout = setTimeout(
+        rrPreempt,
+        ROUND_ROBIN_INTERVAL,
+        preemptedItem.roomId,
+      );
+      rrList.push({
+        timeout: newTimeout,
+        item: modifyTimestamps(preemptedItem, now),
+      });
+    }
   }
 
+  // 释放被抢占对象的关闭定时器
   const shutdownIdx = shutdownList.findIndex(
     (item) => item.item.roomId === preemptedItem.roomId,
   );
@@ -173,13 +184,13 @@ const rrPreempt = (roomId: string) => {
   }
 
   const item = rrList[idx].item;
-  const interval = rrList[idx].interval;
+  const timeout = rrList[idx].timeout;
   const sameFanSpeedItems = servingList
     .filter((servingItem) => servingItem.fanSpeed === item.fanSpeed)
     .sort((a, b) => a.onTimestamp.getTime() - b.onTimestamp.getTime());
   if (sameFanSpeedItems.length === 0) {
     rrList.splice(idx, 1);
-    clearInterval(interval);
+    clearTimeout(timeout);
     return;
   }
 
@@ -314,7 +325,7 @@ const schedulerStep = (item: SchedulerItem) => {
 
   // 如果请求风速等于某些服务对象的风速，启动时间片调度策略
   if (requestFanSpeed === Math.min(...servingFanSpeeds)) {
-    // 将请求对象放置于等待队列，设置时间片
+    // 将请求对象放置于等待队列，设置定时器
     const rrIdx = rrList.findIndex(
       (rrItem) => rrItem.item.roomId === item.roomId,
     );
@@ -322,13 +333,9 @@ const schedulerStep = (item: SchedulerItem) => {
       return;
     }
 
-    const rrInterval = setInterval(
-      rrPreempt,
-      ROUND_ROBIN_INTERVAL,
-      item.roomId,
-    );
+    const rrTimeout = setTimeout(rrPreempt, ROUND_ROBIN_INTERVAL, item.roomId);
     rrList.push({
-      interval: rrInterval,
+      timeout: rrTimeout,
       item: modifyTimestamps(item, now),
     });
     waitingList.push(modifyTimestamps(item, now));
