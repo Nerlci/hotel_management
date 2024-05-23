@@ -4,6 +4,7 @@ import { configService } from "./configService";
 import { acService } from "./acService";
 import { parse } from "json2csv";
 import { get } from "http";
+import { log } from "console";
 
 async function checkRoomAvailability(
   checkInDate: Date,
@@ -219,14 +220,12 @@ const checkOut = async (userId: string) => {
   return result;
 };
 
-const calculateLodgingFee = async (roomId: string) => {
-  // TODO: replace with days from ac
-  // const days = Math.floor(
-  //   (reservation[0].endDate.getDay() - reservation[0].startDate.getDay()) /
-  //     (1000 * 60 * 60 * 24) +
-  //     1,
-  // );
-  const days = 1;
+const calculateLodgingFee = async (
+  roomId: string,
+  checkInDate: Date,
+  checkOutDate: Date,
+) => {
+  const days = await acService.getDays(roomId, checkInDate, checkOutDate);
 
   const price = configService.getRoomPrice(roomId);
   if (!price) throw new Error("Room price not found");
@@ -251,7 +250,11 @@ const getBill = async (userId: string) => {
   if (!checkOutDate || !checkInDate) {
     throw new Error("Illegal check in date or check out date");
   }
-  const roomDetail = await calculateLodgingFee(roomId);
+  const roomDetail = await calculateLodgingFee(
+    roomId,
+    checkInDate,
+    checkOutDate,
+  );
   const roomBill = {
     name: "Lodging Fee",
     ...roomDetail,
@@ -262,20 +265,10 @@ const getBill = async (userId: string) => {
     checkInDate,
     checkOutDate,
   );
-  const acBill: {
-    name: string;
-    price: number;
-    quantity: number;
-    subtotal: number;
-  }[] = [];
-  acDetail.map((item) => {
-    acBill.push({
-      name: "AC Fee",
-      price: item.price,
-      quantity: item.quantity,
-      subtotal: item.price * item.quantity,
-    });
-  });
+  const acBill = acDetail.map((item) => ({
+    name: "AC Fee",
+    ...item,
+  }));
   const bill = [roomBill, acBill];
   const result = {
     roomId: roomId,
@@ -287,28 +280,32 @@ const getBill = async (userId: string) => {
 };
 
 const getBillFile = async (userId: string) => {
-  const bill = await getBill(userId);
+  const { bill, roomId, checkInDate, checkOutDate } = await getBill(userId);
 
-  const lodgingFee = (
-    await calculateLodgingFee((await findUserRoom(userId)) as string)
-  ).subtotal;
-  const fields = ["房间号", "入住日期", "退房日期", "空调总费用", "住宿总费用"];
-  const acBill = bill.bill[1] as {
-    name: string;
+  const lodgingBill = bill[0] as {
     price: number;
     quantity: number;
     subtotal: number;
+    name: string;
+  };
+  const acBill = bill[1] as {
+    price: number;
+    quantity: number;
+    subtotal: number;
+    name: string;
   }[];
+  const lodgingFee = lodgingBill.subtotal;
   const acTotalFee = acBill.reduce(
     (total: any, item: { subtotal: any }) => total + item.subtotal,
     0,
   );
 
+  const fields = ["房间号", "入住日期", "退房日期", "空调总费用", "住宿总费用"];
   const data = [
     {
-      房间号: bill.roomId,
-      入住日期: bill.checkInDate,
-      退房日期: bill.checkOutDate,
+      房间号: roomId,
+      入住日期: checkInDate,
+      退房日期: checkOutDate,
       空调总费用: acTotalFee,
       住宿总费用: lodgingFee,
     },
