@@ -167,6 +167,14 @@ const getInvoice = async (
     });
   }
 
+  if (invoice.length === 0) {
+    invoice.push({
+      price: 0,
+      quantity: 0,
+      subtotal: 0,
+    });
+  }
+
   return invoice;
 };
 
