@@ -1,6 +1,7 @@
 import { User } from "@prisma/client";
 import { prisma } from "../prisma";
 import { configService } from "./configService";
+import { acService } from "./acService";
 
 async function checkRoomAvailability(
   checkInDate: Date,
@@ -205,6 +206,55 @@ const checkOut = async (userId: string) => {
   return result;
 };
 
+const calculateLodgingFee = async (userId: string) => {
+  const reservation = await findReservation(userId);
+  if (reservation[0].roomId === null) {
+    throw new Error("You have not checked in");
+  }
+
+  const room = await findRoom(reservation[0].roomId);
+
+  const days = Math.floor(
+    (reservation[0].endDate.getDay() - reservation[0].startDate.getDay()) /
+      (1000 * 60 * 60 * 24) +
+      1,
+  );
+
+  const price = configService.getRoomPrice(room.roomId);
+  if (!price) throw new Error("Room price not found");
+
+  const roomBill = {
+    price,
+    quantity: days,
+    subtotal: days * price,
+  };
+  return roomBill;
+};
+
+const getBill = async (userId: string) => {
+  const user = await findUser(userId);
+  const reservation = await findReservation(userId);
+  if (reservation[0].roomId === null) {
+    throw new Error("You have not checked in");
+  }
+  const roomDetail = await calculateLodgingFee(userId);
+  const roomBill = {
+    name: "Lodging Fee",
+    ...roomDetail,
+  };
+  const acDetail = await acService.getInvoice(
+    reservation[0].roomId,
+    reservation[0].startDate,
+    reservation[0].endDate,
+  );
+  const acBill = {
+    name: "AC Fee",
+    ...acDetail,
+  };
+  const bill = [roomBill, acBill];
+  return bill;
+};
+
 const roomService = {
   findBusyDays,
   checkRoomAvailability,
@@ -217,6 +267,7 @@ const roomService = {
   checkIn,
   checkOut,
   findUserRoom,
+  getBill,
 };
 
 export { roomService };
