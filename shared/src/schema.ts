@@ -109,7 +109,7 @@ export const acStatus = acUpdateRequest.omit({ userId: true }).extend({
   temp: z.number(),
   initTemp: z.number(),
   rate: z.number(),
-  timestamp: z.date(),
+  timestamp: z.string().datetime(),
 });
 export type ACStatus = z.infer<typeof acStatus>;
 
@@ -119,7 +119,7 @@ export const acDetailResponse = responseBase.extend({
     subtotal: z.number(),
     details: z.array(
       acUpdateRequest.omit({ userId: true, roomId: true }).extend({
-        timestamp: z.date(),
+        timestamp: z.string().datetime(),
         total: z.number(),
       }),
     ),
@@ -182,3 +182,14 @@ export const statementItem = z.object({
   temp: z.number(),
 });
 export type StatementItem = z.infer<typeof statementItem>;
+
+export const receptionAllRooms = responseBase.extend({
+  payload: z.object({
+    roomId: z.string(),
+    occupied: z.boolean(),
+    start: z.string().datetime().nullable(),
+    end: z.string().datetime().nullable(),
+    userId: z.string().nullable(),
+  }),
+});
+export type ReceptionAllRooms = z.infer<typeof receptionAllRooms>;

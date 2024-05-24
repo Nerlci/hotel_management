@@ -15,7 +15,7 @@ import { useEffect, useState } from "react";
 import { Aircon as AirconType } from "@/lib/aircon-data/schema";
 import { Skeleton } from "@/components/ui/skeleton";
 
-type RoomData = {
+type RoomsData = {
   roomId: string;
   target: number;
   fanSpeed: number;
@@ -25,11 +25,7 @@ type RoomData = {
   initTemp: number;
   rate: number;
   timestamp: string;
-};
-
-type RoomsData = {
-  [key: string]: RoomData;
-};
+}[];
 
 export const Aircon = () => {
   const { sseData, firstData, sseReadyState, closeSource } = useSSE<
@@ -41,7 +37,7 @@ export const Aircon = () => {
   useEffect(() => {
     if (firstData) {
       setTasks(
-        Object.entries(firstData).map(([, value]) => {
+        firstData.map((value) => {
           return {
             id: value.roomId,
             temperature: value.on ? `${value.target}` : "-",
@@ -57,7 +53,7 @@ export const Aircon = () => {
     if (sseReadyState.key === 1 && sseData && tasks) {
       // console.log(JSON.stringify(sseData));
       setTasks((prevTasks) => {
-        if (prevTasks === undefined) {
+        if (prevTasks === undefined || prevTasks.length === 0) {
           return undefined;
         }
         return prevTasks.map((task) => {

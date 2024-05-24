@@ -60,6 +60,7 @@ const statusChange = async (status: SchedulerItem) => {
 
   const statusMessage = acStatus.parse({
     ...data,
+    timestamp: status.timestamp.toISOString(),
     initTemp: configService.getRoom(data.roomId)?.initTemp,
     rate,
   });
