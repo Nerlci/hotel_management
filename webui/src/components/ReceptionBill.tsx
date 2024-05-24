@@ -18,30 +18,14 @@ import {
 import ReceptionOrderDetail from "./ReceptionOrderDetail";
 import ReceptionBillingDetail from "./ReceptionBillingDetail";
 
-const roomIds = [
-  {
-    value: "8101",
-  },
-  {
-    value: "8102",
-  },
-  {
-    value: "8103",
-  },
-  {
-    value: "8104",
-  },
-  {
-    value: "8105",
-  },
-];
-
 export function RoomSelect({
   selectedRoom,
   setSelectedRoom,
+  roomIds,
 }: {
   selectedRoom: string;
   setSelectedRoom: React.Dispatch<React.SetStateAction<string>>;
+  roomIds: { value: string }[];
 }) {
   const [open, setOpen] = useState(false);
 
@@ -96,7 +80,7 @@ export function RoomSelect({
   );
 }
 
-export default function ReceptionBill() {
+export default function ReceptionBill(props: { roomIds: { value: string }[] }) {
   const [selectedRoom, setSelectedRoom] = useState("");
   const [selectedTab, setSelectedTab] = useState<"bill" | "detail">("bill");
 
@@ -108,6 +92,7 @@ export default function ReceptionBill() {
             <RoomSelect
               selectedRoom={selectedRoom}
               setSelectedRoom={setSelectedRoom}
+              roomIds={props.roomIds}
             />
           </div>
           <div className="inline-flex rounded-md shadow-sm" role="group">
