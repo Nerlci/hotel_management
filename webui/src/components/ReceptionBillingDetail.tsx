@@ -76,7 +76,7 @@ export default function ReceptionBillingDetail({ roomId }: DetailProps) {
       return;
     }
     const response = await fetch(`/api/ac/statement-file?roomId=${roomId}`, {
-      method: 'GET',
+      method: "GET",
     });
     if (!response.ok) {
       alert("下载失败，请稍后重试。");
@@ -84,14 +84,14 @@ export default function ReceptionBillingDetail({ roomId }: DetailProps) {
     }
     const blob = await response.blob();
     const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
+    const a = document.createElement("a");
     a.href = url;
     a.download = `AC_Statement_${roomId}.Excel`;
     document.body.appendChild(a);
     a.click();
     a.remove();
     window.URL.revokeObjectURL(url);
-  }  
+  }
 
   return (
     <Card className="overflow-hidden">
@@ -115,8 +115,8 @@ export default function ReceptionBillingDetail({ roomId }: DetailProps) {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuItem onSelect={handleDownload}>              
-                    导出
+                <DropdownMenuItem onSelect={handleDownload}>
+                  导出
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

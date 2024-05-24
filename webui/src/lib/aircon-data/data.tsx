@@ -14,17 +14,20 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuRadioGroup,
-  DropdownMenuRadioItem,
   DropdownMenuSeparator,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { airconSchema } from "@/lib/aircon-data/schema";
 import { FilterableColumns } from "../types";
+import { Dialog, DialogContent, DialogHeader } from "@/components/ui/dialog";
+import CustomerAirconChart from "@/components/CustomerAirconChart";
+import { useState } from "react";
+import { Drawer, DrawerContent } from "@/components/ui/drawer";
+import { AirconDrawerContent } from "@/components/AirconDrawer";
+import { useMutation } from "@tanstack/react-query";
+import { dataFetch } from "shared";
+import { toast } from "sonner";
+import { useAuth } from "@/hooks/useAuth";
 
 interface DataTableRowActionsProps<TData> {
   row: Row<TData>;
@@ -33,36 +36,91 @@ interface DataTableRowActionsProps<TData> {
 export function DataTableRowActions<TData>({
   row,
 }: DataTableRowActionsProps<TData>) {
-  const task = airconSchema.parse(row.original);
+  const roomId = row.getValue("id") as string;
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const currentData = {
+    roomId: roomId,
+    target: 24,
+    fanSpeed: 1,
+    mode: 0,
+    on: false,
+    temp: 24,
+    initTemp: 24,
+    rate: 0.1,
+    timestamp: "",
+  };
+  // TODO: read row values into currentData
+  const { logout } = useAuth()!;
+  const mutation = useMutation({
+    mutationFn: dataFetch.postUserAirconUpdate,
+    onSuccess: () => {
+      toast.success("空调状态更改成功");
+    },
+    onError: (error) => {
+      if (error.message === "401") {
+        toast("请重新登录", {
+          description: "登录状态已过期",
+        });
+        logout();
+      }
+      toast.error("空调状态更改失败");
+      console.log(error.message);
+    },
+  });
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button
-          variant="ghost"
-          className="flex h-8 w-8 p-0 data-[state=open]:bg-muted"
-        >
-          <DotsHorizontalIcon className="h-4 w-4" />
-          <span className="sr-only">打开选项</span>
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-[160px]">
-        <DropdownMenuSub>
-          <DropdownMenuSubTrigger>状态</DropdownMenuSubTrigger>
-          <DropdownMenuSubContent>
-            <DropdownMenuRadioGroup value={task.status}>
-              {statuses.map((status) => (
-                <DropdownMenuRadioItem key={status.value} value={status.value}>
-                  {status.label}
-                </DropdownMenuRadioItem>
-              ))}
-            </DropdownMenuRadioGroup>
-          </DropdownMenuSubContent>
-        </DropdownMenuSub>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem>详单</DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button
+            variant="ghost"
+            className="flex h-8 w-8 p-0 data-[state=open]:bg-muted"
+          >
+            <DotsHorizontalIcon className="h-4 w-4" />
+            <span className="sr-only">打开选项</span>
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" className="w-[160px]">
+          <DropdownMenuItem asChild>
+            <div onClick={() => setDrawerOpen(true)}>控制</div>
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem asChild>
+            <div onClick={() => setDialogOpen(true)}>使用详情</div>
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+      <Drawer open={drawerOpen} onOpenChange={setDrawerOpen}>
+        <DrawerContent>
+          <AirconDrawerContent
+            sseData={{
+              ...currentData,
+              mode: currentData.mode === 0 ? 0 : 1,
+            }}
+            onUserUpdate={(temperature, windspeed, cool, start) => {
+              mutation.mutate({
+                roomId: currentData.roomId,
+                target: temperature,
+                fanSpeed: windspeed,
+                mode: cool ? 1 : 0,
+                on: start,
+              });
+              setDrawerOpen(false);
+            }}
+            controlled={false}
+          />
+        </DrawerContent>
+      </Drawer>
+      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <DialogContent>
+          <DialogHeader>使用情况图</DialogHeader>
+          <div>
+            <CustomerAirconChart roomId={roomId} />
+          </div>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }
 

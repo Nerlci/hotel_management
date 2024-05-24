@@ -8,6 +8,7 @@ import {
   responseBase,
   userAvailablityResponse,
   userRoomOrderResponse,
+  receptionAllRooms,
 } from "shared";
 import { roomService } from "../service/roomService";
 import { prisma } from "../prisma";
@@ -201,13 +202,49 @@ const checkOut = async (req: Request, res: Response) => {
 
 const getBill = async (req: Request, res: Response) => {
   try {
-    const userId = req.query.userId as string;
+    const roomId = req.query.roomId as string;
 
-    const result = await roomService.getBill(userId);
+    const result = await roomService.getBill(roomId);
 
     const response = responseBase.parse({
       code: "200",
       payload: { statement: result },
+      error: {
+        msg: "",
+      },
+    });
+
+    res.json(response);
+  } catch (error) {
+    handleErrors(error, res);
+  }
+};
+
+const getBillFile = async (req: Request, res: Response) => {
+  try {
+    const roomId = req.query.roomId as string;
+
+    const csv = await roomService.getBillFile(roomId);
+
+    res.setHeader("Content-Type", "text/csv");
+    res.setHeader(
+      "Content-Disposition",
+      `attachment; filename=bill-${roomId}.csv`,
+    );
+    res.send(csv);
+  } catch (error) {
+    handleErrors(error, res);
+  }
+};
+
+const getAllRooms = async (req: Request, res: Response) => {
+  try {
+    const result = await roomService.getAllRooms();
+    // console.log(result);
+
+    const response = receptionAllRooms.parse({
+      code: "200",
+      payload: { rooms: result },
       error: {
         msg: "",
       },
@@ -229,6 +266,8 @@ const roomController = {
   getRoom,
   checkOut,
   getBill,
+  getBillFile,
+  getAllRooms,
 };
 
 export { roomController };

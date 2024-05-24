@@ -30,10 +30,8 @@ import { useAuth } from "@/hooks/useAuth";
 import { useWindowSize } from "usehooks-ts";
 
 type CostDataItem = {
-  date: string;
+  time: number;
   cost: number;
-  aircon: number;
-  food: number;
 };
 
 type AirconDataItem = {
@@ -43,14 +41,6 @@ type AirconDataItem = {
   cool?: boolean;
   on: boolean;
 };
-
-function calcTotalCost(costData: CostDataItem[]): number {
-  let res = 0;
-  for (const item of costData) {
-    res += item.cost;
-  }
-  return res;
-}
 
 function ChartSkeleton() {
   return (
@@ -67,7 +57,7 @@ function ChartSkeleton() {
 }
 
 // @ts-expect-error recharts api is not well typed
-const CustomTooltip = ({ active, payload }) => {
+const AirconTooltip = ({ active, payload }) => {
   if (
     active &&
     payload &&
@@ -93,6 +83,32 @@ const CustomTooltip = ({ active, payload }) => {
   }
 };
 
+// @ts-expect-error recharts api is not well typed
+const PriceTooltip = ({ active, payload }) => {
+  if (
+    active &&
+    payload &&
+    payload.length &&
+    payload[0].payload.time !== undefined &&
+    payload[0].payload.cost !== undefined
+  ) {
+    const date = new Date(payload[0].payload.time);
+    return (
+      <Card className="bg-card/70 dark:bg-card/40">
+        <div className="m-3 flex flex-col gap-2">
+          <div>时间：{date.toLocaleString()}</div>
+          <div>费用：{payload[0].payload.cost}</div>
+        </div>
+      </Card>
+    );
+  } else {
+    // smh if null or empty string is returned,
+    // the previous tooltip will show up in the
+    // top left corner of the chart, wtf?
+    return <div>...</div>;
+  }
+};
+
 export default function CustomerAirconChart(props: { roomId: string }) {
   const { width } = useWindowSize();
   const MAX_CHART_DATA = width < 700 ? 10 : 40;
@@ -102,7 +118,7 @@ export default function CustomerAirconChart(props: { roomId: string }) {
     error,
     data: airconDetail,
   } = useQuery({
-    queryKey: ["customerAirconChartData"],
+    queryKey: ["customerAirconChartData", props.roomId],
     queryFn: dataFetch.generateGetUserAirconDetail(props.roomId),
     enabled: !!props.roomId,
     refetchInterval: 1000,
@@ -147,32 +163,13 @@ export default function CustomerAirconChart(props: { roomId: string }) {
       }
     });
 
-  const costData: CostDataItem[] = [
-    {
-      date: "2021-01-01",
-      cost: 100,
-      aircon: 0,
-      food: 0,
-    },
-    {
-      date: "2021-01-02",
-      cost: 120,
-      aircon: 10,
-      food: 10,
-    },
-    {
-      date: "2021-01-03",
-      cost: 300,
-      aircon: 150,
-      food: 50,
-    },
-    {
-      date: "2021-01-04",
-      cost: 300,
-      aircon: 50,
-      food: 150,
-    },
-  ];
+  const costData: CostDataItem[] = [];
+  airconDetail?.payload.details.forEach((item) => {
+    costData.push({
+      time: new Date(item.timestamp).getTime(),
+      cost: item.total,
+    });
+  });
 
   return (
     <Card className="ml-auto mr-auto mt-5">
@@ -185,27 +182,28 @@ export default function CustomerAirconChart(props: { roomId: string }) {
           ) : error ? (
             <div className="text-destructive">获取详单信息失败</div>
           ) : (
-            <CardDescription>{calcTotalCost(costData)}￥</CardDescription>
+            <CardDescription>
+              当前小计：{airconDetail?.payload.subtotal.toFixed(2) || 0}￥
+            </CardDescription>
           )}
         </div>
       </CardHeader>
       <CardContent>
         <Tabs defaultValue="aircon">
           <TabsList>
-            <TabsTrigger value="total">总计</TabsTrigger>
+            <TabsTrigger value="price">费用</TabsTrigger>
             <TabsTrigger value="aircon">空调</TabsTrigger>
-            <TabsTrigger value="food">食物</TabsTrigger>
           </TabsList>
-          <TabsContent value="total">
+          <TabsContent value="price">
             {isLoading || error ? (
               <ChartSkeleton />
             ) : (
-              <ResponsiveContainer width="100%" height={250}>
+              <ResponsiveContainer width="100%" height={300}>
                 <LineChart
                   data={costData}
                   margin={{ top: 5, right: 40, left: 0, bottom: 5 }}
                 >
-                  <XAxis dataKey="date" hide />
+                  <XAxis dataKey="time" hide />
                   <YAxis
                     domain={["dataMin", "dataMax + 10"]}
                     interval="preserveStart"
@@ -215,7 +213,13 @@ export default function CustomerAirconChart(props: { roomId: string }) {
                     dataKey="cost"
                     stroke="hsl(var(--foreground))"
                     strokeWidth={3}
-                    dot={{ strokeWidth: 5 }}
+                    dot={{ strokeWidth: 1 }}
+                    isAnimationActive={false}
+                  />
+                  <Tooltip
+                    // @ts-expect-error recharts api is not well typed
+                    content={<PriceTooltip />}
+                    cursor={false}
                   />
                 </LineChart>
               </ResponsiveContainer>
@@ -263,35 +267,10 @@ export default function CustomerAirconChart(props: { roomId: string }) {
                   />
                   <Tooltip
                     // @ts-expect-error recharts api is not well typed
-                    content={<CustomTooltip />}
+                    content={<AirconTooltip />}
                     cursor={false}
                   />
                 </AreaChart>
-              </ResponsiveContainer>
-            )}
-          </TabsContent>
-          <TabsContent value="food">
-            {isLoading || error ? (
-              <ChartSkeleton />
-            ) : (
-              <ResponsiveContainer width="100%" height={300}>
-                <LineChart
-                  data={costData}
-                  margin={{ top: 5, right: 40, left: 0, bottom: 5 }}
-                >
-                  <XAxis dataKey="date" hide />
-                  <YAxis
-                    domain={["dataMin", "dataMax + 10"]}
-                    interval="preserveStart"
-                  />
-                  <Line
-                    type="linear"
-                    dataKey="food"
-                    stroke="hsl(var(--foreground))"
-                    strokeWidth={3}
-                    dot={{ strokeWidth: 5 }}
-                  />
-                </LineChart>
               </ResponsiveContainer>
             )}
           </TabsContent>

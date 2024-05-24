@@ -36,7 +36,7 @@ export default function ReceptionOrderDetail({ roomId }: DetailProps) {
       return;
     }
     const response = await fetch(`/api/room/bill-file?roomId=${roomId}`, {
-      method: 'GET',
+      method: "GET",
     });
     if (!response.ok) {
       alert("下载失败，请稍后重试。");
@@ -44,15 +44,14 @@ export default function ReceptionOrderDetail({ roomId }: DetailProps) {
     }
     const blob = await response.blob();
     const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
+    const a = document.createElement("a");
     a.href = url;
     a.download = `AC_Statement_${roomId}.csv`;
     document.body.appendChild(a);
     a.click();
     a.remove();
     window.URL.revokeObjectURL(url);
-  }  
-
+  }
 
   return (
     <Card className="overflow-hidden">
@@ -76,7 +75,9 @@ export default function ReceptionOrderDetail({ roomId }: DetailProps) {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuItem onSelect={handleDownload}>导出</DropdownMenuItem>
+                <DropdownMenuItem onSelect={handleDownload}>
+                  导出
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
@@ -91,13 +92,17 @@ export default function ReceptionOrderDetail({ roomId }: DetailProps) {
               <li className="flex items-center justify-between">
                 <span className="text-muted-foreground">入住时间</span>
                 <span>
-                {parseTimeString(billQuery.data?.payload.statement.checkInDate || "")}
+                  {parseTimeString(
+                    billQuery.data?.payload.statement.checkInDate || "",
+                  )}
                 </span>
               </li>
               <li className="flex items-center justify-between">
                 <span className="text-muted-foreground">离开时间</span>
                 <span>
-                  {parseTimeString(billQuery.data?.payload.statement.checkOutDate || "")}
+                  {parseTimeString(
+                    billQuery.data?.payload.statement.checkOutDate || "",
+                  )}
                 </span>
               </li>
               <Separator className="my-4" />
@@ -118,16 +123,15 @@ export default function ReceptionOrderDetail({ roomId }: DetailProps) {
           {roomId ? (
             <ul className="grid gap-3">
               <span className="text-muted-foreground">简餐费用</span>
-              {Array.isArray(billQuery.data?.payload.statement.bill) && billQuery.data.payload.statement.bill.map(
-                (item, index) => (
+              {Array.isArray(billQuery.data?.payload.statement.bill) &&
+                billQuery.data.payload.statement.bill.map((item, index) => (
                   <li key={index} className="flex items-center justify-between">
                     <span>{item.name}</span>
                     <span>
                       ￥ {item.price} × {item.quantity} = ￥ {item.subtotal}
                     </span>
                   </li>
-                )
-              )}
+                ))}
             </ul>
           ) : (
             <>
