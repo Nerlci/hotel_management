@@ -14,20 +14,16 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuRadioGroup,
-  DropdownMenuRadioItem,
   DropdownMenuSeparator,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { airconSchema } from "@/lib/aircon-data/schema";
 import { FilterableColumns } from "../types";
 import { Dialog, DialogContent, DialogHeader } from "@/components/ui/dialog";
 import CustomerAirconChart from "@/components/CustomerAirconChart";
 import { useState } from "react";
+import { Drawer, DrawerContent } from "@/components/ui/drawer";
+import { AirconDrawerContent } from "@/components/AirconDrawer";
 
 interface DataTableRowActionsProps<TData> {
   row: Row<TData>;
@@ -36,9 +32,20 @@ interface DataTableRowActionsProps<TData> {
 export function DataTableRowActions<TData>({
   row,
 }: DataTableRowActionsProps<TData>) {
-  const task = airconSchema.parse(row.original);
-  const [open, setOpen] = useState(false);
   const roomId = row.getValue("id") as string;
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const currentData = {
+    roomId: roomId,
+    target: 24,
+    fanSpeed: 1,
+    mode: 0,
+    on: false,
+    temp: 24,
+    initTemp: 24,
+    rate: 0.1,
+    timestamp: "",
+  };
 
   return (
     <>
@@ -53,28 +60,30 @@ export function DataTableRowActions<TData>({
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-[160px]">
-          <DropdownMenuSub>
-            <DropdownMenuSubTrigger>状态</DropdownMenuSubTrigger>
-            <DropdownMenuSubContent>
-              <DropdownMenuRadioGroup value={task.status}>
-                {statuses.map((status) => (
-                  <DropdownMenuRadioItem
-                    key={status.value}
-                    value={status.value}
-                  >
-                    {status.label}
-                  </DropdownMenuRadioItem>
-                ))}
-              </DropdownMenuRadioGroup>
-            </DropdownMenuSubContent>
-          </DropdownMenuSub>
+          <DropdownMenuItem asChild>
+            <div onClick={() => setDrawerOpen(true)}>状态</div>
+          </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem asChild>
-            <div onClick={() => setOpen(true)}>使用详情</div>
+            <div onClick={() => setDialogOpen(true)}>使用详情</div>
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
-      <Dialog open={open} onOpenChange={setOpen}>
+      <Drawer open={drawerOpen} onOpenChange={setDrawerOpen}>
+        <DrawerContent>
+          <AirconDrawerContent
+            sseData={{
+              ...currentData,
+              mode: currentData.mode === 0 ? 0 : 1,
+            }}
+            onUserUpdate={(update) => {
+              console.log(update);
+            }}
+            controlled={false}
+          />
+        </DrawerContent>
+      </Drawer>
+      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent>
           <DialogHeader>使用情况图</DialogHeader>
           <div>

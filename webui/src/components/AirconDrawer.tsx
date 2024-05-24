@@ -38,9 +38,10 @@ import { useAuth } from "@/hooks/useAuth";
 import { useSSE } from "@/hooks/useSSE";
 import { useTempEmulate } from "@/hooks/tempEmulate";
 
-const AirconDrawerContent = ({
+export const AirconDrawerContent = ({
   sseData,
   onUserUpdate,
+  controlled = true,
 }: {
   sseData: ACStatus;
   onUserUpdate: (
@@ -49,6 +50,7 @@ const AirconDrawerContent = ({
     cool: boolean,
     start: boolean,
   ) => void;
+  controlled: boolean;
 }) => {
   const [temperature, setTemperature] = useState(sseData.target);
   const [windspeed, setWindspeed] = useState(sseData.fanSpeed);
@@ -57,8 +59,10 @@ const AirconDrawerContent = ({
 
   // start state could change from outside when drawer is open
   useEffect(() => {
-    setstart(sseData.on);
-  }, [sseData, setstart]);
+    if (controlled) {
+      setstart(sseData.on);
+    }
+  }, [sseData, controlled]);
 
   return (
     <div className="mx-auto w-full max-w-sm">
@@ -287,6 +291,7 @@ export default function AirconDrawer(props: { roomId: string }) {
               });
               setDrawerOpen(false);
             }}
+            controlled
           />
         )}
       </DrawerContent>
