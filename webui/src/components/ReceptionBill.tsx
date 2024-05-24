@@ -132,12 +132,12 @@ export default function ReceptionBill(props: { roomIds: { value: string }[] }) {
       <div className="mt-3 flex gap-3">
         {selectedTab === "bill" && (
           <div className="grow">
-            <ReceptionOrderDetail roomId={selectedRoom} />
+            <ReceptionBillingDetail roomId={selectedRoom} />
           </div>
         )}
         {selectedTab === "detail" && (
           <div className="grow">
-            <ReceptionBillingDetail roomId={selectedRoom} />
+            <ReceptionOrderDetail roomId={selectedRoom} />
           </div>
         )}
       </div>
