@@ -201,9 +201,9 @@ const checkOut = async (req: Request, res: Response) => {
 
 const getBill = async (req: Request, res: Response) => {
   try {
-    const userId = req.query.userId as string;
+    const roomId = req.query.roomId as string;
 
-    const result = await roomService.getBill(userId);
+    const result = await roomService.getBill(roomId);
 
     const response = responseBase.parse({
       code: "200",
@@ -219,6 +219,23 @@ const getBill = async (req: Request, res: Response) => {
   }
 };
 
+const getBillFile = async (req: Request, res: Response) => {
+  try {
+    const roomId = req.query.roomId as string;
+
+    const csv = await roomService.getBillFile(roomId);
+
+    res.setHeader("Content-Type", "text/csv");
+    res.setHeader(
+      "Content-Disposition",
+      `attachment; filename=bill-${roomId}.csv`,
+    );
+    res.send(csv);
+  } catch (error) {
+    handleErrors(error, res);
+  }
+};
+
 const roomController = {
   bookRoom,
   checkOrder,
@@ -229,6 +246,7 @@ const roomController = {
   getRoom,
   checkOut,
   getBill,
+  getBillFile,
 };
 
 export { roomController };

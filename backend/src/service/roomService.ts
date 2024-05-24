@@ -2,6 +2,9 @@ import { User } from "@prisma/client";
 import { prisma } from "../prisma";
 import { configService } from "./configService";
 import { acService } from "./acService";
+import { parse } from "json2csv";
+import { get } from "http";
+import { log } from "console";
 
 async function checkRoomAvailability(
   checkInDate: Date,
@@ -217,14 +220,12 @@ const checkOut = async (userId: string) => {
   return result;
 };
 
-const calculateLodgingFee = async (roomId: string) => {
-  // TODO: replace with days from ac
-  // const days = Math.floor(
-  //   (reservation[0].endDate.getDay() - reservation[0].startDate.getDay()) /
-  //     (1000 * 60 * 60 * 24) +
-  //     1,
-  // );
-  const days = 1;
+const calculateLodgingFee = async (
+  roomId: string,
+  checkInDate: Date,
+  checkOutDate: Date,
+) => {
+  const days = await acService.getDays(roomId, checkInDate, checkOutDate);
 
   const price = configService.getRoomPrice(roomId);
   if (!price) throw new Error("Room price not found");
@@ -237,19 +238,21 @@ const calculateLodgingFee = async (roomId: string) => {
   return roomBill;
 };
 
-const getBill = async (userId: string) => {
-  const user = await findUser(userId);
-  const reservation = await findReservation(userId);
-  const roomId = reservation[0].roomId;
-  const checkInDate = reservation[0].checkInDate;
-  const checkOutDate = reservation[0].checkOutDate;
-  if (roomId === null) {
-    throw new Error("You have not checked in");
-  }
+const getBill = async (roomId: string) => {
+  const reservation = await prisma.reservation.findFirst({
+    where: { roomId },
+  });
+  if (!reservation) throw new Error("No record found.");
+  const checkInDate = reservation.checkInDate;
+  const checkOutDate = reservation.checkOutDate;
   if (!checkOutDate || !checkInDate) {
     throw new Error("Illegal check in date or check out date");
   }
-  const roomDetail = await calculateLodgingFee(roomId);
+  const roomDetail = await calculateLodgingFee(
+    roomId,
+    checkInDate,
+    checkOutDate,
+  );
   const roomBill = {
     name: "Lodging Fee",
     ...roomDetail,
@@ -260,18 +263,48 @@ const getBill = async (userId: string) => {
     checkInDate,
     checkOutDate,
   );
-  const acBill = {
-    name: "AC Fee",
-    ...acDetail,
-  };
-  const bill = [roomBill, acBill];
+  const acBill = acDetail.map((item) => ({
+    name: `AC Fee (${item.price} per second)`,
+    ...item,
+  }));
+  const bill = [roomBill, ...acBill];
   const result = {
     roomId: roomId,
     checkInDate: checkInDate,
     checkOutDate: checkOutDate,
+    acTotalFee: acBill.reduce(
+      (total: any, item: { subtotal: any }) => total + item.subtotal,
+      0,
+    ),
     bill,
   };
   return result;
+};
+
+const getBillFile = async (roomId: string) => {
+  const { bill, checkInDate, checkOutDate } = await getBill(roomId);
+
+  const lodgingBill = bill[0];
+  const acBill = bill.slice(1);
+  const lodgingFee = lodgingBill.subtotal;
+  const acTotalFee = acBill.reduce(
+    (total: any, item: { subtotal: any }) => total + item.subtotal,
+    0,
+  );
+
+  const fields = ["房间号", "入住日期", "退房日期", "空调总费用", "住宿总费用"];
+  const data = [
+    {
+      房间号: roomId,
+      入住日期: checkInDate,
+      退房日期: checkOutDate,
+      空调总费用: acTotalFee,
+      住宿总费用: lodgingFee,
+    },
+  ];
+
+  const csv = parse(data, { fields });
+  return csv;
 };
 
 const roomService = {
@@ -287,6 +320,7 @@ const roomService = {
   checkOut,
   findUserRoom,
   getBill,
+  getBillFile,
 };
 
 export { roomService };
