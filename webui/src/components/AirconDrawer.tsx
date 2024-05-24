@@ -119,7 +119,7 @@ const AirconDrawerContent = ({
             max={MAX_AIRCON_TEMP}
             min={MIN_AIRCON_TEMP}
             step={1}
-            disabled={!start || sseData.on}
+            disabled={!start}
             onValueChange={(value) => {
               setTemperature(value[0]);
               if (value[0] < sseData.temp) {
@@ -171,7 +171,7 @@ const AirconDrawerContent = ({
             max={MAX_AIRCON_SPEED}
             min={MIN_AIRCON_SPEED}
             step={1}
-            disabled={!start || sseData.on}
+            disabled={!start}
             onValueChange={(value) => {
               setWindspeed(value[0]);
             }}

@@ -183,7 +183,7 @@ export default function CustomerAirconChart(props: { roomId: string }) {
             <div className="text-destructive">获取详单信息失败</div>
           ) : (
             <CardDescription>
-              当前小计：{airconDetail?.payload.subtotal || 0}￥
+              当前小计：{airconDetail?.payload.subtotal.toFixed(2) || 0}￥
             </CardDescription>
           )}
         </div>
