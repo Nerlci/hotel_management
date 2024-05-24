@@ -52,6 +52,7 @@ export default function ReceptionOrderDetail({ roomId }: DetailProps) {
       window.URL.revokeObjectURL(url);
     },
   });
+  console.log(billQuery.data);
 
   const shouldShow = roomId && billQuery.data;
 
