@@ -41,7 +41,7 @@ import { useTempEmulate } from "@/hooks/tempEmulate";
 export const AirconDrawerContent = ({
   sseData,
   onUserUpdate,
-  controlled = true,
+  controlled = true, // controlled is set to false when the drawer is opened by ac-manager
 }: {
   sseData: ACStatus;
   onUserUpdate: (
@@ -70,7 +70,9 @@ export const AirconDrawerContent = ({
         <div className="flex flex-row">
           <div className="flex flex-col gap-2">
             <DrawerTitle className="text-left">控制空调</DrawerTitle>
-            <DrawerDescription>您的空调使用会产生额外计费</DrawerDescription>
+            {controlled && (
+              <DrawerDescription>您的空调使用会产生额外计费</DrawerDescription>
+            )}
           </div>
           <div className="grow" />
           启动
@@ -185,6 +187,7 @@ export const AirconDrawerContent = ({
       <DrawerFooter>
         <Button
           disabled={
+            controlled &&
             temperature === sseData.temp &&
             windspeed === sseData.fanSpeed &&
             cool === (sseData.mode === 1) &&

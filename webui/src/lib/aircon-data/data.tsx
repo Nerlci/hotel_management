@@ -24,6 +24,10 @@ import CustomerAirconChart from "@/components/CustomerAirconChart";
 import { useState } from "react";
 import { Drawer, DrawerContent } from "@/components/ui/drawer";
 import { AirconDrawerContent } from "@/components/AirconDrawer";
+import { useMutation } from "@tanstack/react-query";
+import { dataFetch } from "shared";
+import { toast } from "sonner";
+import { useAuth } from "@/hooks/useAuth";
 
 interface DataTableRowActionsProps<TData> {
   row: Row<TData>;
@@ -46,6 +50,24 @@ export function DataTableRowActions<TData>({
     rate: 0.1,
     timestamp: "",
   };
+  // TODO: read row values into currentData
+  const { logout } = useAuth()!;
+  const mutation = useMutation({
+    mutationFn: dataFetch.postUserAirconUpdate,
+    onSuccess: () => {
+      toast.success("空调状态更改成功");
+    },
+    onError: (error) => {
+      if (error.message === "401") {
+        toast("请重新登录", {
+          description: "登录状态已过期",
+        });
+        logout();
+      }
+      toast.error("空调状态更改失败");
+      console.log(error.message);
+    },
+  });
 
   return (
     <>
@@ -61,7 +83,7 @@ export function DataTableRowActions<TData>({
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-[160px]">
           <DropdownMenuItem asChild>
-            <div onClick={() => setDrawerOpen(true)}>状态</div>
+            <div onClick={() => setDrawerOpen(true)}>控制</div>
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem asChild>
@@ -76,8 +98,15 @@ export function DataTableRowActions<TData>({
               ...currentData,
               mode: currentData.mode === 0 ? 0 : 1,
             }}
-            onUserUpdate={(update) => {
-              console.log(update);
+            onUserUpdate={(temperature, windspeed, cool, start) => {
+              mutation.mutate({
+                roomId: currentData.roomId,
+                target: temperature,
+                fanSpeed: windspeed,
+                mode: cool ? 1 : 0,
+                on: start,
+              });
+              setDrawerOpen(false);
             }}
             controlled={false}
           />
