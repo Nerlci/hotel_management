@@ -315,19 +315,21 @@ const getBillFile = async (roomId: string) => {
 };
 
 const getAllRooms = async () => {
-  const rooms = await configService.getRooms();
+  const rooms = await prisma.room.findMany();
   const result = [];
 
   for (const room of rooms) {
-    const reservation = await findReservationByRoomId(room.roomId);
-    if (reservation) {
-      result.push({
-        roomId: room.roomId,
-        occupied: true,
-        start: reservation.startDate.toISOString(),
-        end: reservation.endDate.toISOString(),
-        userId: reservation.userId,
-      });
+    if (room.status === "occupied") {
+      const reservation = await findReservationByRoomId(room.roomId);
+      if (reservation) {
+        result.push({
+          roomId: room.roomId,
+          occupied: true,
+          start: reservation.startDate.toISOString(),
+          end: reservation.endDate.toISOString(),
+          userId: reservation.userId,
+        });
+      }
     } else {
       result.push({
         roomId: room.roomId,
