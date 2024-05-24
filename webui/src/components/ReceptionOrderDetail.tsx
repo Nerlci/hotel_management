@@ -1,9 +1,8 @@
-import { Copy, MoreVertical } from "lucide-react";
+import { MoreVertical } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
@@ -12,44 +11,60 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Separator } from "@/components/ui/separator";
 import { DetailProps } from "./ReceptionBill";
 import { Skeleton } from "./ui/skeleton";
+import { useQuery } from "@tanstack/react-query";
+import { dataFetch } from "shared";
 
 export default function ReceptionOrderDetail({ roomId }: DetailProps) {
+  function parseTimeString(timeString: string): string {
+    const date = new Date(timeString);
+    return date.toLocaleString("zh-CN");
+  }
+
+  const billQuery = useQuery({
+    queryKey: ["receptionBill"],
+    queryFn: async () => await dataFetch.getBillDetail(roomId),
+  });
+
+  async function handleDownload() {
+    if (!roomId) {
+      alert("房间ID缺失,无法下载详单。");
+      return;
+    }
+    const response = await fetch(`/api/room/bill-file?roomId=${roomId}`, {
+      method: 'GET',
+    });
+    if (!response.ok) {
+      alert("下载失败，请稍后重试。");
+      return;
+    }
+    const blob = await response.blob();
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `AC_Statement_${roomId}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    window.URL.revokeObjectURL(url);
+  }  
+
+
   return (
     <Card className="overflow-hidden">
       <CardHeader className="flex flex-row items-start bg-muted/50">
         <div className="grid gap-0.5">
           <CardTitle className="group flex items-center gap-2 text-lg">
             {roomId ? (
-              <>
-                {`${roomId} 房间账单`}
-                <Button
-                  size="icon"
-                  variant="outline"
-                  className="h-6 w-6 opacity-0 transition-opacity group-hover:opacity-100"
-                >
-                  <Copy className="h-3 w-3" />
-                  <span className="sr-only">Copy Order ID</span>
-                </Button>
-              </>
+              <>{`${roomId} 房间账单`}</>
             ) : (
               <Skeleton className="mb-1 mt-1 h-5 w-52" />
             )}
           </CardTitle>
-          {roomId ? (
-            <CardDescription className="flex justify-between gap-4">
-              <span>2024-05-15 11:05</span>
-              <span>账单号:000293</span>
-              <span>结账员:王丽</span>
-            </CardDescription>
-          ) : (
-            <Skeleton className="mb-1 mt-1 h-3 w-20" />
-          )}
         </div>
         {roomId ? (
           <div className="ml-auto flex items-center gap-1">
@@ -61,10 +76,7 @@ export default function ReceptionOrderDetail({ roomId }: DetailProps) {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuItem>编辑</DropdownMenuItem>
-                <DropdownMenuItem>导出</DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>删除</DropdownMenuItem>
+                <DropdownMenuItem onSelect={handleDownload}>导出</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
@@ -74,20 +86,26 @@ export default function ReceptionOrderDetail({ roomId }: DetailProps) {
       </CardHeader>
       <CardContent className="p-6 text-sm">
         <div className="grid gap-3">
-          <div className="font-semibold">账单详情</div>
           {roomId ? (
             <ul className="grid gap-3">
               <li className="flex items-center justify-between">
-                <span className="text-muted-foreground">住宿费</span>
-                <span>￥250.00</span>
+                <span className="text-muted-foreground">入住时间</span>
+                <span>
+                {parseTimeString(billQuery.data?.payload.statement.checkInDate || "")}
+                </span>
               </li>
               <li className="flex items-center justify-between">
-                <span className="text-muted-foreground">餐饮费</span>
-                <span>￥160.00</span>
+                <span className="text-muted-foreground">离开时间</span>
+                <span>
+                  {parseTimeString(billQuery.data?.payload.statement.checkOutDate || "")}
+                </span>
               </li>
+              <Separator className="my-4" />
               <li className="flex items-center justify-between">
-                <span className="text-muted-foreground">空调费</span>
-                <span>￥3.20</span>
+                <span className="text-muted-foreground">空调总费用</span>
+                <span>
+                  ￥ {billQuery.data?.payload.statement.acTotalFee || 0}
+                </span>
               </li>
             </ul>
           ) : (
@@ -99,14 +117,22 @@ export default function ReceptionOrderDetail({ roomId }: DetailProps) {
           <Separator className="my-4" />
           {roomId ? (
             <ul className="grid gap-3">
-              <li className="flex items-center justify-between font-semibold">
-                <span className="text-muted-foreground">总费用</span>
-                <span>￥414.20</span>
-              </li>
+              <span className="text-muted-foreground">简餐费用</span>
+              {Array.isArray(billQuery.data?.payload.statement.bill) && billQuery.data.payload.statement.bill.map(
+                (item, index) => (
+                  <li key={index} className="flex items-center justify-between">
+                    <span>{item.name}</span>
+                    <span>
+                      ￥ {item.price} × {item.quantity} = ￥ {item.subtotal}
+                    </span>
+                  </li>
+                )
+              )}
             </ul>
           ) : (
             <>
-              <Skeleton className="h-5 w-36" />
+              <Skeleton className="h-5 w-52" />
+              <Skeleton className="h-5 w-52" />
             </>
           )}
           <Separator className="my-4" />

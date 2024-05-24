@@ -401,3 +401,70 @@ export async function putAirconPriceRate(priceRate: number) {
   }
   return json;
 }
+export async function getBillDetail(roomId: string) {
+  const response = await fetch(`${BASE_URL}/api/room/bill?roomId=${roomId}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+  });
+  if (!response.ok) {
+    throw new Error("Request failed");
+  }
+  const responseJson = await response.json();
+  if (responseJson.code === "401") {
+    throw new Error("401");
+  }
+  if (responseJson.code !== "200") {
+    throw new Error(responseJson.error.msg);
+  }
+  return responseJson.payload;
+}
+export async function getACDetail(roomId: string) {
+  const response = await fetch(`${BASE_URL}/api/ac/statement?roomId=${roomId}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+  });
+  if (!response.ok) {
+    throw new Error("Request failed");
+  }
+  const responseJson = await response.json();
+  if (responseJson.code === "401") {
+    throw new Error("401");
+  }
+  if (responseJson.code !== "200") {
+    throw new Error(responseJson.error.msg);
+  }
+  return responseJson.payload;
+}
+export async function getACDetailFile(roomId: string) {
+  const response = await fetch(`${BASE_URL}/api/ac/statement-file?roomId=${roomId}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+  });
+  if (!response.ok) {
+    throw new Error("Request failed");
+  }
+  return response.blob();
+}
+export async function getBillDetailFile(roomId: string) {
+  const response = await fetch(`${BASE_URL}/api/room/bill-file?roomId=${roomId}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+  });
+  if (!response.ok) {
+    throw new Error("Request failed");
+  }
+  return response.blob();
+  
+}

@@ -133,12 +133,12 @@ export default function ReceptionBill() {
       <div className="mt-3 flex gap-3">
         {selectedTab === "bill" && (
           <div className="grow">
-            <ReceptionOrderDetail roomId={selectedRoom} />
+            <ReceptionOrderDetail key={selectedRoom} roomId={selectedRoom} />
           </div>
         )}
         {selectedTab === "detail" && (
           <div className="grow">
-            <ReceptionBillingDetail roomId={selectedRoom} />
+            <ReceptionBillingDetail key={selectedRoom} roomId={selectedRoom} />
           </div>
         )}
       </div>
