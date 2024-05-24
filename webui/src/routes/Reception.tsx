@@ -3,8 +3,18 @@ import { PersonIcon } from "@radix-ui/react-icons";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ReceptionBill from "@/components/ReceptionBill";
 import ReceptionCheckinCheckout from "@/components/ReceptionCheckinCheckout";
+import { useQuery } from "@tanstack/react-query";
+import { dataFetch } from "shared";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function Reception() {
+  const roomsQuery = useQuery({
+    queryKey: ["receptionRooms"],
+    queryFn: dataFetch.getReceptionAllRooms,
+    refetchInterval: 5000,
+  });
+  const rooms = roomsQuery.data;
+
   return (
     <>
       <NavBar title={<PersonIcon />} />
@@ -16,12 +26,16 @@ export default function Reception() {
           </TabsList>
           <TabsContent value="checkinout">
             <div className="mb-4 hidden h-full flex-1 flex-col md:flex">
-              <ReceptionCheckinCheckout />
+              {rooms === undefined ? (
+                <Skeleton />
+              ) : (
+                <ReceptionCheckinCheckout rooms={rooms} />
+              )}
             </div>
           </TabsContent>
           <TabsContent value="bill">
             <div className="mb-4 hidden h-full flex-1 flex-col md:flex">
-              <ReceptionBill />
+              {rooms === undefined ? <Skeleton /> : <ReceptionBill />}
             </div>
           </TabsContent>
         </Tabs>

@@ -6,6 +6,7 @@ import {
   RegisterForm,
   UserRoomOrderResponse,
   acDetailResponse,
+  receptionAllRooms,
   receptionAvailableResponse,
   receptionCheckinableResponse,
   responseBase,
@@ -399,5 +400,27 @@ export async function putAirconPriceRate(priceRate: number) {
   if (json.code !== "200") {
     throw new Error(json.error.msg);
   }
+  return json;
+}
+
+export async function getReceptionAllRooms() {
+  const response = await fetch(`${BASE_URL}/api/room/rooms`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+  });
+  if (!response.ok) {
+    throw new Error("Request failed");
+  }
+  const responseJson = await response.json();
+  if (responseJson.code === "401") {
+    throw new Error("401");
+  }
+  if (responseJson.code !== "200") {
+    throw new Error(responseJson.error.msg);
+  }
+  const json = receptionAllRooms.parse(responseJson);
   return json;
 }
