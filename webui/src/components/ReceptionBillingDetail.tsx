@@ -51,8 +51,8 @@ export default function ReceptionBillingDetail({ roomId }: DetailProps) {
   }
 
   function calculateTotal() {
-    if (Array.isArray(acDetailQuery.data)) {
-      return acDetailQuery.data.reduce(
+    if (Array.isArray(acDetailQuery.data?.statement)) {
+      return acDetailQuery.data.statement.reduce(
         (total, detail) => total + detail.price,
         0,
       );
@@ -149,7 +149,7 @@ export default function ReceptionBillingDetail({ roomId }: DetailProps) {
                       <td className="p-2">{formatTime(detail.duration)}</td>
                       <td className="p-2">{detail.fanSpeed} 级</td>
                       <td className="p-2">{detail.target} ℃</td>
-                      <td className="p-2">{detail.temp} ℃</td>
+                      <td className="p-2">{detail.temp.toFixed(2)} ℃</td>
                       <td className="p-2">￥{detail.priceRate}</td>
                       <td className="p-2">￥{detail.price.toFixed(2)}</td>
                     </tr>
