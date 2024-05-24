@@ -182,3 +182,18 @@ export const statementItem = z.object({
   temp: z.number(),
 });
 export type StatementItem = z.infer<typeof statementItem>;
+
+export const receptionAllRooms = responseBase.extend({
+  payload: z.object({
+    rooms: z.array(
+      z.object({
+        roomId: z.string(),
+        occupied: z.boolean(),
+        start: z.string().datetime().nullable(),
+        end: z.string().datetime().nullable(),
+        userId: z.string().nullable(),
+      }),
+    ),
+  }),
+});
+export type ReceptionAllRooms = z.infer<typeof receptionAllRooms>;

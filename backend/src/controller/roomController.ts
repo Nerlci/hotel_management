@@ -8,6 +8,7 @@ import {
   responseBase,
   userAvailablityResponse,
   userRoomOrderResponse,
+  receptionAllRooms,
 } from "shared";
 import { roomService } from "../service/roomService";
 import { prisma } from "../prisma";
@@ -236,6 +237,25 @@ const getBillFile = async (req: Request, res: Response) => {
   }
 };
 
+const getAllRooms = async (req: Request, res: Response) => {
+  try {
+    const result = await roomService.getAllRooms();
+    // console.log(result);
+
+    const response = receptionAllRooms.parse({
+      code: "200",
+      payload: { rooms: result },
+      error: {
+        msg: "",
+      },
+    });
+
+    res.json(response);
+  } catch (error) {
+    handleErrors(error, res);
+  }
+};
+
 const roomController = {
   bookRoom,
   checkOrder,
@@ -247,6 +267,7 @@ const roomController = {
   checkOut,
   getBill,
   getBillFile,
+  getAllRooms,
 };
 
 export { roomController };

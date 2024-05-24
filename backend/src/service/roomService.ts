@@ -67,7 +67,7 @@ const getAvailableRooms = async (startDate: Date, endDate: Date) => {
 const getRoom = async (userId: string) => {
   const user = await findUser(userId);
 
-  const reservation = await findReservation(userId);
+  const reservation = await findReservationByUserId(userId);
 
   if (reservation[0].roomId !== null) {
     throw new Error("You have already checked in");
@@ -103,7 +103,7 @@ const bookRoom = async (userId: string, startDate: Date, endDate: Date) => {
 };
 
 const checkOrder = async (userId: string) => {
-  return await findReservation(userId);
+  return await findReservationByUserId(userId);
 };
 
 const checkDaysAvailability = async (startDate: Date, endDate: Date) => {
@@ -114,7 +114,7 @@ const checkDaysAvailability = async (startDate: Date, endDate: Date) => {
 };
 
 const cancelOrder = async (userId: string) => {
-  const reservation = await findReservation(userId);
+  const reservation = await findReservationByUserId(userId);
   if (reservation[0].roomId !== null) {
     throw new Error("You have already checked in");
   } else {
@@ -142,7 +142,7 @@ const findUser = async (userId: string) => {
   return user;
 };
 
-const findReservation = async (userId: string) => {
+const findReservationByUserId = async (userId: string) => {
   const reservation = await prisma.reservation.findMany({
     where: { userId },
   });
@@ -151,8 +151,15 @@ const findReservation = async (userId: string) => {
   return reservation;
 };
 
+const findReservationByRoomId = async (roomId: string) => {
+  const reservation = await prisma.reservation.findFirst({
+    where: { roomId },
+  });
+  return reservation;
+};
+
 const findUserRoom = async (userId: string) => {
-  const reservation = await findReservation(userId);
+  const reservation = await findReservationByUserId(userId);
   return reservation[0].roomId;
 };
 
@@ -183,7 +190,7 @@ const checkIn = async (userId: string, roomId: string) => {
   }
 
   const user = await findUser(userId);
-  const reservation = await findReservation(userId);
+  const reservation = await findReservationByUserId(userId);
   if (reservation[0].roomId !== null)
     throw new Error("You have already checked in");
 
@@ -199,7 +206,7 @@ const checkIn = async (userId: string, roomId: string) => {
 const checkOut = async (userId: string) => {
   const user = await findUser(userId);
 
-  const reservation = await findReservation(userId);
+  const reservation = await findReservationByUserId(userId);
 
   if (reservation[0].roomId === null) {
     throw new Error("You have not checked in");
@@ -307,6 +314,33 @@ const getBillFile = async (roomId: string) => {
   return csv;
 };
 
+const getAllRooms = async () => {
+  const rooms = await configService.getRooms();
+  const result = [];
+
+  for (const room of rooms) {
+    const reservation = await findReservationByRoomId(room.roomId);
+    if (reservation) {
+      result.push({
+        roomId: room.roomId,
+        occupied: true,
+        start: reservation.startDate.toISOString(),
+        end: reservation.endDate.toISOString(),
+        userId: reservation.userId,
+      });
+    } else {
+      result.push({
+        roomId: room.roomId,
+        occupied: false,
+        start: null,
+        end: null,
+        userId: null,
+      });
+    }
+  }
+  return result;
+};
+
 const roomService = {
   findBusyDays,
   checkRoomAvailability,
@@ -321,6 +355,7 @@ const roomService = {
   findUserRoom,
   getBill,
   getBillFile,
+  getAllRooms,
 };
 
 export { roomService };
