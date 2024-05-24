@@ -38,9 +38,10 @@ import { useAuth } from "@/hooks/useAuth";
 import { useSSE } from "@/hooks/useSSE";
 import { useTempEmulate } from "@/hooks/tempEmulate";
 
-const AirconDrawerContent = ({
+export const AirconDrawerContent = ({
   sseData,
   onUserUpdate,
+  controlled = true, // controlled is set to false when the drawer is opened by ac-manager
 }: {
   sseData: ACStatus;
   onUserUpdate: (
@@ -49,6 +50,7 @@ const AirconDrawerContent = ({
     cool: boolean,
     start: boolean,
   ) => void;
+  controlled: boolean;
 }) => {
   const [temperature, setTemperature] = useState(sseData.target);
   const [windspeed, setWindspeed] = useState(sseData.fanSpeed);
@@ -57,8 +59,10 @@ const AirconDrawerContent = ({
 
   // start state could change from outside when drawer is open
   useEffect(() => {
-    setstart(sseData.on);
-  }, [sseData, setstart]);
+    if (controlled) {
+      setstart(sseData.on);
+    }
+  }, [sseData, controlled]);
 
   return (
     <div className="mx-auto w-full max-w-sm">
@@ -66,7 +70,9 @@ const AirconDrawerContent = ({
         <div className="flex flex-row">
           <div className="flex flex-col gap-2">
             <DrawerTitle className="text-left">控制空调</DrawerTitle>
-            <DrawerDescription>您的空调使用会产生额外计费</DrawerDescription>
+            {controlled && (
+              <DrawerDescription>您的空调使用会产生额外计费</DrawerDescription>
+            )}
           </div>
           <div className="grow" />
           启动
@@ -119,7 +125,7 @@ const AirconDrawerContent = ({
             max={MAX_AIRCON_TEMP}
             min={MIN_AIRCON_TEMP}
             step={1}
-            disabled={!start || sseData.on}
+            disabled={!start}
             onValueChange={(value) => {
               setTemperature(value[0]);
               if (value[0] < sseData.temp) {
@@ -171,7 +177,7 @@ const AirconDrawerContent = ({
             max={MAX_AIRCON_SPEED}
             min={MIN_AIRCON_SPEED}
             step={1}
-            disabled={!start || sseData.on}
+            disabled={!start}
             onValueChange={(value) => {
               setWindspeed(value[0]);
             }}
@@ -181,6 +187,7 @@ const AirconDrawerContent = ({
       <DrawerFooter>
         <Button
           disabled={
+            controlled &&
             temperature === sseData.temp &&
             windspeed === sseData.fanSpeed &&
             cool === (sseData.mode === 1) &&
@@ -287,6 +294,7 @@ export default function AirconDrawer(props: { roomId: string }) {
               });
               setDrawerOpen(false);
             }}
+            controlled
           />
         )}
       </DrawerContent>
