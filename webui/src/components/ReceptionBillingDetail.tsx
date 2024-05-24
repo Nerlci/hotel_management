@@ -17,26 +17,16 @@ import {
 import { DetailProps } from "./ReceptionBill";
 import { Skeleton } from "./ui/skeleton";
 import { dataFetch } from "shared";
-import { useQuery } from "@tanstack/react-query";
-import { Key } from "react";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { useAuth } from "@/hooks/useAuth";
+import { toast } from "sonner";
 
 export default function ReceptionBillingDetail({ roomId }: DetailProps) {
   const acDetailQuery = useQuery({
     queryKey: ["acDetail"],
     queryFn: async () => await dataFetch.getACDetail(roomId),
+    enabled: !!roomId,
   });
-
-  interface Detail {
-    requestTime: string;
-    startTime: string;
-    endTime: string;
-    duration: number;
-    fanSpeed: number;
-    target: number;
-    temp: number;
-    price: number;
-    priceRate: number;
-  }
 
   function parseTimeString(timeString: string): string {
     const date = new Date(timeString);
@@ -69,29 +59,27 @@ export default function ReceptionBillingDetail({ roomId }: DetailProps) {
     }
     return 0;
   }
-
-  async function handleDownload() {
-    if (!roomId) {
-      alert("房间ID缺失,无法下载详单。");
-      return;
-    }
-    const response = await fetch(`/api/ac/statement-file?roomId=${roomId}`, {
-      method: "GET",
-    });
-    if (!response.ok) {
-      alert("下载失败，请稍后重试。");
-      return;
-    }
-    const blob = await response.blob();
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `AC_Statement_${roomId}.Excel`;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    window.URL.revokeObjectURL(url);
-  }
+  const { logout } = useAuth()!;
+  const fileMutation = useMutation({
+    mutationFn: dataFetch.getACDetailFile,
+    onError: (e) => {
+      if (e.message === "401") {
+        logout();
+      }
+      console.log(e.message);
+      toast.error("下载失败");
+    },
+    onSuccess: (blob) => {
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `AC_Statement_${roomId}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+    },
+  });
 
   return (
     <Card className="overflow-hidden">
@@ -115,8 +103,12 @@ export default function ReceptionBillingDetail({ roomId }: DetailProps) {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuItem onSelect={handleDownload}>
-                  导出
+                <DropdownMenuItem
+                  onSelect={() => {
+                    fileMutation.mutate(roomId);
+                  }}
+                >
+                  导出 csv
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -127,7 +119,7 @@ export default function ReceptionBillingDetail({ roomId }: DetailProps) {
       </CardHeader>
       <CardContent className="p-6 text-sm">
         <div className="grid gap-3">
-          {roomId ? (
+          {roomId && acDetailQuery.data ? (
             <div className="overflow-x-auto">
               <table className="w-full table-fixed text-left">
                 <thead>
@@ -144,28 +136,24 @@ export default function ReceptionBillingDetail({ roomId }: DetailProps) {
                   </tr>
                 </thead>
                 <tbody>
-                  {Array.isArray(acDetailQuery.data) &&
-                    acDetailQuery.data.map((detail: Detail, index: Key) =>
-                      detail ? (
-                        <tr key={index} className="border-b">
-                          <td className="p-2">
-                            {parseTimeString(detail.requestTime)}
-                          </td>
-                          <td className="p-2">
-                            {parseTimeString(detail.startTime)}
-                          </td>
-                          <td className="p-2">
-                            {parseTimeString(detail.endTime)}
-                          </td>
-                          <td className="p-2">{formatTime(detail.duration)}</td>
-                          <td className="p-2">{detail.fanSpeed} 级</td>
-                          <td className="p-2">{detail.target} ℃</td>
-                          <td className="p-2">{detail.temp} ℃</td>
-                          <td className="p-2">￥{detail.priceRate}</td>
-                          <td className="p-2">￥{detail.price}</td>
-                        </tr>
-                      ) : null,
-                    )}
+                  {acDetailQuery.data.statement.map((detail, index) => (
+                    <tr key={index} className="border-b">
+                      <td className="p-2">
+                        {detail.requestTime &&
+                          parseTimeString(detail.requestTime)}
+                      </td>
+                      <td className="p-2">
+                        {parseTimeString(detail.startTime)}
+                      </td>
+                      <td className="p-2">{parseTimeString(detail.endTime)}</td>
+                      <td className="p-2">{formatTime(detail.duration)}</td>
+                      <td className="p-2">{detail.fanSpeed} 级</td>
+                      <td className="p-2">{detail.target} ℃</td>
+                      <td className="p-2">{detail.temp} ℃</td>
+                      <td className="p-2">￥{detail.priceRate}</td>
+                      <td className="p-2">￥{detail.price.toFixed(2)}</td>
+                    </tr>
+                  ))}
                 </tbody>
               </table>
             </div>

@@ -6,6 +6,7 @@ import {
   RegisterForm,
   UserRoomOrderResponse,
   acDetailResponse,
+  getACDetailResponse,
   receptionAllRooms,
   receptionAvailableResponse,
   receptionCheckinableResponse,
@@ -492,7 +493,8 @@ export async function getACDetail(roomId: string) {
   if (responseJson.code !== "200") {
     throw new Error(responseJson.error.msg);
   }
-  return responseJson.payload;
+  const json = getACDetailResponse.parse(responseJson);
+  return json.payload;
 }
 
 export async function getACDetailFile(roomId: string) {

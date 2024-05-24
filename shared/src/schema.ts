@@ -171,9 +171,9 @@ export type ReceptionCheckinRequest = z.infer<typeof receptionCheckinRequest>;
 
 export const statementItem = z.object({
   roomId: z.string(),
-  requestTime: z.date().nullable(),
-  startTime: z.date(),
-  endTime: z.date(),
+  requestTime: z.string().datetime().nullable(),
+  startTime: z.string().datetime(),
+  endTime: z.string().datetime(),
   duration: z.number(),
   fanSpeed: z.number(),
   price: z.number(),
@@ -182,6 +182,13 @@ export const statementItem = z.object({
   temp: z.number(),
 });
 export type StatementItem = z.infer<typeof statementItem>;
+
+export const getACDetailResponse = responseBase.extend({
+  payload: z.object({
+    roomId: z.string(),
+    statement: z.array(statementItem),
+  }),
+});
 
 export const receptionAllRooms = responseBase.extend({
   payload: z.object({
