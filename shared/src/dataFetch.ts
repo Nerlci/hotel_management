@@ -6,6 +6,8 @@ import {
   RegisterForm,
   UserRoomOrderResponse,
   acDetailResponse,
+  getACDetailResponse,
+  getRoomBillResponse,
   receptionAllRooms,
   receptionAvailableResponse,
   receptionCheckinableResponse,
@@ -468,7 +470,8 @@ export async function getBillDetail(roomId: string) {
   if (responseJson.code !== "200") {
     throw new Error(responseJson.error.msg);
   }
-  return responseJson.payload;
+  const json = getRoomBillResponse.parse(responseJson);
+  return json.payload;
 }
 
 export async function getACDetail(roomId: string) {
@@ -492,7 +495,8 @@ export async function getACDetail(roomId: string) {
   if (responseJson.code !== "200") {
     throw new Error(responseJson.error.msg);
   }
-  return responseJson.payload;
+  const json = getACDetailResponse.parse(responseJson);
+  return json.payload;
 }
 
 export async function getACDetailFile(roomId: string) {

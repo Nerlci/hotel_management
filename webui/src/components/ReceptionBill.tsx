@@ -82,7 +82,7 @@ export function RoomSelect({
 
 export default function ReceptionBill(props: { roomIds: { value: string }[] }) {
   const [selectedRoom, setSelectedRoom] = useState("");
-  const [selectedTab, setSelectedTab] = useState<"bill" | "detail">("bill");
+  const [selectedTab, setSelectedTab] = useState<"bill" | "detail">("detail");
 
   return (
     <div>
@@ -132,12 +132,12 @@ export default function ReceptionBill(props: { roomIds: { value: string }[] }) {
       <div className="mt-3 flex gap-3">
         {selectedTab === "bill" && (
           <div className="grow">
-            <ReceptionOrderDetail key={selectedRoom} roomId={selectedRoom} />
+            <ReceptionOrderDetail roomId={selectedRoom} />
           </div>
         )}
         {selectedTab === "detail" && (
           <div className="grow">
-            <ReceptionBillingDetail key={selectedRoom} roomId={selectedRoom} />
+            <ReceptionBillingDetail roomId={selectedRoom} />
           </div>
         )}
       </div>
