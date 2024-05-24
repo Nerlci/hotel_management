@@ -25,6 +25,9 @@ import {
 import { Button } from "@/components/ui/button";
 import { airconSchema } from "@/lib/aircon-data/schema";
 import { FilterableColumns } from "../types";
+import { Dialog, DialogContent, DialogHeader } from "@/components/ui/dialog";
+import CustomerAirconChart from "@/components/CustomerAirconChart";
+import { useState } from "react";
 
 interface DataTableRowActionsProps<TData> {
   row: Row<TData>;
@@ -34,35 +37,52 @@ export function DataTableRowActions<TData>({
   row,
 }: DataTableRowActionsProps<TData>) {
   const task = airconSchema.parse(row.original);
+  const [open, setOpen] = useState(false);
+  const roomId = row.getValue("id") as string;
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button
-          variant="ghost"
-          className="flex h-8 w-8 p-0 data-[state=open]:bg-muted"
-        >
-          <DotsHorizontalIcon className="h-4 w-4" />
-          <span className="sr-only">打开选项</span>
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-[160px]">
-        <DropdownMenuSub>
-          <DropdownMenuSubTrigger>状态</DropdownMenuSubTrigger>
-          <DropdownMenuSubContent>
-            <DropdownMenuRadioGroup value={task.status}>
-              {statuses.map((status) => (
-                <DropdownMenuRadioItem key={status.value} value={status.value}>
-                  {status.label}
-                </DropdownMenuRadioItem>
-              ))}
-            </DropdownMenuRadioGroup>
-          </DropdownMenuSubContent>
-        </DropdownMenuSub>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem>详单</DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button
+            variant="ghost"
+            className="flex h-8 w-8 p-0 data-[state=open]:bg-muted"
+          >
+            <DotsHorizontalIcon className="h-4 w-4" />
+            <span className="sr-only">打开选项</span>
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" className="w-[160px]">
+          <DropdownMenuSub>
+            <DropdownMenuSubTrigger>状态</DropdownMenuSubTrigger>
+            <DropdownMenuSubContent>
+              <DropdownMenuRadioGroup value={task.status}>
+                {statuses.map((status) => (
+                  <DropdownMenuRadioItem
+                    key={status.value}
+                    value={status.value}
+                  >
+                    {status.label}
+                  </DropdownMenuRadioItem>
+                ))}
+              </DropdownMenuRadioGroup>
+            </DropdownMenuSubContent>
+          </DropdownMenuSub>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem asChild>
+            <div onClick={() => setOpen(true)}>使用详情</div>
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent>
+          <DialogHeader>使用情况图</DialogHeader>
+          <div>
+            <CustomerAirconChart roomId={roomId} />
+          </div>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }
 
