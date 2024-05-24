@@ -11,7 +11,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormField, FormItem } from "./ui/form";
 import { Button } from "./ui/button";
 import { useMutation } from "@tanstack/react-query";
-import { dataFetch } from "shared";
+import { ChineseDateFormat, ReceptionAllRooms, dataFetch } from "shared";
 import { useAuth } from "@/hooks/useAuth";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import {
@@ -26,33 +26,6 @@ import { useRef, useState } from "react";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { toast } from "sonner";
-
-const tasks: Room[] = [
-  {
-    id: "8101",
-    status: "occupied",
-    startDate: new Date(2024, 0, 1).toLocaleString().split(" ")[0],
-    endDate: new Date(2024, 0, 2).toLocaleString().split(" ")[0],
-  },
-  {
-    id: "8102",
-    status: "empty",
-    startDate: "-",
-    endDate: "-",
-  },
-  {
-    id: "8103",
-    status: "occupied",
-    startDate: new Date(2024, 0, 4).toLocaleString().split(" ")[0],
-    endDate: new Date(2024, 0, 5).toLocaleString().split(" ")[0],
-  },
-  {
-    id: "8201",
-    status: "occupied",
-    startDate: new Date(2024, 0, 5).toLocaleString().split(" ")[0],
-    endDate: new Date(2024, 0, 6).toLocaleString().split(" ")[0],
-  },
-];
 
 const emailFormSchema = z.object({
   email: z.string().email(),
@@ -203,7 +176,20 @@ const ReceptionCheckin = () => {
   );
 };
 
-export default function ReceptionCheckinCheckout() {
+export default function ReceptionCheckinCheckout(props: {
+  rooms: ReceptionAllRooms;
+}) {
+  const tableData = props.rooms.payload.rooms.map((room) => {
+    const r: Room = {
+      id: room.roomId,
+      status: room.occupied ? "occupied" : "empty",
+      startDate: room.start ? ChineseDateFormat(new Date(room.start)) : "-",
+      endDate: room.end ? ChineseDateFormat(new Date(room.end)) : "-",
+      userId: room.userId || "",
+    };
+    return r;
+  });
+
   return (
     <div className="flex flex-col gap-5">
       <ReceptionCheckin />
@@ -213,7 +199,7 @@ export default function ReceptionCheckinCheckout() {
         </CardHeader>
         <CardContent>
           <DataTable
-            data={tasks}
+            data={tableData}
             columns={columns}
             getDisplayName={getDisplayName}
             searchPlaceholder="搜索房间号..."

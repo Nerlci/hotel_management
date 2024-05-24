@@ -28,7 +28,12 @@ const loadConfig = () => {
   const defaultConf = JSON.parse(
     fs.readFileSync(defaultConfigFilePath, "utf-8"),
   );
-  const conf = JSON.parse(fs.readFileSync(configFilePath, "utf-8"));
+  let conf = {};
+  if (fs.existsSync(configFilePath)) {
+    conf = JSON.parse(fs.readFileSync(configFilePath, "utf-8"));
+  } else {
+    conf = defaultConf;
+  }
 
   config = { ...defaultConf, ...conf };
   config.ac.rate = config.ac.rate.map((rate) => rate / 60);

@@ -1,5 +1,5 @@
 import { ColumnDef } from "@tanstack/react-table";
-import { Room, roomSchema } from "@/lib/room-data/schema";
+import { Room } from "@/lib/room-data/schema";
 import { Checkbox } from "@/components/ui/checkbox";
 import { DataTableColumnHeader } from "@/components/DataTable/data-table-column-header";
 import { DotsHorizontalIcon } from "@radix-ui/react-icons";
@@ -8,17 +8,24 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuRadioGroup,
-  DropdownMenuRadioItem,
-  DropdownMenuSeparator,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { UserRoundCheckIcon, UserRoundXIcon } from "lucide-react";
 import { DataTableColumnValue } from "../types";
+import { useState } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { useMutation } from "@tanstack/react-query";
+import { dataFetch } from "shared";
+import { toast } from "sonner";
+import { useAuth } from "@/hooks/useAuth";
 
 interface DataTableRowActionsProps<TData> {
   row: Row<TData>;
@@ -27,36 +34,60 @@ interface DataTableRowActionsProps<TData> {
 export function DataTableRowActions<TData>({
   row,
 }: DataTableRowActionsProps<TData>) {
-  const task = roomSchema.parse(row.original);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const { logout } = useAuth()!;
+  const checkoutMutation = useMutation({
+    mutationFn: dataFetch.postReceptionCheckout,
+    onSuccess: () => {
+      toast.success("退房成功");
+      location.reload();
+    },
+    onError: (e) => {
+      if (e.message === "401") {
+        logout();
+      }
+      console.log(e.message);
+      toast.error("退房失败");
+    },
+  });
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button
-          variant="ghost"
-          className="flex h-8 w-8 p-0 data-[state=open]:bg-muted"
-        >
-          <DotsHorizontalIcon className="h-4 w-4" />
-          <span className="sr-only">打开选项</span>
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-[160px]">
-        <DropdownMenuSub>
-          <DropdownMenuSubTrigger>状态</DropdownMenuSubTrigger>
-          <DropdownMenuSubContent>
-            <DropdownMenuRadioGroup value={task.status}>
-              {statuses.map((status) => (
-                <DropdownMenuRadioItem key={status.value} value={status.value}>
-                  {status.label}
-                </DropdownMenuRadioItem>
-              ))}
-            </DropdownMenuRadioGroup>
-          </DropdownMenuSubContent>
-        </DropdownMenuSub>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem>设置</DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button
+            variant="ghost"
+            className="flex h-8 w-8 p-0 data-[state=open]:bg-muted"
+          >
+            <DotsHorizontalIcon className="h-4 w-4" />
+            <span className="sr-only">打开选项</span>
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" className="w-[160px]">
+          <DropdownMenuItem asChild>
+            <div onClick={() => setDialogOpen(true)}>退房</div>
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>确认退房</DialogTitle>
+            <DialogDescription>此操作不能撤销</DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              onClick={() => {
+                checkoutMutation.mutate(row.getValue("userId"));
+              }}
+              variant="destructive"
+            >
+              退房
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }
 
@@ -68,6 +99,8 @@ export const getDisplayName = (column: string) => {
       return "结束日期";
     case "status":
       return "状态";
+    case "userId":
+      return "用户id";
   }
   return column;
 };
@@ -163,6 +196,21 @@ export const columns: ColumnDef<Room>[] = [
     },
     filterFn: (row, id, value) => {
       return value.includes(row.getValue(id));
+    },
+  },
+  {
+    accessorKey: "userId",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="用户id" />
+    ),
+    cell: ({ row }) => {
+      return (
+        <div className="flex space-x-2">
+          <span className="max-w-[500px] truncate font-medium">
+            {row.getValue("userId")}
+          </span>
+        </div>
+      );
     },
   },
   {
