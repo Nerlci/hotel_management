@@ -87,7 +87,8 @@ export default function ReceptionBill(props: { roomIds: { value: string }[] }) {
   return (
     <div>
       <div className="flex items-center justify-center">
-        <div className="relative mx-auto flex flex-row gap-3">
+        <div className="flex w-full flex-row items-center gap-3">
+          <div className="grow" />
           <div className="">
             <RoomSelect
               selectedRoom={selectedRoom}
@@ -95,20 +96,33 @@ export default function ReceptionBill(props: { roomIds: { value: string }[] }) {
               roomIds={props.roomIds}
             />
           </div>
-          <div className="inline-flex rounded-md shadow-sm" role="group">
+          <div className="group flex h-9 rounded-sm bg-muted p-1">
             <Button
-              variant="outline"
+              variant="ghost"
               onClick={() => setSelectedTab("bill")}
-              className={selectedTab === "bill" ? "bg-blue-500 text-white" : ""}
+              className={cn(
+                selectedTab === "bill"
+                  ? "bg-muted-foreground text-white dark:text-white"
+                  : "",
+                "h-7 w-20 rounded-sm hover:bg-foreground hover:text-white dark:hover:text-black",
+              )}
             >
               生成账单
             </Button>
+            <div className="flex w-1">
+              <div className="grow" />
+              <div className="my-auto h-4/6 w-[1px] rounded-full group-hover:bg-muted-foreground" />
+              <div className="grow" />
+            </div>
             <Button
-              variant="outline"
+              variant="ghost"
               onClick={() => setSelectedTab("detail")}
-              className={
-                selectedTab === "detail" ? "bg-blue-500 text-white" : ""
-              }
+              className={cn(
+                selectedTab === "detail"
+                  ? "bg-muted-foreground text-white dark:text-white"
+                  : "",
+                "h-7 w-20 rounded-sm hover:bg-foreground hover:text-white dark:hover:text-black",
+              )}
             >
               生成详单
             </Button>
