@@ -424,3 +424,28 @@ export async function getReceptionAllRooms() {
   const json = receptionAllRooms.parse(responseJson);
   return json;
 }
+
+export async function postReceptionCheckout(userId: string) {
+  const response = await fetch(
+    `${BASE_URL}/api/room/checkout?userId=${userId}`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+    },
+  );
+  if (!response.ok) {
+    throw new Error("Request failed");
+  }
+  const responseJson = await response.json();
+  if (responseJson.code === "401") {
+    throw new Error("401");
+  }
+  if (responseJson.code !== "200") {
+    throw new Error(responseJson.error.msg);
+  }
+  const json = responseBase.parse(responseJson);
+  return json;
+}

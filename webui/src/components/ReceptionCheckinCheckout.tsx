@@ -185,6 +185,7 @@ export default function ReceptionCheckinCheckout(props: {
       status: room.occupied ? "occupied" : "empty",
       startDate: room.start ? ChineseDateFormat(new Date(room.start)) : "-",
       endDate: room.end ? ChineseDateFormat(new Date(room.end)) : "-",
+      userId: room.userId || "",
     };
     return r;
   });
