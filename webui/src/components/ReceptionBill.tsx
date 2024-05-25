@@ -18,30 +18,14 @@ import {
 import ReceptionOrderDetail from "./ReceptionOrderDetail";
 import ReceptionBillingDetail from "./ReceptionBillingDetail";
 
-const roomIds = [
-  {
-    value: "8101",
-  },
-  {
-    value: "8102",
-  },
-  {
-    value: "8103",
-  },
-  {
-    value: "8104",
-  },
-  {
-    value: "8105",
-  },
-];
-
 export function RoomSelect({
   selectedRoom,
   setSelectedRoom,
+  roomIds,
 }: {
   selectedRoom: string;
   setSelectedRoom: React.Dispatch<React.SetStateAction<string>>;
+  roomIds: { value: string }[];
 }) {
   const [open, setOpen] = useState(false);
 
@@ -96,34 +80,49 @@ export function RoomSelect({
   );
 }
 
-export default function ReceptionBill() {
+export default function ReceptionBill(props: { roomIds: { value: string }[] }) {
   const [selectedRoom, setSelectedRoom] = useState("");
-  const [selectedTab, setSelectedTab] = useState<"bill" | "detail">("bill");
+  const [selectedTab, setSelectedTab] = useState<"bill" | "detail">("detail");
 
   return (
     <div>
       <div className="flex items-center justify-center">
-        <div className="relative mx-auto flex flex-row gap-3">
+        <div className="flex w-full flex-row items-center gap-3">
+          <div className="grow" />
           <div className="">
             <RoomSelect
               selectedRoom={selectedRoom}
               setSelectedRoom={setSelectedRoom}
+              roomIds={props.roomIds}
             />
           </div>
-          <div className="inline-flex rounded-md shadow-sm" role="group">
+          <div className="group flex h-9 rounded-sm bg-muted p-1">
             <Button
-              variant="outline"
+              variant="ghost"
               onClick={() => setSelectedTab("bill")}
-              className={selectedTab === "bill" ? "bg-blue-500 text-white" : ""}
+              className={cn(
+                selectedTab === "bill"
+                  ? "bg-muted-foreground text-white dark:text-white"
+                  : "",
+                "h-7 w-20 rounded-sm hover:bg-foreground hover:text-white dark:hover:text-black",
+              )}
             >
               生成账单
             </Button>
+            <div className="flex w-1">
+              <div className="grow" />
+              <div className="my-auto h-4/6 w-[1px] rounded-full group-hover:bg-muted-foreground" />
+              <div className="grow" />
+            </div>
             <Button
-              variant="outline"
+              variant="ghost"
               onClick={() => setSelectedTab("detail")}
-              className={
-                selectedTab === "detail" ? "bg-blue-500 text-white" : ""
-              }
+              className={cn(
+                selectedTab === "detail"
+                  ? "bg-muted-foreground text-white dark:text-white"
+                  : "",
+                "h-7 w-20 rounded-sm hover:bg-foreground hover:text-white dark:hover:text-black",
+              )}
             >
               生成详单
             </Button>
@@ -133,12 +132,12 @@ export default function ReceptionBill() {
       <div className="mt-3 flex gap-3">
         {selectedTab === "bill" && (
           <div className="grow">
-            <ReceptionOrderDetail roomId={selectedRoom} />
+            <ReceptionBillingDetail roomId={selectedRoom} />
           </div>
         )}
         {selectedTab === "detail" && (
           <div className="grow">
-            <ReceptionBillingDetail roomId={selectedRoom} />
+            <ReceptionOrderDetail roomId={selectedRoom} />
           </div>
         )}
       </div>
