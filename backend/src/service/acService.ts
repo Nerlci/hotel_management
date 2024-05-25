@@ -88,9 +88,11 @@ const getStatement = async (
       statement.push(
         statementItem.parse({
           roomId: roomId,
-          requestTime: lastRequest?.timestamp,
-          startTime: lastStatus.timestamp,
-          endTime: acRecord.timestamp,
+          requestTime: lastRequest?.timestamp
+            ? lastRequest?.timestamp.toISOString()
+            : null,
+          startTime: lastStatus.timestamp.toISOString(),
+          endTime: acRecord.timestamp.toISOString(),
           duration,
           fanSpeed: lastStatus.fanSpeed,
           price: duration * lastStatus.priceRate,

@@ -35,7 +35,17 @@ export default function Reception() {
           </TabsContent>
           <TabsContent value="bill">
             <div className="mb-4 hidden h-full flex-1 flex-col md:flex">
-              {rooms === undefined ? <Skeleton /> : <ReceptionBill />}
+              {rooms === undefined ? (
+                <Skeleton />
+              ) : (
+                <ReceptionBill
+                  roomIds={rooms.payload.rooms.map((r) => {
+                    return {
+                      value: r.roomId,
+                    };
+                  })}
+                />
+              )}
             </div>
           </TabsContent>
         </Tabs>

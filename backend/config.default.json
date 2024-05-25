@@ -2,8 +2,8 @@
   "ac": {
     "minTarget": 18,
     "maxTarget": 30,
-    "serveLimit": 1,
-    "roundRobinInterval": 3000,
+    "serveLimit": 3,
+    "roundRobinInterval": 20000,
     "rate": [3, 2, 3, 6],
     "priceRate": 1
   },
