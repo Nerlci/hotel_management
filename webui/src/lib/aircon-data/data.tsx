@@ -24,10 +24,11 @@ import CustomerAirconChart from "@/components/CustomerAirconChart";
 import { useState } from "react";
 import { Drawer, DrawerContent } from "@/components/ui/drawer";
 import { AirconDrawerContent } from "@/components/AirconDrawer";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { dataFetch } from "shared";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface DataTableRowActionsProps<TData> {
   row: Row<TData>;
@@ -68,6 +69,11 @@ export function DataTableRowActions<TData>({
       console.log(error.message);
     },
   });
+  const tempRangeQuery = useQuery({
+    queryKey: ["tempRange"],
+    queryFn: dataFetch.getACTargetRange,
+  });
+  const tempRange = tempRangeQuery.data;
 
   return (
     <>
@@ -93,23 +99,28 @@ export function DataTableRowActions<TData>({
       </DropdownMenu>
       <Drawer open={drawerOpen} onOpenChange={setDrawerOpen}>
         <DrawerContent>
-          <AirconDrawerContent
-            sseData={{
-              ...currentData,
-              mode: currentData.mode === 0 ? 0 : 1,
-            }}
-            onUserUpdate={(temperature, windspeed, cool, start) => {
-              mutation.mutate({
-                roomId: currentData.roomId,
-                target: temperature,
-                fanSpeed: windspeed,
-                mode: cool ? 1 : 0,
-                on: start,
-              });
-              setDrawerOpen(false);
-            }}
-            controlled={false}
-          />
+          {tempRange === undefined ? (
+            <Skeleton className="h-full w-full" />
+          ) : (
+            <AirconDrawerContent
+              sseData={{
+                ...currentData,
+                mode: currentData.mode === 0 ? 0 : 1,
+              }}
+              onUserUpdate={(temperature, windspeed, cool, start) => {
+                mutation.mutate({
+                  roomId: currentData.roomId,
+                  target: temperature,
+                  fanSpeed: windspeed,
+                  mode: cool ? 1 : 0,
+                  on: start,
+                });
+                setDrawerOpen(false);
+              }}
+              controlled={false}
+              tempRange={tempRange}
+            />
+          )}
         </DrawerContent>
       </Drawer>
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>

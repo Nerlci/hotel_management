@@ -8,6 +8,7 @@ import {
   acDetailResponse,
   getACDetailResponse,
   getRoomBillResponse,
+  getTargetRangeResponse,
   receptionAllRooms,
   receptionAvailableResponse,
   receptionCheckinableResponse,
@@ -165,7 +166,7 @@ export async function postUserRegister(values: RegisterForm) {
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify(values),
+    body: JSON.stringify({ ...values, sex: 69, phone: "1234567890" }),
     credentials: "include",
   });
   if (!response.ok) {
@@ -531,4 +532,26 @@ export async function getBillDetailFile(roomId: string) {
     throw new Error("Request failed");
   }
   return response.blob();
+}
+
+export async function getACTargetRange() {
+  const response = await fetch(`${BASE_URL}/api/ac/target-range`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+  });
+  if (!response.ok) {
+    throw new Error("Request failed");
+  }
+  const responseJson = await response.json();
+  if (responseJson.code === "401") {
+    throw new Error("401");
+  }
+  if (responseJson.code !== "200") {
+    throw new Error(responseJson.error.msg);
+  }
+  const json = getTargetRangeResponse.parse(responseJson);
+  return json.payload;
 }
