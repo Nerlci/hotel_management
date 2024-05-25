@@ -37,6 +37,14 @@ import { TempSlider, WindSlider } from "./AirconSlider";
 import { useAuth } from "@/hooks/useAuth";
 import { useSSE } from "@/hooks/useSSE";
 import { useTempEmulate } from "@/hooks/tempEmulate";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "./ui/select";
 
 export const AirconDrawerContent = ({
   sseData,
@@ -56,6 +64,7 @@ export const AirconDrawerContent = ({
   const [windspeed, setWindspeed] = useState(sseData.fanSpeed);
   const [start, setstart] = useState(sseData.on);
   const [cool, setcool] = useState(sseData.mode === 1);
+  const [mode, setMode] = useState<"cool" | "warm" | "auto">("auto");
 
   // start state could change from outside when drawer is open
   useEffect(() => {
@@ -81,11 +90,38 @@ export const AirconDrawerContent = ({
       </DrawerHeader>
       <div className="p-4 pb-0">
         <div className="flex flex-col items-center gap-2">
+          <Select
+            defaultValue={mode}
+            onValueChange={(value) => {
+              if (value !== "cool" && value !== "warm" && value !== "auto") {
+                toast.error("无效的模式");
+              } else {
+                setMode(value);
+                if (value === "cool") {
+                  setcool(true);
+                } else if (value === "warm") {
+                  setcool(false);
+                }
+              }
+            }}
+            disabled={!start}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Select a mode" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectItem value="cool">模式：制冷</SelectItem>
+                <SelectItem value="warm">模式：制热</SelectItem>
+                <SelectItem value="auto">模式：自动</SelectItem>
+              </SelectGroup>
+            </SelectContent>
+          </Select>
           <div className="flex flex-row items-center gap-3">
             <div
               className={`flex flex-row gap-1 text-[1.2rem] ${
                 start
-                  ? temperature > sseData.temp
+                  ? !cool
                     ? "text-orange-500"
                     : "text-blue-500"
                   : "text-muted"
@@ -94,13 +130,13 @@ export const AirconDrawerContent = ({
               <div
                 className={`h-10 w-10 rounded-full ${
                   start
-                    ? temperature > sseData.temp
+                    ? !cool
                       ? "bg-orange-500/10"
                       : "bg-blue-500/10"
                     : "text-muted"
                 }`}
               >
-                {temperature > sseData.temp ? (
+                {!cool ? (
                   <ThermometerSunIcon className="mx-auto mt-2" />
                 ) : (
                   <ThermometerSnowflakeIcon className="mx-auto mt-2" />
@@ -128,10 +164,12 @@ export const AirconDrawerContent = ({
             disabled={!start}
             onValueChange={(value) => {
               setTemperature(value[0]);
-              if (value[0] < sseData.temp) {
-                setcool(true);
-              } else {
-                setcool(false);
+              if (mode === "auto") {
+                if (value[0] < sseData.temp) {
+                  setcool(true);
+                } else {
+                  setcool(false);
+                }
               }
             }}
           />
