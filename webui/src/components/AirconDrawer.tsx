@@ -107,7 +107,7 @@ export const AirconDrawerContent = ({
                 }
               }
             }}
-            disabled={!start}
+            // disabled={!start}
           >
             <SelectTrigger>
               <SelectValue placeholder="Select a mode" />

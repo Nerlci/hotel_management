@@ -38,7 +38,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
               <Route
                 path="/airconmanager"
                 element={
-                  <ProtectedRoute roles={["aircon-manager"]}>
+                  <ProtectedRoute roles={["aircon-manager", "admin"]}>
                     <Aircon />
                   </ProtectedRoute>
                 }
