@@ -1,6 +1,12 @@
 import { FoodDrawer } from "@/components/FoodDrawer";
 import { RoomDrawer } from "@/components/RoomDrawer";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { useAuth } from "@/hooks/useAuth";
 import CustomerAirconChart from "./CustomerAirconChart";
 import AirconDrawer from "./AirconDrawer";
@@ -11,8 +17,10 @@ export const CustomerDashboard = (props: { roomId: string }) => {
   return (
     <>
       <Card className="ml-auto mr-auto mt-5">
-        <CardHeader>
+        <CardHeader className="flex flex-row">
           <CardTitle>欢迎回来，{user && user.username}</CardTitle>
+          <div className="grow" />
+          <CardDescription>{props.roomId}</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="flex flex-col gap-2 lg:flex-row">

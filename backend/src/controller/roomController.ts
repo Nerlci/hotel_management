@@ -9,6 +9,7 @@ import {
   userAvailablityResponse,
   userRoomOrderResponse,
   receptionAllRooms,
+  getAvailableRoomsResponse,
 } from "shared";
 import { roomService } from "../service/roomService";
 import { prisma } from "../prisma";
@@ -166,7 +167,7 @@ const getRoom = async (req: Request, res: Response) => {
     const userId = String(req.query.userId);
     const result = await roomService.getRoom(userId);
 
-    const response = responseBase.parse({
+    const response = getAvailableRoomsResponse.parse({
       code: "200",
       payload: { available: result },
       error: {

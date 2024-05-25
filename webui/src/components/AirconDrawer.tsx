@@ -16,16 +16,14 @@ import {
 import {
   ACStatus,
   MAX_AIRCON_SPEED,
-  MAX_AIRCON_TEMP,
   MIN_AIRCON_SPEED,
-  MIN_AIRCON_TEMP,
   dataFetch,
 } from "shared";
 import AirConditionerIcon from "../assets/aircon.svg";
 import { Switch } from "./ui/switch";
 import { useEffect, useState } from "react";
 import { Skeleton } from "./ui/skeleton";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 import {
   Tooltip,
@@ -37,11 +35,20 @@ import { TempSlider, WindSlider } from "./AirconSlider";
 import { useAuth } from "@/hooks/useAuth";
 import { useSSE } from "@/hooks/useSSE";
 import { useTempEmulate } from "@/hooks/tempEmulate";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "./ui/select";
 
 export const AirconDrawerContent = ({
   sseData,
   onUserUpdate,
   controlled = true, // controlled is set to false when the drawer is opened by ac-manager
+  tempRange,
 }: {
   sseData: ACStatus;
   onUserUpdate: (
@@ -51,11 +58,16 @@ export const AirconDrawerContent = ({
     start: boolean,
   ) => void;
   controlled: boolean;
+  tempRange: {
+    minTarget: number;
+    maxTarget: number;
+  };
 }) => {
   const [temperature, setTemperature] = useState(sseData.target);
   const [windspeed, setWindspeed] = useState(sseData.fanSpeed);
   const [start, setstart] = useState(sseData.on);
   const [cool, setcool] = useState(sseData.mode === 1);
+  const [mode, setMode] = useState<"cool" | "warm" | "auto">("auto");
 
   // start state could change from outside when drawer is open
   useEffect(() => {
@@ -81,11 +93,38 @@ export const AirconDrawerContent = ({
       </DrawerHeader>
       <div className="p-4 pb-0">
         <div className="flex flex-col items-center gap-2">
+          <Select
+            defaultValue={mode}
+            onValueChange={(value) => {
+              if (value !== "cool" && value !== "warm" && value !== "auto") {
+                toast.error("无效的模式");
+              } else {
+                setMode(value);
+                if (value === "cool") {
+                  setcool(true);
+                } else if (value === "warm") {
+                  setcool(false);
+                }
+              }
+            }}
+            disabled={!start}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Select a mode" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectItem value="cool">模式：制冷</SelectItem>
+                <SelectItem value="warm">模式：制热</SelectItem>
+                <SelectItem value="auto">模式：自动</SelectItem>
+              </SelectGroup>
+            </SelectContent>
+          </Select>
           <div className="flex flex-row items-center gap-3">
             <div
               className={`flex flex-row gap-1 text-[1.2rem] ${
                 start
-                  ? temperature > sseData.temp
+                  ? !cool
                     ? "text-orange-500"
                     : "text-blue-500"
                   : "text-muted"
@@ -94,13 +133,13 @@ export const AirconDrawerContent = ({
               <div
                 className={`h-10 w-10 rounded-full ${
                   start
-                    ? temperature > sseData.temp
+                    ? !cool
                       ? "bg-orange-500/10"
                       : "bg-blue-500/10"
                     : "text-muted"
                 }`}
               >
-                {temperature > sseData.temp ? (
+                {!cool ? (
                   <ThermometerSunIcon className="mx-auto mt-2" />
                 ) : (
                   <ThermometerSnowflakeIcon className="mx-auto mt-2" />
@@ -121,17 +160,20 @@ export const AirconDrawerContent = ({
           </div>
           <TempSlider
             className="w-full"
+            // TODO: edge case when temperature is not in [min, max]
             defaultValue={[temperature]}
-            max={MAX_AIRCON_TEMP}
-            min={MIN_AIRCON_TEMP}
+            max={tempRange.maxTarget}
+            min={tempRange.minTarget}
             step={1}
             disabled={!start}
             onValueChange={(value) => {
               setTemperature(value[0]);
-              if (value[0] < sseData.temp) {
-                setcool(true);
-              } else {
-                setcool(false);
+              if (mode === "auto") {
+                if (value[0] < sseData.temp) {
+                  setcool(true);
+                } else {
+                  setcool(false);
+                }
               }
             }}
           />
@@ -235,6 +277,13 @@ export default function AirconDrawer(props: { roomId: string }) {
     initTemp: sseData?.initTemp || 30,
     timestamp: sseData ? new Date(sseData.timestamp) : new Date(),
   });
+  const tempRangeQuery = useQuery({
+    queryKey: ["tempRange"],
+    queryFn: dataFetch.getACTargetRange,
+  });
+  const tempRange = tempRangeQuery.data;
+  const loading =
+    sseData === undefined || sseReadyState.key !== 1 || tempRange === undefined;
 
   return (
     <Drawer open={drawerOpen} onOpenChange={setDrawerOpen}>
@@ -256,7 +305,7 @@ export default function AirconDrawer(props: { roomId: string }) {
                   <div
                     className={`flex max-w-[14rem] flex-row flex-wrap items-center justify-center gap-1 text-right ${sseData?.on ? "" : "text-muted-foreground"}`}
                   >
-                    {sseData === undefined || sseReadyState.key !== 1 ? (
+                    {loading ? (
                       <Skeleton className="h-5 w-40" />
                     ) : (
                       <>
@@ -281,7 +330,7 @@ export default function AirconDrawer(props: { roomId: string }) {
         </Button>
       </DrawerTrigger>
       <DrawerContent>
-        {sseData && (
+        {!loading && (
           <AirconDrawerContent
             sseData={sseData}
             onUserUpdate={(temperature, windspeed, cool, start) => {
@@ -295,6 +344,7 @@ export default function AirconDrawer(props: { roomId: string }) {
               setDrawerOpen(false);
             }}
             controlled
+            tempRange={tempRange}
           />
         )}
       </DrawerContent>
