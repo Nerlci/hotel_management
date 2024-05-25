@@ -223,3 +223,9 @@ export const getRoomBillResponse = responseBase.extend({
     }),
   }),
 });
+
+export const getAvailableRoomsResponse = responseBase.extend({
+  payload: z.object({
+    available: z.array(z.string().min(1, "Room ID can't be empty")),
+  }),
+});
