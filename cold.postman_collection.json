@@ -13,11 +13,11 @@
 				"header": [{"key": "Content-Type", "value": "application/json"}],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"email\": \"acmanager@bupt.edu.cn\",\n    \"password\": \"acmanager\"\n}",
+					"raw": "{\"email\": \"acmanager@bupt.edu.cn\",   \"password\": \"acmanager\"}",
 					"options": {"raw": {"language": "json"}}
 				}
 			},
-			"delay": 100,
+			"delay": 0,
 			"events": [],
 			"protocolProfileBehavior": {"disableBodyPruning": true}
 		},
@@ -29,7 +29,7 @@
 				"header": [],
 				"body": {}
 			},
-			"delay": 100,
+			"delay": 20,
 			"events": [],
 			"protocolProfileBehavior": {"disableBodyPruning": true}
 		},
@@ -41,7 +41,7 @@
 				"header": [],
 				"body": {}
 			},
-			"delay": 100,
+			"delay": 20,
 			"events": [],
 			"protocolProfileBehavior": {"disableBodyPruning": true}
 		},
@@ -53,7 +53,7 @@
 				"header": [],
 				"body": {}
 			},
-			"delay": 1000,
+			"delay": 20,
 			"events": [],
 			"protocolProfileBehavior": {"disableBodyPruning": true}
 		},
@@ -65,7 +65,7 @@
 				"header": [],
 				"body": {}
 			},
-			"delay": 1000,
+			"delay": 20,
 			"events": [],
 			"protocolProfileBehavior": {"disableBodyPruning": true}
 		},
@@ -77,13 +77,13 @@
 				"header": [],
 				"body": {}
 			},
-			"delay": 1000,
+			"delay": 20,
 			"events": [],
 			"protocolProfileBehavior": {"disableBodyPruning": true}
 		},
 
 		{
-			"name": "用户控制空调",
+			"name": "用户控制空调t0",
 			"request": {
 				"method": "POST",
 				"url": "{{BASE_URL}}/api/ac/update",
@@ -94,14 +94,13 @@
 					"options": {"raw": {"language": "json"}}
 				}
 			},
-			"delay": 1000,
+			"delay": 20,
 			"events": [],
 			"protocolProfileBehavior": {"disableBodyPruning": true}
 		},
-		{"name": "delay", "item": []},
 
 		{
-			"name": "用户控制空调",
+			"name": "用户控制空调t1",
 			"request": {
 				"method": "POST",
 				"url": "{{BASE_URL}}/api/ac/update",
@@ -117,7 +116,7 @@
 			"protocolProfileBehavior": {"disableBodyPruning": true}
 		},
 		{
-			"name": "用户控制空调",
+			"name": "用户控制空调t1",
 			"request": {
 				"method": "POST",
 				"url": "{{BASE_URL}}/api/ac/update",
@@ -133,7 +132,7 @@
 			"protocolProfileBehavior": {"disableBodyPruning": true}
 		},
 		{
-			"name": "用户控制空调",
+			"name": "用户控制空调t1",
 			"request": {
 				"method": "POST",
 				"url": "{{BASE_URL}}/api/ac/update",
@@ -148,10 +147,9 @@
 			"events": [],
 			"protocolProfileBehavior": {"disableBodyPruning": true}
 		},
-		{"name": "delay", "item": []},
 
 		{
-			"name": "用户控制空调",
+			"name": "用户控制空调t2",
 			"request": {
 				"method": "POST",
 				"url": "{{BASE_URL}}/api/ac/update",
@@ -166,10 +164,9 @@
 			"events": [],
 			"protocolProfileBehavior": {"disableBodyPruning": true}
 		},
-		{"name": "delay", "item": []},
 
 		{
-			"name": "用户控制空调",
+			"name": "用户控制空调t3",
 			"request": {
 				"method": "POST",
 				"url": "{{BASE_URL}}/api/ac/update",
@@ -185,7 +182,7 @@
 			"protocolProfileBehavior": {"disableBodyPruning": true}
 		},
 		{
-			"name": "用户控制空调",
+			"name": "用户控制空调t3",
 			"request": {
 				"method": "POST",
 				"url": "{{BASE_URL}}/api/ac/update",
@@ -200,10 +197,9 @@
 			"events": [],
 			"protocolProfileBehavior": {"disableBodyPruning": true}
 		},
-		{"name": "delay", "item": []},
 
 		{
-			"name": "用户控制空调",
+			"name": "用户控制空调t4",
 			"request": {
 				"method": "POST",
 				"url": "{{BASE_URL}}/api/ac/update",
@@ -218,10 +214,9 @@
 			"events": [],
 			"protocolProfileBehavior": {"disableBodyPruning": true}
 		},
-		{"name": "delay", "item": []},
 
 		{
-			"name": "用户控制空调",
+			"name": "用户控制空调t5",
 			"request": {
 				"method": "POST",
 				"url": "{{BASE_URL}}/api/ac/update",
@@ -236,9 +231,9 @@
 			"events": [],
 			"protocolProfileBehavior": {"disableBodyPruning": true}
 		},
-		{"name": "delay", "item": []},
+
 		{
-			"name": "用户控制空调",
+			"name": "用户控制空调t6",
 			"request": {
 				"method": "POST",
 				"url": "{{BASE_URL}}/api/ac/update",
@@ -253,10 +248,9 @@
 			"events": [],
 			"protocolProfileBehavior": {"disableBodyPruning": true}
 		},
-		{"name": "delay", "item": []},
 
 		{
-			"name": "用户控制空调",
+			"name": "用户控制空调t7",
 			"request": {
 				"method": "POST",
 				"url": "{{BASE_URL}}/api/ac/update",
@@ -272,7 +266,7 @@
 			"protocolProfileBehavior": {"disableBodyPruning": true}
 		},
 		{
-			"name": "用户控制空调",
+			"name": "用户控制空调t7",
 			"request": {
 				"method": "POST",
 				"url": "{{BASE_URL}}/api/ac/update",
@@ -287,12 +281,9 @@
 			"events": [],
 			"protocolProfileBehavior": {"disableBodyPruning": true}
 		},
-		{"name": "delay", "item": []},
-		{"name": "group", "item": []},
-		{"name": "delay", "item": []},
 
 		{
-			"name": "用户控制空调",
+			"name": "用户控制空调t9",
 			"request": {
 				"method": "POST",
 				"url": "{{BASE_URL}}/api/ac/update",
@@ -308,7 +299,7 @@
 			"protocolProfileBehavior": {"disableBodyPruning": true}
 		},
 		{
-			"name": "用户控制空调",
+			"name": "用户控制空调t9",
 			"request": {
 				"method": "POST",
 				"url": "{{BASE_URL}}/api/ac/update",
@@ -323,9 +314,6 @@
 			"events": [],
 			"protocolProfileBehavior": {"disableBodyPruning": true}
 		},
-		{"name": "delay", "item": []},
-		{"name": "group", "item": []},
-		{"name": "delay", "item": []},
 
 		{
 			"name": "用户控制空调",
@@ -343,7 +331,6 @@
 			"events": [],
 			"protocolProfileBehavior": {"disableBodyPruning": true}
 		},
-		{"name": "delay", "item": []},
 
 		{
 			"name": "用户控制空调",
@@ -361,9 +348,6 @@
 			"events": [],
 			"protocolProfileBehavior": {"disableBodyPruning": true}
 		},
-		{"name": "delay", "item": []},
-		{"name": "group", "item": []},
-		{"name": "delay", "item": []},
 
 		{
 			"name": "用户控制空调",
@@ -397,7 +381,6 @@
 			"events": [],
 			"protocolProfileBehavior": {"disableBodyPruning": true}
 		},
-		{"name": "delay", "item": []},
 
 		{
 			"name": "用户控制空调",
@@ -415,7 +398,6 @@
 			"events": [],
 			"protocolProfileBehavior": {"disableBodyPruning": true}
 		},
-		{"name": "delay", "item": []},
 
 		{
 			"name": "用户控制空调",
@@ -433,7 +415,6 @@
 			"events": [],
 			"protocolProfileBehavior": {"disableBodyPruning": true}
 		},
-		{"name": "delay", "item": []},
 
 		{
 			"name": "用户控制空调",
@@ -451,7 +432,6 @@
 			"events": [],
 			"protocolProfileBehavior": {"disableBodyPruning": true}
 		},
-		{"name": "delay", "item": []},
 
 		{
 			"name": "用户控制空调",
@@ -485,7 +465,6 @@
 			"events": [],
 			"protocolProfileBehavior": {"disableBodyPruning": true}
 		},
-		{"name": "delay", "item": []},
 
 		{
 			"name": "用户控制空调",
@@ -503,7 +482,6 @@
 			"events": [],
 			"protocolProfileBehavior": {"disableBodyPruning": true}
 		},
-		{"name": "delay", "item": []},
 
 		{
 			"name": "用户控制空调",
@@ -521,9 +499,6 @@
 			"events": [],
 			"protocolProfileBehavior": {"disableBodyPruning": true}
 		},
-		{"name": "delay", "item": []},
-		{"name": "group", "item": []},
-		{"name": "delay", "item": []},
 
 		{
 			"name": "用户控制空调",
@@ -541,7 +516,6 @@
 			"events": [],
 			"protocolProfileBehavior": {"disableBodyPruning": true}
 		},
-		{"name": "delay", "item": []},
 
 		{
 			"name": "用户控制空调",
@@ -559,7 +533,6 @@
 			"events": [],
 			"protocolProfileBehavior": {"disableBodyPruning": true}
 		},
-		{"name": "delay", "item": []},
 
 		{
 			"name": "用户控制空调",
@@ -577,7 +550,6 @@
 			"events": [],
 			"protocolProfileBehavior": {"disableBodyPruning": true}
 		},
-		{"name": "delay", "item": []},
 
 		{
 			"name": "用户控制空调",
@@ -596,7 +568,7 @@
 			"protocolProfileBehavior": {"disableBodyPruning": true}
 		},
 		{
-			"name": "用户控制空调",
+			"name": "用户控制空调last",
 			"request": {
 				"method": "POST",
 				"url": "{{BASE_URL}}/api/ac/update",
