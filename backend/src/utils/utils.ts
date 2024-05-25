@@ -4,6 +4,15 @@ import { Prisma } from "@prisma/client";
 import { z } from "zod";
 import { responseBase } from "shared";
 
+class CustomError extends Error {
+  code: string;
+
+  constructor(code: string, message: string) {
+    super(message);
+    this.code = code;
+  }
+}
+
 const encryptPassword = async (password: string): Promise<string> => {
   const salt = crypto.randomBytes(16).toString("hex");
 
@@ -56,6 +65,8 @@ function handleErrors(error: unknown, res: Response<any, Record<string, any>>) {
     sendError(res, err, "400");
   } else if (error instanceof Prisma.PrismaClientUnknownRequestError) {
     sendError(res, { msg: error.message }, "400");
+  } else if (error instanceof CustomError) {
+    sendError(res, { msg: error.message }, error.code);
   } else if (error instanceof Error) {
     sendError(res, { msg: error.message }, "500");
   } else {
@@ -64,4 +75,4 @@ function handleErrors(error: unknown, res: Response<any, Record<string, any>>) {
   }
 }
 
-export { encryptPassword, validatePassword, handleErrors };
+export { encryptPassword, validatePassword, handleErrors, CustomError };
