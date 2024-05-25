@@ -166,7 +166,7 @@ export async function postUserRegister(values: RegisterForm) {
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify(values),
+    body: JSON.stringify({ ...values, sex: 69, phone: "1234567890" }),
     credentials: "include",
   });
   if (!response.ok) {
