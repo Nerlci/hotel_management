@@ -18,9 +18,10 @@ import {
   userRoomOrderResponse,
 } from "./schema";
 
-export const BASE_URL = localStorage.getItem("API_URL")
-  ? localStorage.getItem("API_URL")
-  : process.env.VITE_API_URL || "https://localhost:8443";
+export const BASE_URL =
+  typeof window !== "undefined" && localStorage.getItem("API_URL")
+    ? localStorage.getItem("API_URL")
+    : process.env.VITE_API_URL || "https://localhost:8443";
 
 console.log(BASE_URL);
 
