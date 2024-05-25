@@ -229,3 +229,10 @@ export const getAvailableRoomsResponse = responseBase.extend({
     available: z.array(z.string().min(1, "Room ID can't be empty")),
   }),
 });
+
+export const getTargetRangeResponse = responseBase.extend({
+  payload: z.object({
+    minTarget: z.number(),
+    maxTarget: z.number(),
+  }),
+});
