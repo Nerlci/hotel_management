@@ -43,6 +43,12 @@ const runRequest = (item: any) => {
     console.log(`Request "${item.name}" complete!`);
     // 检查请求的测试结果
     summary.run.executions.forEach((execution) => {
+      // console.log(`Request for "${execution.item.name}":`);
+      // console.log(`URL: ${execution.request.url.toString()}`);
+      // console.log(`Method: ${execution.request.method}`);
+      // if (execution.request.body) {
+      //   console.log(`Body: ${execution.request.body.toString()}`);
+      // }
       // console.log(`Response for "${execution.item.name}":`);
       // if (execution.response && execution.response.stream) {
       //   console.log(execution.response.stream.toString());
