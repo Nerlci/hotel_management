@@ -16,7 +16,7 @@ const ROUND_ROBIN_INTERVAL =
 
 const waitingList: SchedulerItem[] = [];
 const servingList: SchedulerItem[] = [];
-const rrList: { timeout: NodeJS.Timeout; item: SchedulerItem }[] = [];
+const rrList: { interval: NodeJS.Timeout; item: SchedulerItem }[] = [];
 const shutdownList: { timeout: NodeJS.Timeout; item: SchedulerItem }[] = [];
 
 const modifyTimestamps = (item: ACUpdateRequest, now: Date) => {
@@ -33,7 +33,7 @@ const stopRR = (roomId: string) => {
     return;
   }
 
-  clearTimeout(rrList[idx].timeout);
+  clearInterval(rrList[idx].interval);
   rrList.splice(idx, 1);
 };
 
@@ -109,8 +109,8 @@ const checkWaitingList = () => {
 
   waitingList.sort((a, b) =>
     a.fanSpeed === b.fanSpeed
-      ? b.fanSpeed - a.fanSpeed
-      : b.onTimestamp.getTime() - a.onTimestamp.getTime(),
+      ? a.timestamp.getTime() - b.timestamp.getTime()
+      : b.fanSpeed - a.fanSpeed,
   );
   const minServingFanSpeed = Math.min(
     ...servingList.map((item) => item.fanSpeed),
@@ -156,7 +156,7 @@ const preemptService = (item: SchedulerItem, preemptedItem: SchedulerItem) => {
     (rrItem) => rrItem.item.roomId === item.roomId,
   );
   if (rrIdx !== -1) {
-    clearTimeout(rrList[rrIdx].timeout);
+    clearInterval(rrList[rrIdx].interval);
     rrList.splice(rrIdx, 1);
   }
 
@@ -169,13 +169,13 @@ const preemptService = (item: SchedulerItem, preemptedItem: SchedulerItem) => {
       (rrItem) => rrItem.item.roomId === sameFanSpeedItem.roomId,
     );
     if (rrIdx === -1) {
-      const newTimeout = setTimeout(
+      const newInterval = setInterval(
         rrPreempt,
         ROUND_ROBIN_INTERVAL,
         sameFanSpeedItem.roomId,
       );
       rrList.push({
-        timeout: newTimeout,
+        interval: newInterval,
         item: sameFanSpeedItem,
       });
     }
@@ -190,13 +190,13 @@ const preemptService = (item: SchedulerItem, preemptedItem: SchedulerItem) => {
       (rrItem) => rrItem.item.roomId === preemptedItem.roomId,
     );
     if (rrIdx === -1) {
-      const newTimeout = setTimeout(
+      const newInterval = setInterval(
         rrPreempt,
         ROUND_ROBIN_INTERVAL,
         preemptedItem.roomId,
       );
       rrList.push({
-        timeout: newTimeout,
+        interval: newInterval,
         item: modifyTimestamps(preemptedItem, now),
       });
     }
@@ -219,13 +219,13 @@ const rrPreempt = (roomId: string) => {
   }
 
   const item = rrList[idx].item;
-  const timeout = rrList[idx].timeout;
+  const interval = rrList[idx].interval;
   const sameFanSpeedItems = servingList
     .filter((servingItem) => servingItem.fanSpeed === item.fanSpeed)
     .sort((a, b) => a.onTimestamp.getTime() - b.onTimestamp.getTime());
   if (sameFanSpeedItems.length === 0) {
     rrList.splice(idx, 1);
-    clearTimeout(timeout);
+    clearInterval(interval);
     return;
   }
 
@@ -368,9 +368,13 @@ const schedulerStep = async (item: SchedulerItem) => {
       return;
     }
 
-    const rrTimeout = setTimeout(rrPreempt, ROUND_ROBIN_INTERVAL, item.roomId);
+    const rrInterval = setInterval(
+      rrPreempt,
+      ROUND_ROBIN_INTERVAL,
+      item.roomId,
+    );
     rrList.push({
-      timeout: rrTimeout,
+      interval: rrInterval,
       item: modifyTimestamps(item, now),
     });
     waitingList.push(modifyTimestamps(item, now));

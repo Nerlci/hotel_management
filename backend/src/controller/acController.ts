@@ -20,14 +20,12 @@ const updateAC = async (req: Request, res: Response) => {
       ...req.body,
     });
 
-    const userRoom = await roomService.findUserRoom(res.locals.user.userId);
+    if (res.locals.user.type !== 3 && res.locals.user.type !== 1) {
+      const userRoom = await roomService.findUserRoom(res.locals.user.userId);
 
-    if (
-      (userRoom === undefined || userRoom !== ac.roomId) &&
-      res.locals.user.type !== 3 &&
-      res.locals.user.type !== 1
-    ) {
-      throw new CustomError("400", "Permission denied");
+      if (userRoom === undefined || userRoom !== ac.roomId) {
+        throw new CustomError("400", "Permission denied");
+      }
     }
 
     const targetRange = configService.getTargetRange();
