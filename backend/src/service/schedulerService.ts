@@ -50,13 +50,40 @@ const statusChange = async (status: SchedulerItem) => {
     priceRate: configService.getFanSpeedPriceRate(status.fanSpeed),
     type: 1,
   };
-  await prisma.aCRecord.create({
-    data: data,
-  });
 
   const rate =
     configService.getRate(data.fanSpeed * (data.on ? 1 : 0)) *
     (!data.on || data.mode === 0 ? 1 : -1);
+
+  if (data.on) {
+    const targetTime =
+      ((data.target - data.temp) / rate) * 1000 + data.timestamp.getTime() - 50;
+
+    if (targetTime < Date.now()) {
+      const servingItemIdx = servingList.findIndex(
+        (item) => item.roomId === data.roomId,
+      );
+      if (servingItemIdx !== -1) {
+        servingList[servingItemIdx] = status;
+      }
+      shutdownRoom(data.roomId);
+      return;
+    }
+
+    const timeout = setTimeout(
+      shutdownRoom,
+      targetTime - Date.now(),
+      data.roomId,
+    );
+    shutdownList.push({
+      timeout: timeout,
+      item: status,
+    });
+  }
+
+  await prisma.aCRecord.create({
+    data: data,
+  });
 
   const statusMessage = acStatus.parse({
     ...data,
@@ -73,20 +100,6 @@ const statusChange = async (status: SchedulerItem) => {
     on: data.on,
     timestamp: status.timestamp,
   });
-
-  if (data.on) {
-    const targetTime =
-      ((data.target - data.temp) / rate) * 1000 + data.timestamp.getTime() - 50;
-    const timeout = setTimeout(
-      shutdownRoom,
-      targetTime - Date.now(),
-      data.roomId,
-    );
-    shutdownList.push({
-      timeout: timeout,
-      item: status,
-    });
-  }
 };
 
 const checkWaitingList = () => {
@@ -147,8 +160,29 @@ const preemptService = (item: SchedulerItem, preemptedItem: SchedulerItem) => {
     rrList.splice(rrIdx, 1);
   }
 
+  // 如果当前对象还有其他同风速的服务对象在等待队列，设置定时器
+  let sameFanSpeedItems = waitingList.filter(
+    (waitingItem) => waitingItem.fanSpeed === item.fanSpeed,
+  );
+  for (const sameFanSpeedItem of sameFanSpeedItems) {
+    const rrIdx = rrList.findIndex(
+      (rrItem) => rrItem.item.roomId === sameFanSpeedItem.roomId,
+    );
+    if (rrIdx === -1) {
+      const newTimeout = setTimeout(
+        rrPreempt,
+        ROUND_ROBIN_INTERVAL,
+        sameFanSpeedItem.roomId,
+      );
+      rrList.push({
+        timeout: newTimeout,
+        item: sameFanSpeedItem,
+      });
+    }
+  }
+
   // 如果被抢占的对象的风速还有其他服务对象在使用，为被抢占对象设置定时器
-  const sameFanSpeedItems = servingList.filter(
+  sameFanSpeedItems = servingList.filter(
     (servingItem) => servingItem.fanSpeed === preemptedItem.fanSpeed,
   );
   if (sameFanSpeedItems.length !== 0) {
@@ -215,7 +249,7 @@ const shutdownRoom = (roomId: string) => {
   });
 };
 
-const schedulerStep = (item: SchedulerItem) => {
+const schedulerStep = async (item: SchedulerItem) => {
   const now = new Date();
 
   // 如果正在服务
