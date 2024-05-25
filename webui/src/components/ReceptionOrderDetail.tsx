@@ -123,7 +123,7 @@ export default function ReceptionOrderDetail({ roomId }: DetailProps) {
             <div className="overflow-x-auto">
               <table className="w-full table-fixed text-left">
                 <thead>
-                  <tr className="text-white">
+                  <tr>
                     <th className="p-2">请求时间</th>
                     <th className="p-2">服务开始时间</th>
                     <th className="p-2">服务结束时间</th>

@@ -18,7 +18,12 @@ import {
   userRoomOrderResponse,
 } from "./schema";
 
-export const BASE_URL = process.env.VITE_API_URL || "http://localhost:8080";
+export const BASE_URL =
+  typeof window !== "undefined" && localStorage.getItem("API_URL")
+    ? localStorage.getItem("API_URL")
+    : process.env.VITE_API_URL || "https://localhost:8443";
+
+console.log(BASE_URL);
 
 export async function deleteUserBooking() {
   const response = await fetch(`${BASE_URL}/api/room/book`, {
