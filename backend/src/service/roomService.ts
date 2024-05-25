@@ -277,8 +277,8 @@ const getBill = async (roomId: string) => {
   const bill = [roomBill, ...acBill];
   const result = {
     roomId: roomId,
-    checkInDate: checkInDate,
-    checkOutDate: checkOutDate,
+    checkInDate: checkInDate.toISOString(),
+    checkOutDate: checkOutDate.toISOString(),
     acTotalFee: acBill.reduce(
       (total: any, item: { subtotal: any }) => total + item.subtotal,
       0,
