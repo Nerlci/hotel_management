@@ -16,16 +16,14 @@ import {
 import {
   ACStatus,
   MAX_AIRCON_SPEED,
-  MAX_AIRCON_TEMP,
   MIN_AIRCON_SPEED,
-  MIN_AIRCON_TEMP,
   dataFetch,
 } from "shared";
 import AirConditionerIcon from "../assets/aircon.svg";
 import { Switch } from "./ui/switch";
 import { useEffect, useState } from "react";
 import { Skeleton } from "./ui/skeleton";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 import {
   Tooltip,
@@ -50,6 +48,7 @@ export const AirconDrawerContent = ({
   sseData,
   onUserUpdate,
   controlled = true, // controlled is set to false when the drawer is opened by ac-manager
+  tempRange,
 }: {
   sseData: ACStatus;
   onUserUpdate: (
@@ -59,6 +58,10 @@ export const AirconDrawerContent = ({
     start: boolean,
   ) => void;
   controlled: boolean;
+  tempRange: {
+    minTarget: number;
+    maxTarget: number;
+  };
 }) => {
   const [temperature, setTemperature] = useState(sseData.target);
   const [windspeed, setWindspeed] = useState(sseData.fanSpeed);
@@ -157,9 +160,10 @@ export const AirconDrawerContent = ({
           </div>
           <TempSlider
             className="w-full"
+            // TODO: edge case when temperature is not in [min, max]
             defaultValue={[temperature]}
-            max={MAX_AIRCON_TEMP}
-            min={MIN_AIRCON_TEMP}
+            max={tempRange.maxTarget}
+            min={tempRange.minTarget}
             step={1}
             disabled={!start}
             onValueChange={(value) => {
@@ -273,6 +277,13 @@ export default function AirconDrawer(props: { roomId: string }) {
     initTemp: sseData?.initTemp || 30,
     timestamp: sseData ? new Date(sseData.timestamp) : new Date(),
   });
+  const tempRangeQuery = useQuery({
+    queryKey: ["tempRange"],
+    queryFn: dataFetch.getACTargetRange,
+  });
+  const tempRange = tempRangeQuery.data;
+  const loading =
+    sseData === undefined || sseReadyState.key !== 1 || tempRange === undefined;
 
   return (
     <Drawer open={drawerOpen} onOpenChange={setDrawerOpen}>
@@ -294,7 +305,7 @@ export default function AirconDrawer(props: { roomId: string }) {
                   <div
                     className={`flex max-w-[14rem] flex-row flex-wrap items-center justify-center gap-1 text-right ${sseData?.on ? "" : "text-muted-foreground"}`}
                   >
-                    {sseData === undefined || sseReadyState.key !== 1 ? (
+                    {loading ? (
                       <Skeleton className="h-5 w-40" />
                     ) : (
                       <>
@@ -319,7 +330,7 @@ export default function AirconDrawer(props: { roomId: string }) {
         </Button>
       </DrawerTrigger>
       <DrawerContent>
-        {sseData && (
+        {!loading && (
           <AirconDrawerContent
             sseData={sseData}
             onUserUpdate={(temperature, windspeed, cool, start) => {
@@ -333,6 +344,7 @@ export default function AirconDrawer(props: { roomId: string }) {
               setDrawerOpen(false);
             }}
             controlled
+            tempRange={tempRange}
           />
         )}
       </DrawerContent>
