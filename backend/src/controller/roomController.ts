@@ -227,10 +227,10 @@ const getBillFile = async (req: Request, res: Response) => {
 
     const csv = await roomService.getBillFile(roomId);
 
-    res.setHeader("Content-Type", "text/csv");
+    res.setHeader("Content-Type", "application/octet-stream");
     res.setHeader(
       "Content-Disposition",
-      `attachment; filename=bill-${roomId}.csv`,
+      `attachment; filename="bill_${roomId}_${Date.now()}.csv"`,
     );
     res.send(csv);
   } catch (error) {

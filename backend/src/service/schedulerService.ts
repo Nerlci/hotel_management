@@ -75,6 +75,13 @@ const statusChange = async (status: SchedulerItem) => {
       targetTime - Date.now(),
       data.roomId,
     );
+    const timeoutIdx = shutdownList.findIndex(
+      (item) => item.item.roomId === status.roomId,
+    );
+    if (timeoutIdx !== -1) {
+      clearTimeout(shutdownList[timeoutIdx].timeout);
+      shutdownList.splice(timeoutIdx, 1);
+    }
     shutdownList.push({
       timeout: timeout,
       item: status,
@@ -249,7 +256,7 @@ const shutdownRoom = (roomId: string) => {
   });
 };
 
-const schedulerStep = async (item: SchedulerItem) => {
+const schedulerStep = (item: SchedulerItem) => {
   const now = new Date();
 
   // 如果正在服务
@@ -265,7 +272,7 @@ const schedulerStep = async (item: SchedulerItem) => {
 
     const previousFanSpeed = servingList[servingItemIdx].fanSpeed;
 
-    if (item.fanSpeed < previousFanSpeed) {
+    if (item.on && item.fanSpeed < previousFanSpeed) {
       // 先修改服务列表为新的风速，再检查等待队列
       servingList[servingItemIdx] = modifiedItem;
       checkWaitingList();
@@ -282,6 +289,14 @@ const schedulerStep = async (item: SchedulerItem) => {
     statusChange(modifiedItem);
 
     if (!item.on) {
+      const shutdownIdx = shutdownList.findIndex(
+        (shutdownItem) => shutdownItem.item.roomId === item.roomId,
+      );
+
+      if (shutdownIdx !== -1) {
+        clearTimeout(shutdownList[shutdownIdx].timeout);
+        shutdownList.splice(shutdownIdx, 1);
+      }
       servingList.splice(servingItemIdx, 1);
       checkWaitingList();
 
@@ -298,6 +313,14 @@ const schedulerStep = async (item: SchedulerItem) => {
     (waitingItem) => waitingItem.roomId === item.roomId,
   );
   if (waitingItemIdx !== -1) {
+    const rrIdx = rrList.findIndex(
+      (rrItem) => rrItem.item.roomId === item.roomId,
+    );
+    if (rrIdx !== -1) {
+      clearInterval(rrList[rrIdx].interval);
+      rrList.splice(rrIdx, 1);
+    }
+
     waitingList.splice(waitingItemIdx, 1);
   }
 
@@ -313,8 +336,8 @@ const schedulerStep = async (item: SchedulerItem) => {
   if (servingList.length < SERVE_LIMIT) {
     stopRR(item.roomId);
     const modifiedItem = modifyTimestamps(item, now);
-    statusChange(modifiedItem);
     servingList.push(modifiedItem);
+    statusChange(modifiedItem);
 
     return;
   }

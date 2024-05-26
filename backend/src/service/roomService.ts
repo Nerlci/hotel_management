@@ -299,18 +299,19 @@ const getBillFile = async (roomId: string) => {
     0,
   );
 
-  const fields = ["房间号", "入住日期", "退房日期", "空调总费用", "住宿总费用"];
-  const data = [
-    {
-      房间号: roomId,
-      入住日期: checkInDate,
-      退房日期: checkOutDate,
-      空调总费用: acTotalFee,
-      住宿总费用: lodgingFee,
-    },
+  const table = [
+    ["房间号", "入住日期", "退房日期", "空调总费用", "住宿总费用", "总费用"],
+    [
+      roomId,
+      new Date(checkInDate).toLocaleString(),
+      new Date(checkOutDate).toLocaleString(),
+      acTotalFee,
+      lodgingFee,
+      acTotalFee + lodgingFee,
+    ],
   ];
 
-  const csv = parse(data, { fields });
+  const csv = parse(table, { header: false });
   return csv;
 };
 

@@ -85,24 +85,26 @@ const getStatement = async (
         (acRecord.timestamp.getTime() - lastStatus.timestamp.getTime()) / 1000,
       );
 
-      statement.push(
-        statementItem.parse({
-          roomId: roomId,
-          requestTime: lastRequest?.timestamp
-            ? lastRequest?.timestamp.toISOString()
-            : null,
-          startTime: lastStatus.timestamp.toISOString(),
-          endTime: acRecord.timestamp.toISOString(),
-          duration,
-          fanSpeed: lastStatus.fanSpeed,
-          price: duration * lastStatus.priceRate,
-          priceRate:
-            lastStatus.priceRate / configService.getRate(lastStatus.fanSpeed),
-          target: lastStatus.target,
-          temp: acRecord.temp,
-          mode: lastStatus.mode,
-        }),
-      );
+      if (duration !== 0) {
+        statement.push(
+          statementItem.parse({
+            roomId: roomId,
+            requestTime: lastRequest?.timestamp
+              ? lastRequest?.timestamp.toISOString()
+              : null,
+            startTime: lastStatus.timestamp.toISOString(),
+            endTime: acRecord.timestamp.toISOString(),
+            duration,
+            fanSpeed: lastStatus.fanSpeed,
+            price: duration * lastStatus.priceRate,
+            priceRate:
+              lastStatus.priceRate / configService.getRate(lastStatus.fanSpeed),
+            target: lastStatus.target,
+            temp: acRecord.temp,
+            mode: lastStatus.mode,
+          }),
+        );
+      }
     }
 
     if (!acRecord.on) {
@@ -142,9 +144,9 @@ const getStatementTable = async (
   for (const item of statement) {
     table.push([
       item.roomId,
-      item.requestTime?.toLocaleString() || "",
-      item.startTime.toLocaleString(),
-      item.endTime.toLocaleString(),
+      new Date(item.requestTime || "").toLocaleString(),
+      new Date(item.startTime).toLocaleString(),
+      new Date(item.endTime).toLocaleString(),
       item.duration.toString(),
       item.fanSpeed.toString(),
       item.price.toString(),
