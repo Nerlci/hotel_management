@@ -21,6 +21,8 @@
     "express": "^4.19.2",
     "json2csv": "^6.0.0-alpha.2",
     "jsonwebtoken": "^9.0.2",
+    "jspdf": "^2.5.1",
+    "jspdf-autotable": "^3.8.2",
     "shared": "file:../shared",
     "sse-channel": "^4.0.0",
     "zod": "^3.23.8"

@@ -1,8 +1,10 @@
-import { parse } from "json2csv";
 import { prisma } from "../prisma";
 import { ACRecord } from "@prisma/client";
 import { StatementItem, statementItem } from "shared";
 import { configService } from "./configService";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
+import "../utils/LXGWWenKai-Regular-normal";
 
 const getDetailByRoomId = async (roomId: string) => {
   const ac = await prisma.aCRecord.findMany({
@@ -126,37 +128,45 @@ const getStatementTable = async (
   const statement = await getStatement(roomId, startTime, endTime);
 
   const table = [
-    [
-      "房间号",
-      "请求时间",
-      "开始时间",
-      "结束时间",
-      "持续时长",
-      "风速",
-      "费用",
-      "费率",
-      "目标温度",
-      "结束温度",
-    ],
+    "房间号",
+    "请求时间",
+    "开始时间",
+    "结束时间",
+    "持续时长",
+    "风速",
+    "费用",
+    "费率",
+    "目标温度",
+    "结束温度",
   ];
-  for (const item of statement) {
-    table.push([
+  const body = statement.map((item) => {
+    return [
       item.roomId,
       item.requestTime?.toLocaleString() || "",
       item.startTime.toLocaleString(),
       item.endTime.toLocaleString(),
       item.duration.toString(),
       item.fanSpeed.toString(),
-      item.price.toString(),
-      item.priceRate.toString(),
-      item.target.toString(),
-      item.temp.toString(),
-    ]);
-  }
+      item.price.toFixed(2).toString(),
+      item.priceRate.toFixed(2).toString(),
+      item.target.toFixed(2).toString(),
+      item.temp.toFixed(2).toString(),
+    ];
+  });
+  const pdf = new jsPDF({
+    orientation: "landscape",
+  });
+  console.log(pdf.getFontList());
+  pdf.setFont("LXGWWenKai-Regular");
 
-  const csv = parse(table, { header: false });
-
-  return csv;
+  // add title
+  pdf.text("详单", 148.5, 10, { align: "center" });
+  autoTable(pdf, {
+    head: [table],
+    body: body,
+    styles: { fontStyle: "normal", font: "LXGWWenKai-Regular" },
+  });
+  return pdf.output();
 };
 
 const getInvoice = async (

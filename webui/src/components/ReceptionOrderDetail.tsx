@@ -73,7 +73,7 @@ export default function ReceptionOrderDetail({ roomId }: DetailProps) {
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `详单_${roomId}.csv`;
+      a.download = `详单_${roomId}.pdf`;
       document.body.appendChild(a);
       a.click();
       a.remove();
@@ -108,7 +108,7 @@ export default function ReceptionOrderDetail({ roomId }: DetailProps) {
                     fileMutation.mutate(roomId);
                   }}
                 >
-                  导出 csv
+                  导出 pdf
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
