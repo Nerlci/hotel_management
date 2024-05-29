@@ -45,7 +45,7 @@ export default function ReceptionBillingDetail({ roomId }: DetailProps) {
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `账单_${roomId}.csv`;
+      a.download = `账单_${roomId}.pdf`;
       document.body.appendChild(a);
       a.click();
       a.remove();
@@ -54,6 +54,10 @@ export default function ReceptionBillingDetail({ roomId }: DetailProps) {
   });
 
   const shouldShow = roomId && billQuery.data;
+  const totalFee = billQuery.data?.statement.bill.reduce(
+    (total: number, item: any) => total + item.subtotal,
+    0,
+  );
 
   return (
     <Card className="overflow-hidden">
@@ -82,7 +86,7 @@ export default function ReceptionBillingDetail({ roomId }: DetailProps) {
                     fileMutation.mutate(roomId);
                   }}
                 >
-                  导出
+                  导出 pdf
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -109,13 +113,6 @@ export default function ReceptionBillingDetail({ roomId }: DetailProps) {
                   )}
                 </span>
               </li>
-              <Separator className="my-4" />
-              <li className="flex items-center justify-between">
-                <span className="text-muted-foreground">空调总费用</span>
-                <span>
-                  ￥ {billQuery.data?.statement.acTotalFee.toFixed(2)}
-                </span>
-              </li>
             </ul>
           ) : (
             <>
@@ -126,7 +123,6 @@ export default function ReceptionBillingDetail({ roomId }: DetailProps) {
           <Separator className="my-4" />
           {shouldShow ? (
             <ul className="grid gap-3">
-              <span className="text-muted-foreground">简餐费用</span>
               {Array.isArray(billQuery.data?.statement.bill) &&
                 billQuery.data.statement.bill.map((item, index) => (
                   <li key={index} className="flex items-center justify-between">
@@ -145,6 +141,10 @@ export default function ReceptionBillingDetail({ roomId }: DetailProps) {
             </>
           )}
           <Separator className="my-4" />
+          <div className="flex items-center justify-between">
+            <span className="text-muted-foreground">合计费用</span>
+            <span>￥{totalFee}</span>
+          </div>
           <ul className="grid gap-3">
             <li className="flex items-center justify-between">
               <span className="text-muted-foreground">地址</span>

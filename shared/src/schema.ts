@@ -183,6 +183,24 @@ export const statementItem = z.object({
 });
 export type StatementItem = z.infer<typeof statementItem>;
 
+export declare const billItem: z.ZodObject<{
+  name: z.ZodString;
+  price: z.ZodNumber;
+  quantity: z.ZodNumber;
+  subtotal: z.ZodNumber;
+}, "strip", z.ZodTypeAny, {
+  subtotal: number;
+  price: number;
+  name: string;
+  quantity: number;
+}, {
+  subtotal: number;
+  price: number;
+  name: string;
+  quantity: number;
+}>;
+export type BillItem = z.infer<typeof billItem>;
+
 export const getACDetailResponse = responseBase.extend({
   payload: z.object({
     roomId: z.string(),
