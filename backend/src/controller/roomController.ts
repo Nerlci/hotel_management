@@ -225,14 +225,14 @@ const getBillFile = async (req: Request, res: Response) => {
   try {
     const roomId = req.query.roomId as string;
 
-    const csv = await roomService.getBillFile(roomId);
+    const doc = await roomService.getBillFile(roomId);
 
-    res.setHeader("Content-Type", "text/csv");
+    res.setHeader("Content-Type", "application/pdf");
     res.setHeader(
       "Content-Disposition",
-      `attachment; filename=bill-${roomId}.csv`,
+      `attachment; filename="bill_${roomId}.pdf"`,
     );
-    res.send(csv);
+    doc.pipe(res);
   } catch (error) {
     handleErrors(error, res);
   }

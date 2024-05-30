@@ -177,14 +177,14 @@ const statementFileAC = async (req: Request, res: Response) => {
       throw new CustomError("400", "Invalid room ID");
     }
 
-    const csv = await acService.getStatementTable(roomId, startTime, endTime);
+    const doc = await acService.getStatementTable(roomId, startTime, endTime);
 
-    res.setHeader("Content-Type", "application/octet-stream");
+    res.setHeader("Content-Type", "application/pdf");
     res.setHeader(
       "Content-Disposition",
-      `attachment; filename="statement_${roomId}_${Date.now()}.csv"`,
+      `attachment; filename="statement_${roomId}_${Date.now()}.pdf"`,
     );
-    res.status(200).send(csv);
+    doc.pipe(res);
   } catch (e) {
     handleErrors(e, res);
   }
