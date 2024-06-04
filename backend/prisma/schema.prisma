@@ -33,6 +33,7 @@ model ACRecord {
   fanSpeed  Int
   mode      Int
   on        Boolean
+  waiting   Boolean
   priceRate Float
   type      Int
   timestamp DateTime @default(now())
@@ -46,13 +47,13 @@ model Room {
 }
 
 model Reservation {
-  id            String   @id @default(cuid())
-  room          Room?    @relation(fields: [roomId], references: [roomId])
-  roomId        String?      
-  user          User     @relation(fields: [userId], references: [id])
-  userId        String   @unique
-  startDate     DateTime
-  endDate       DateTime
-  checkInDate   DateTime?
-  checkOutDate  DateTime?
+  id           String    @id @default(cuid())
+  room         Room?     @relation(fields: [roomId], references: [roomId])
+  roomId       String?
+  user         User      @relation(fields: [userId], references: [id])
+  userId       String    @unique
+  startDate    DateTime
+  endDate      DateTime
+  checkInDate  DateTime?
+  checkOutDate DateTime?
 }

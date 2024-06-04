@@ -64,6 +64,10 @@ const updateTemp = (temp: Temp) => {
     throw new Error("Room not found");
   }
 
+  if (temp.timestamp.getTime() < roomTemps[tempIdx].timestamp.getTime()) {
+    return;
+  }
+
   roomTemps[tempIdx] = {
     ...temp,
   };

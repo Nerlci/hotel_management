@@ -106,6 +106,7 @@ export const acUpdateRequestBody = acUpdateRequest.omit({
 export type ACUpdateRequestBody = z.infer<typeof acUpdateRequestBody>;
 
 export const acStatus = acUpdateRequest.omit({ userId: true }).extend({
+  waiting: z.boolean(),
   temp: z.number(),
   initTemp: z.number(),
   rate: z.number(),
