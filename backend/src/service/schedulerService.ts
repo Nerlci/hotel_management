@@ -1,9 +1,8 @@
-import { ACUpdateRequest, acStatus } from "shared";
+import { ACStatus, ACUpdateRequest } from "shared";
 import { prisma } from "../prisma";
 import { statusService } from "./statusService";
 import { configService } from "./configService";
 import { tempService } from "./tempService";
-import { acService } from "./acService";
 
 interface SchedulerItem extends ACUpdateRequest {
   waiting: boolean;
@@ -93,12 +92,12 @@ const statusChange = async (status: SchedulerItem) => {
     data: data,
   });
 
-  const statusMessage = acStatus.parse({
+  const statusMessage: ACStatus = {
     ...data,
     timestamp: status.timestamp.toISOString(),
-    initTemp: configService.getRoom(data.roomId)?.initTemp,
+    initTemp: configService.getRoom(data.roomId)?.initTemp || 0,
     rate,
-  });
+  };
   statusService.updateStatus(statusMessage);
 
   tempService.updateTemp({

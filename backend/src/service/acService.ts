@@ -1,6 +1,6 @@
 import { prisma } from "../prisma";
 import { ACRecord } from "@prisma/client";
-import { StatementItem, statementItem } from "shared";
+import { StatementItem } from "shared";
 import { configService } from "./configService";
 import { renderStatement } from "../utils/renderPdf";
 
@@ -86,24 +86,22 @@ const getStatement = async (
       );
 
       if (duration !== 0) {
-        statement.push(
-          statementItem.parse({
-            roomId: roomId,
-            requestTime: lastRequest?.timestamp
-              ? lastRequest?.timestamp.toISOString()
-              : null,
-            startTime: lastStatus.timestamp.toISOString(),
-            endTime: acRecord.timestamp.toISOString(),
-            duration,
-            fanSpeed: lastStatus.fanSpeed,
-            price: duration * lastStatus.priceRate,
-            priceRate:
-              lastStatus.priceRate / configService.getRate(lastStatus.fanSpeed),
-            target: lastStatus.target,
-            temp: acRecord.temp,
-            mode: lastStatus.mode,
-          }),
-        );
+        const newStatementItem: StatementItem = {
+          roomId: roomId,
+          requestTime: lastRequest?.timestamp
+            ? lastRequest?.timestamp.toISOString()
+            : null,
+          startTime: lastStatus.timestamp.toISOString(),
+          endTime: acRecord.timestamp.toISOString(),
+          duration,
+          fanSpeed: lastStatus.fanSpeed,
+          price: duration * lastStatus.priceRate,
+          priceRate:
+            lastStatus.priceRate / configService.getRate(lastStatus.fanSpeed),
+          target: lastStatus.target,
+          temp: acRecord.temp,
+        };
+        statement.push(newStatementItem);
       }
     }
 

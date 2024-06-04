@@ -1,4 +1,3 @@
-import { prisma } from "../prisma";
 import { configService } from "./configService";
 
 type Temp = {
