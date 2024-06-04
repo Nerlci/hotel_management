@@ -55,7 +55,7 @@ export default function ReceptionBillingDetail({ roomId }: DetailProps) {
 
   const shouldShow = roomId && billQuery.data;
   const totalFee = billQuery.data?.statement.bill.reduce(
-    (total: number, item: any) => total + item.subtotal,
+    (total, item) => total + item.subtotal,
     0,
   );
 

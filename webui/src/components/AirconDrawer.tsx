@@ -343,7 +343,7 @@ export default function AirconDrawer(props: { roomId: string }) {
               });
               setDrawerOpen(false);
             }}
-            controlled
+            controlled={false}
             tempRange={tempRange}
           />
         )}
