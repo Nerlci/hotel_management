@@ -258,7 +258,7 @@ export const AirconDrawerContent = ({
                   fill="currentFill"
                 />
               </svg>
-              <span className="">Loading...</span>
+              <span className="">调度中...</span>
             </div>
           ) : (
             "确认"
