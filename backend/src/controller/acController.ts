@@ -179,10 +179,10 @@ const statementFileAC = async (req: Request, res: Response) => {
 
     const doc = await acService.getStatementTable(roomId, startTime, endTime);
 
-    res.setHeader("Content-Type", "application/pdf");
+    res.setHeader("Content-Type", "application/octet-stream");
     res.setHeader(
       "Content-Disposition",
-      `attachment; filename="statement_${roomId}_${Date.now()}.pdf"`,
+      `attachment; filename=statement_${roomId}_${Date.now()}.pdf`,
     );
     doc.pipe(res);
   } catch (e) {
