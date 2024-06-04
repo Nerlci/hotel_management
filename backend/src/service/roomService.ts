@@ -1,10 +1,6 @@
-import { User } from "@prisma/client";
 import { prisma } from "../prisma";
 import { configService } from "./configService";
 import { acService } from "./acService";
-import { parse } from "json2csv";
-import { get } from "http";
-import { log } from "console";
 import { renderBill } from "../utils/renderPdf";
 
 async function checkRoomAvailability(

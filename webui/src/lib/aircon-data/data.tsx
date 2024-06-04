@@ -50,6 +50,7 @@ export function DataTableRowActions<TData>({
     initTemp: 24,
     rate: 0.1,
     timestamp: "",
+    waiting: false,
   };
   // TODO: read row values into currentData
   const { logout } = useAuth()!;

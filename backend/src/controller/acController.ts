@@ -1,10 +1,5 @@
 import { Request, Response } from "express";
-import {
-  ACDetailResponse,
-  acDetailResponse,
-  acUpdateRequest,
-  responseBase,
-} from "shared";
+import { ACDetailResponse, ACUpdateRequest, responseBase } from "shared";
 import { schedulerService } from "../service/schedulerService";
 import { statusService } from "../service/statusService";
 import { acService } from "../service/acService";
@@ -15,10 +10,10 @@ import { roomService } from "../service/roomService";
 
 const updateAC = async (req: Request, res: Response) => {
   try {
-    const ac = acUpdateRequest.parse({
+    const ac: ACUpdateRequest = {
       userId: res.locals.user.userId,
       ...req.body,
-    });
+    };
 
     if (res.locals.user.type !== 3 && res.locals.user.type !== 1) {
       const userRoom = await roomService.findUserRoom(res.locals.user.userId);
@@ -80,7 +75,7 @@ const detailAC = async (req: Request, res: Response) => {
 
     const detail = await acService.getDetailByRoomId(roomId);
 
-    const response = acDetailResponse.parse({
+    const response: ACDetailResponse = {
       code: "200",
       error: {
         msg: "",
@@ -90,11 +85,12 @@ const detailAC = async (req: Request, res: Response) => {
         details: detail.details.map((d) => {
           return {
             ...d,
+            mode: d.mode as 0 | 1,
             timestamp: d.timestamp.toISOString(),
           };
         }),
       },
-    });
+    };
     res.json(response);
   } catch (e) {
     handleErrors(e, res);
@@ -107,7 +103,6 @@ const tempAC = async (req: Request, res: Response) => {
 
     if (typeof roomId !== "string") {
       throw new CustomError("400", "Invalid room ID");
-      return;
     }
 
     const now = new Date();
