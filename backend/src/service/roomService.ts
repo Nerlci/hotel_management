@@ -290,7 +290,7 @@ const getBill = async (roomId: string) => {
 };
 
 const getBillFile = async (roomId: string) => {
-  const { bill, checkInDate, checkOutDate, acTotalFee} = await getBill(roomId);
+  const { bill, checkInDate, checkOutDate, acTotalFee } = await getBill(roomId);
   const headers = ["消费项目", "单价", "数量", "小计"];
   return await renderBill(headers, bill, roomId, checkInDate, checkOutDate);
 };

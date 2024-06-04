@@ -204,10 +204,7 @@ const Bill = (props: {
   checkInDate: string;
   checkOutDate: string;
 }) => {
-  const totalFee = props.bills.reduce(
-    (acc, cur) => acc + Number(cur[3]),
-    0,
-  );
+  const totalFee = props.bills.reduce((acc, cur) => acc + Number(cur[3]), 0);
   return (
     <Document>
       <Page
