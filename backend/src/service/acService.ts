@@ -42,6 +42,7 @@ const getDetailByRoomId = async (roomId: string) => {
       fanSpeed: item.fanSpeed,
       mode: item.mode,
       on: item.on,
+      waiting: item.waiting,
       timestamp: item.timestamp,
       total: total,
     });
