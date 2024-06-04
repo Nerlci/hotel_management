@@ -230,7 +230,7 @@ const getBillFile = async (req: Request, res: Response) => {
     res.setHeader("Content-Type", "application/octet-stream");
     res.setHeader(
       "Content-Disposition",
-      `attachment; filename="bill_${roomId}.pdf"`,
+      `attachment; filename=bill_${roomId}.pdf`,
     );
     doc.pipe(res);
   } catch (error) {

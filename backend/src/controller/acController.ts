@@ -182,7 +182,7 @@ const statementFileAC = async (req: Request, res: Response) => {
     res.setHeader("Content-Type", "application/octet-stream");
     res.setHeader(
       "Content-Disposition",
-      `attachment; filename="statement_${roomId}_${Date.now()}.pdf"`,
+      `attachment; filename=statement_${roomId}_${Date.now()}.pdf`,
     );
     doc.pipe(res);
   } catch (e) {

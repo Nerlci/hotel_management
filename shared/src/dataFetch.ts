@@ -519,7 +519,15 @@ export async function getACDetailFile(roomId: string) {
   if (!response.ok) {
     throw new Error("Request failed");
   }
-  return response.blob();
+  const blob = await response.blob();
+  const fileName = response.headers.get("Content-Disposition")?.split("=")[1];
+  if (fileName === undefined) {
+    throw new Error("No file name");
+  }
+  return {
+    blob,
+    fileName,
+  };
 }
 
 export async function getBillDetailFile(roomId: string) {
@@ -536,7 +544,15 @@ export async function getBillDetailFile(roomId: string) {
   if (!response.ok) {
     throw new Error("Request failed");
   }
-  return response.blob();
+  const blob = await response.blob();
+  const fileName = response.headers.get("Content-Disposition")?.split("=")[1];
+  if (fileName === undefined) {
+    throw new Error("No file name");
+  }
+  return {
+    blob,
+    fileName,
+  };
 }
 
 export async function getACTargetRange() {
