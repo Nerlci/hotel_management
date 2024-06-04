@@ -254,6 +254,9 @@ export const getAvailableRoomsResponse = responseBase.extend({
     available: z.array(z.string().min(1, "Room ID can't be empty")),
   }),
 });
+export type GetAvailableRoomsResponse = z.infer<
+  typeof getAvailableRoomsResponse
+>;
 
 export const getTargetRangeResponse = responseBase.extend({
   payload: z.object({
