@@ -1,8 +1,8 @@
-import { parse } from "json2csv";
 import { prisma } from "../prisma";
 import { ACRecord } from "@prisma/client";
 import { StatementItem, statementItem } from "shared";
 import { configService } from "./configService";
+import { renderStatement } from "../utils/renderPdf";
 
 const getDetailByRoomId = async (roomId: string) => {
   const ac = await prisma.aCRecord.findMany({
@@ -126,39 +126,18 @@ const getStatementTable = async (
   endTime: Date | undefined,
 ) => {
   const statement = await getStatement(roomId, startTime, endTime);
-
-  const table = [
-    [
-      "房间号",
-      "请求时间",
-      "开始时间",
-      "结束时间",
-      "持续时长",
-      "风速",
-      "费用",
-      "费率",
-      "目标温度",
-      "结束温度",
-    ],
+  const headers = [
+    "请求时间",
+    "开始时间",
+    "结束时间",
+    "持续时长",
+    "风速",
+    "费用",
+    "费率",
+    "目标温度",
+    "结束温度",
   ];
-  for (const item of statement) {
-    table.push([
-      item.roomId,
-      new Date(item.requestTime || "").toLocaleString(),
-      new Date(item.startTime).toLocaleString(),
-      new Date(item.endTime).toLocaleString(),
-      item.duration.toString(),
-      item.fanSpeed.toString(),
-      item.price.toString(),
-      item.priceRate.toString(),
-      item.target.toString(),
-      item.temp.toString(),
-    ]);
-  }
-
-  const csv = parse(table, { header: false });
-
-  return csv;
+  return await renderStatement(headers, statement, roomId);
 };
 
 const getInvoice = async (

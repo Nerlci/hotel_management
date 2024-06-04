@@ -5,6 +5,7 @@ import { acService } from "./acService";
 import { parse } from "json2csv";
 import { get } from "http";
 import { log } from "console";
+import { renderBill } from "../utils/renderPdf";
 
 async function checkRoomAvailability(
   checkInDate: Date,
@@ -289,30 +290,9 @@ const getBill = async (roomId: string) => {
 };
 
 const getBillFile = async (roomId: string) => {
-  const { bill, checkInDate, checkOutDate } = await getBill(roomId);
-
-  const lodgingBill = bill[0];
-  const acBill = bill.slice(1);
-  const lodgingFee = lodgingBill.subtotal;
-  const acTotalFee = acBill.reduce(
-    (total: any, item: { subtotal: any }) => total + item.subtotal,
-    0,
-  );
-
-  const table = [
-    ["房间号", "入住日期", "退房日期", "空调总费用", "住宿总费用", "总费用"],
-    [
-      roomId,
-      new Date(checkInDate).toLocaleString(),
-      new Date(checkOutDate).toLocaleString(),
-      acTotalFee,
-      lodgingFee,
-      acTotalFee + lodgingFee,
-    ],
-  ];
-
-  const csv = parse(table, { header: false });
-  return csv;
+  const { bill, checkInDate, checkOutDate, acTotalFee } = await getBill(roomId);
+  const headers = ["消费项目", "单价", "数量", "小计"];
+  return await renderBill(headers, bill, roomId, checkInDate, checkOutDate);
 };
 
 const getAllRooms = async () => {
