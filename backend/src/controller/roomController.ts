@@ -227,7 +227,7 @@ const getBillFile = async (req: Request, res: Response) => {
 
     const doc = await roomService.getBillFile(roomId);
 
-    res.setHeader("Content-Type", "application/pdf");
+    res.setHeader("Content-Type", "application/octet-stream");
     res.setHeader(
       "Content-Disposition",
       `attachment; filename="bill_${roomId}.pdf"`,
