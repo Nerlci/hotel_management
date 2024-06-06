@@ -178,6 +178,7 @@ const ReceptionCheckin = () => {
 
 export default function ReceptionCheckinCheckout(props: {
   rooms: ReceptionAllRooms;
+  showCheckin?: boolean;
 }) {
   const tableData = props.rooms.payload.rooms.map((room) => {
     const r: Room = {
@@ -192,21 +193,31 @@ export default function ReceptionCheckinCheckout(props: {
 
   return (
     <div className="flex flex-col gap-5">
-      <ReceptionCheckin />
-      <Card>
-        <CardHeader>
-          <CardTitle>管理房间</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <DataTable
-            data={tableData}
-            columns={columns}
-            getDisplayName={getDisplayName}
-            searchPlaceholder="搜索房间号..."
-            filterableColumns={filterableColumns}
-          />
-        </CardContent>
-      </Card>
+      {props.showCheckin && <ReceptionCheckin />}
+      {props.showCheckin ? (
+        <Card>
+          <CardHeader>
+            <CardTitle>管理房间</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <DataTable
+              data={tableData}
+              columns={columns}
+              getDisplayName={getDisplayName}
+              searchPlaceholder="搜索房间号..."
+              filterableColumns={filterableColumns}
+            />
+          </CardContent>
+        </Card>
+      ) : (
+        <DataTable
+          data={tableData}
+          columns={columns}
+          getDisplayName={getDisplayName}
+          searchPlaceholder="搜索房间号..."
+          filterableColumns={filterableColumns}
+        />
+      )}
     </div>
   );
 }

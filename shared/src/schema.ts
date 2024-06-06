@@ -159,6 +159,7 @@ export const userLoginResponse = responseBase.extend({
       z.literal("admin"),
       z.literal("aircon-manager"),
       z.literal("reception"),
+      z.literal("manager"),
     ]),
   }),
 });
