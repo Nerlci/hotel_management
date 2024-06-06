@@ -185,6 +185,33 @@ const statementFileAC = async (req: Request, res: Response) => {
   }
 };
 
+const statisticAC = async (req: Request, res: Response) => {
+  try {
+    const roomId = req.query.roomId ? (req.query.roomId as string) : undefined;
+    const startTime = req.query.startTime
+      ? new Date(req.query.startTime as string)
+      : undefined;
+    const endTime = req.query.endTime
+      ? new Date(req.query.endTime as string)
+      : undefined;
+
+    const statistic = await acService.getStatistic(roomId, startTime, endTime);
+
+    const response = responseBase.parse({
+      code: "200",
+      error: {
+        msg: "",
+      },
+      payload: {
+        statistic,
+      },
+    });
+    res.json(response);
+  } catch (e) {
+    handleErrors(e, res);
+  }
+};
+
 const getPriceRateAC = async (req: Request, res: Response) => {
   try {
     const priceRate = await configService.getPriceRate();
@@ -285,6 +312,7 @@ const acController = {
   tempAC,
   statementAC,
   statementFileAC,
+  statisticAC,
   getPriceRateAC,
   setPriceRateAC,
   getTargetRangeAC,

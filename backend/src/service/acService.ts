@@ -172,6 +172,83 @@ const getInvoice = async (
   return invoice;
 };
 
+const getStatistic = async (
+  roomId: string | undefined,
+  startTime: Date | undefined,
+  endTime: Date | undefined,
+) => {
+  const record = await prisma.aCRecord.findMany({
+    where: {
+      roomId: roomId,
+      timestamp: {
+        gte: startTime,
+        lte: endTime,
+      },
+    },
+  });
+
+  const rooms = roomId
+    ? [roomId]
+    : configService.getRooms().map((room) => room.roomId);
+
+  const statistic = [];
+
+  for (const room of rooms) {
+    const statement = await getStatement(room, startTime, endTime);
+    const roomRecord = record.filter((item) => item.roomId === room);
+    const roomRequest = roomRecord.filter((item) => item.type === 0);
+
+    let onOffCount = 0;
+    const scheduleCount = roomRecord.filter((item) => item.type === 1).length;
+    const statementCount = statement.length;
+    let targetCount = 0;
+    let fanSpeedCount = 0;
+    let requestDuration = 0;
+    const totalPrice = statement.reduce((sum, item) => sum + item.price, 0);
+
+    let lastOnRequest = roomRequest[0];
+
+    for (let i: number = 1; i < roomRequest.length; i++) {
+      if (roomRequest[i].on != roomRequest[i - 1].on) {
+        onOffCount++;
+
+        if (roomRequest[i].on && !roomRequest[i - 1].on) {
+          lastOnRequest = roomRequest[i];
+        } else {
+          requestDuration += Math.ceil(
+            (roomRequest[i].timestamp.getTime() -
+              lastOnRequest.timestamp.getTime()) /
+              1000,
+          );
+        }
+      }
+
+      if (roomRequest[i].target != roomRequest[i - 1].target) {
+        targetCount++;
+      }
+
+      if (roomRequest[i].fanSpeed != roomRequest[i - 1].fanSpeed) {
+        fanSpeedCount++;
+      }
+    }
+
+    const roomStatistic = {
+      roomId: room,
+      onOffCount,
+      scheduleCount,
+      statementCount,
+      targetCount,
+      fanSpeedCount,
+      requestDuration,
+      totalPrice,
+    };
+
+    statistic.push(roomStatistic);
+  }
+
+  return statistic;
+};
+
 const getDays = async (
   roomId: string,
   startTime: Date | undefined,
@@ -210,6 +287,7 @@ const acService = {
   getStatement,
   getStatementTable,
   getInvoice,
+  getStatistic,
   getDays,
 };
 export { acService };
