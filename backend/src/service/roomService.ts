@@ -391,6 +391,23 @@ const orderDining = async (userId: string, itemArray: any) => {
   }
 };
 
+const getDiningFee = async (roomId: string) => {
+  const reservation = await findReservationByRoomId(roomId);
+  if (!reservation) {
+    throw new Error("Room not found");
+  }
+
+  const diningRecords = await prisma.diningRecord.findMany({
+    where: { roomId },
+  });
+  const fee = diningRecords.reduce(
+    (acc, record) =>
+      acc + record.quantity * configService.getDiningPrice(record.foodId),
+    0,
+  );
+  return fee;
+};
+
 const roomService = {
   findBusyDays,
   checkRoomAvailability,
@@ -407,6 +424,7 @@ const roomService = {
   getBillFile,
   getAllRooms,
   orderDining,
+  getDiningFee,
 };
 
 export { roomService };

@@ -278,6 +278,25 @@ const orderDining = async (req: Request, res: Response) => {
   }
 };
 
+const getDiningFee = async (req: Request, res: Response) => {
+  try {
+    const roomId = req.query.roomId as string;
+    const fee = await roomService.getDiningFee(roomId);
+
+    const response = responseBase.parse({
+      code: "200",
+      payload: { diningTotalFee: fee },
+      error: {
+        msg: "",
+      },
+    });
+
+    res.json(response);
+  } catch (error) {
+    handleErrors(error, res);
+  }
+};
+
 const roomController = {
   bookRoom,
   checkOrder,
@@ -291,6 +310,7 @@ const roomController = {
   getBillFile,
   getAllRooms,
   orderDining,
+  getDiningFee,
 };
 
 export { roomController };
