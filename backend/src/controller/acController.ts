@@ -194,8 +194,18 @@ const statisticAC = async (req: Request, res: Response) => {
     const endTime = req.query.endTime
       ? new Date(req.query.endTime as string)
       : undefined;
+    const aggregate = req.query.aggregate;
 
-    const statistic = await acService.getStatistic(roomId, startTime, endTime);
+    if (aggregate !== "day" && aggregate !== "week") {
+      throw new CustomError("400", "Invalid aggregate type");
+    }
+
+    const statistic = await acService.getStatistic(
+      roomId,
+      startTime,
+      endTime,
+      aggregate,
+    );
 
     const response = responseBase.parse({
       code: "200",
