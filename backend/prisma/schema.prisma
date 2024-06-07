@@ -21,6 +21,7 @@ model User {
   password     String
   acRecords    ACRecord[]
   reservations Reservation[]
+  diningRecords DiningRecord[]
 }
 
 model ACRecord {
@@ -55,4 +56,13 @@ model Reservation {
   endDate       DateTime
   checkInDate   DateTime?
   checkOutDate  DateTime?
+}
+
+model DiningRecord {
+  id        String   @id @default(cuid())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  foodId    String
+  quantity  Int
+  timestamp DateTime @default(now())
 }

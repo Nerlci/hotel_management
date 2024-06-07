@@ -7,6 +7,13 @@
     "rate": [3, 2, 3, 6],
     "priceRate": 1
   },
+  "dining": {
+    "sandwich": 10,
+    "salad": 15,
+    "noodles": 20,
+    "soup": 20,
+    "beverage": 5
+  },
   "rooms": [
     {
       "roomId": "8101",
