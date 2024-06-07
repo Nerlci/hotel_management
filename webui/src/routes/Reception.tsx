@@ -29,7 +29,7 @@ export default function Reception() {
               {rooms === undefined ? (
                 <Skeleton />
               ) : (
-                <ReceptionCheckinCheckout rooms={rooms} />
+                <ReceptionCheckinCheckout rooms={rooms} showCheckin />
               )}
             </div>
           </TabsContent>

@@ -20,6 +20,8 @@ acRouter.get(
   acController.statementFileAC,
 );
 
+acRouter.get("/statistic", authUserMiddleware, acController.statisticAC);
+
 acRouter.get("/price-rate", authUserMiddleware, acController.getPriceRateAC);
 
 acRouter.put("/price-rate", authUserMiddleware, acController.setPriceRateAC);

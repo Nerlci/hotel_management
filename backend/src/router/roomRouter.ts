@@ -31,4 +31,6 @@ roomRouter.get("/rooms", authUserMiddleware, roomController.getAllRooms);
 
 roomRouter.post("/dining", authUserMiddleware, roomController.orderDining);
 
+roomRouter.get("/dining", authUserMiddleware, roomController.getDiningFee);
+
 export { roomRouter };

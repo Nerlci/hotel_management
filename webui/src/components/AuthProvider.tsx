@@ -18,8 +18,9 @@ export function AuthProvider({ children }: { children: React.ReactElement }) {
       navigate("/", { replace: true });
     },
     onError: (e) => {
-      toast.error("退出登陆失败");
+      // toast.error("退出登陆失败");
       console.log(e.message);
+      navigate("/login", { replace: true });
     },
   });
 
@@ -36,6 +37,8 @@ export function AuthProvider({ children }: { children: React.ReactElement }) {
           navigate("/reception");
         } else if (data!.type === "aircon-manager") {
           navigate("/airconmanager");
+        } else if (data!.type === "manager") {
+          navigate("/manager");
         }
       },
       logout: () => {

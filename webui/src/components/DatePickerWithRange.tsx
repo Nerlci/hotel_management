@@ -17,6 +17,7 @@ export type DatePickerWithRangeProps = {
   date: DateRange | undefined;
   setDate: React.Dispatch<React.SetStateAction<DateRange | undefined>>;
   disabledDays: Matcher[];
+  disabled?: boolean;
 };
 
 export function DatePickerWithRange({
@@ -24,6 +25,7 @@ export function DatePickerWithRange({
   date,
   setDate,
   disabledDays,
+  disabled = false,
 }: DatePickerWithRangeProps) {
   const { width } = useWindowSize();
 
@@ -38,6 +40,7 @@ export function DatePickerWithRange({
               "w-[300px] justify-start text-left font-normal",
               !date && "text-muted-foreground",
             )}
+            disabled={disabled}
           >
             <CalendarIcon className="mr-2 h-4 w-4" />
             {date?.from ? (
