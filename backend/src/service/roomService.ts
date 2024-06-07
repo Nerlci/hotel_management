@@ -246,18 +246,38 @@ const getDiningBill = async (roomId: string) => {
   const diningRecords = await prisma.diningRecord.findMany({
     where: { roomId },
   });
-  const diningBill = diningRecords.map((record) => {
-    return {
-      name: record.foodId,
-      price: configService.getDiningPrice(record.foodId),
-      quantity: record.quantity,
-      subtotal: configService.getDiningPrice(record.foodId) * record.quantity,
-    };
-  });
-  const diningTotalFee = diningBill.reduce(
-    (total: any, item: { subtotal: any }) => total + item.subtotal,
-    0,
+
+  const diningBill = diningRecords.reduce(
+    (
+      acc: {
+        name: string;
+        price: number;
+        quantity: number;
+        subtotal: number;
+      }[],
+      record,
+    ) => {
+      const existingRecord = acc.find((item) => item.name === record.foodId);
+      const price = configService.getDiningPrice(record.foodId);
+      const subtotal = price * record.quantity;
+
+      if (existingRecord) {
+        existingRecord.quantity += record.quantity;
+        existingRecord.subtotal += subtotal;
+      } else {
+        acc.push({
+          name: record.foodId,
+          price: price,
+          quantity: record.quantity,
+          subtotal: subtotal,
+        });
+      }
+
+      return acc;
+    },
+    [],
   );
+
   return diningBill;
 };
 
