@@ -261,8 +261,6 @@ const TheBarChart = ({ data }: { data: RoomStatistic[] }) => {
       const index =
         (new Date(value.timestamp).getTime() - getAWeekAgoStart().getTime()) /
         (24 * 60 * 60 * 1000);
-      console.log("1: " + value.timestamp);
-      console.log("2: " + getAWeekAgoStart().toISOString());
       groupByDay[7 - index].onOffCount += value.onOffCount;
       groupByDay[7 - index].scheduleCount += value.scheduleCount;
       groupByDay[7 - index].statementCount += value.statementCount;
