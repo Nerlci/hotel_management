@@ -82,7 +82,7 @@ const ActiveShape = (props) => {
         textAnchor={textAnchor}
         fill="hsl(var(--muted-foreground))"
       >
-        {`(占比 ${(percent * 100).toFixed(2)}%)`}
+        {`${(percent * 100).toFixed(2)}%`}
       </text>
     </g>
   );
@@ -161,8 +161,12 @@ const ThePieChart = () => {
 
   return (
     <div className="flex flex-row">
-      <div className="grow">
-        <RadioGroup value={displayItem} onValueChange={setDisplayItem}>
+      <div className="flex w-32">
+        <RadioGroup
+          value={displayItem}
+          onValueChange={setDisplayItem}
+          className="my-auto"
+        >
           {dataItems.map((i, index) => (
             <div key={index} className="flex items-center gap-1">
               <RadioGroupItem value={i} id={i} />
@@ -171,14 +175,14 @@ const ThePieChart = () => {
           ))}
         </RadioGroup>
       </div>
-      <ResponsiveContainer width="50%" height={250}>
+      <ResponsiveContainer width="100%" height={250}>
         <PieChart width={250} height={250}>
           <Pie
             data={pieData}
             dataKey="value"
             nameKey="name"
-            outerRadius={80}
-            innerRadius={50}
+            outerRadius={70}
+            innerRadius={40}
             fill="hsl(var(--primary))"
             paddingAngle={10}
             animationDuration={500}
@@ -196,10 +200,18 @@ const ThePieChart = () => {
 
 export const HotelStats = () => {
   return (
-    <div>
-      <Card>
+    <div className="my-3 flex flex-wrap gap-3">
+      <Card className="w-[34rem]">
         <CardHeader>
           <CardTitle>分布占比</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <ThePieChart />
+        </CardContent>
+      </Card>
+      <Card className="w-[34rem]">
+        <CardHeader>
+          <CardTitle>变化趋势</CardTitle>
         </CardHeader>
         <CardContent>
           <ThePieChart />
