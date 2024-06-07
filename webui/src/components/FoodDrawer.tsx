@@ -17,12 +17,11 @@ import {
   CarouselPrevious,
 } from "./ui/carousel";
 import { Card, CardContent } from "./ui/card";
-import { Checkbox } from "./ui/checkbox";
-import Img1 from "../assets/foods/casey-lee-awj7sRviVXo-unsplash.jpg";
-import Img2 from "../assets/foods/anh-nguyen-kcA-c3f_3FE-unsplash.jpg";
-import Img3 from "../assets/foods/eiliv-aceron-ZuIDLSz3XLg-unsplash.jpg";
-import Img4 from "../assets/foods/joseph-gonzalez-fdlZBWIP0aM-unsplash.jpg";
-import Img5 from "../assets/foods/anna-tukhfatullina-food-photographer-stylist-Mzy-OjtCI70-unsplash.jpg";
+import Img1 from "../assets/foods/sandwich.jpg";
+import Img2 from "../assets/foods/salad.jpg";
+import Img3 from "../assets/foods/noodle.jpg";
+import Img4 from "../assets/foods/soup.jpg";
+import Img5 from "../assets/foods/beverage.jpg";
 import { useState } from "react";
 import {
   Tooltip,
@@ -30,27 +29,59 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { dataFetch } from "shared";
+import { toast } from "sonner";
+import { useQuery } from "@tanstack/react-query";
 
 const images = [Img1, Img2, Img3, Img4, Img5];
-const prices = [10, 20, 30, 40, 50];
-const selectedInit = [false, false, false, false, false];
+const prices = [10, 15, 20, 20, 5];
+const names = ["sandwich", "salad", "noodles", "soup", "beverage"];
 
-export function FoodDrawer() {
-  const [selected, setselected] = useState(selectedInit);
+export function FoodDrawer(props: { roomId: string }) {
+  console.log(props.roomId);
+  const {data, refetch} = useQuery({
+    queryKey: ["diningFee"],
+    queryFn: async () => await dataFetch.getDiningFee(props.roomId),
+    enabled: !!props.roomId,
+  });
 
-  function calcPrice(selected: boolean[]) {
-    let res = 0;
-    for (let i = 0; i < selected.length; i++) {
-      if (selected[i]) {
-        res += prices[i];
-      }
-    }
-    return res;
+  const [selected, setSelected] = useState(names.map(() => 0)); // 初始化每种食物的数量为0
+
+  function calcPrice() {
+    return selected.reduce((acc, count, idx) => acc + count * prices[idx], 0);
   }
 
-  function onSubmit() {
-    // TODO: post to server
-    console.log("Selected: ", selected);
+  function updateQuantity(index: number, change: number) {
+    setSelected((prev) => {
+      const newSelected = [...prev];
+      const newQuantity = newSelected[index] + change;
+      newSelected[index] = newQuantity >= 0 ? newQuantity : 0;
+      return newSelected;
+    });
+  }
+
+  async function onSubmit() {
+    const items = selected
+      .map((quantity, index) => ({
+        name: names[index],
+        quantity,
+      }))
+      .filter((item) => item.quantity > 0);
+
+    if (items.length === 0) {
+      toast.error("未选中任何食物，请至少选择一项！");
+      return;
+    }
+
+    try {
+      const result = await dataFetch.postDining(items);
+      console.log(result);
+      setSelected(names.map(() => 0)); // 清空选择
+      toast.success("订单提交成功!");
+      refetch();
+    } catch (error) {
+      toast.error("订单提交失败！");
+    }
   }
 
   return (
@@ -66,7 +97,7 @@ export function FoodDrawer() {
                     src={FoodIcon}
                   />
                   <div className="grow" />
-                  <p>共消费：10 ￥</p>
+                  <p>共消费：￥{data}</p>
                 </div>
               </TooltipTrigger>
               <TooltipContent className="mb-2">
@@ -89,29 +120,27 @@ export function FoodDrawer() {
               }}
               className="w-full max-w-2xl"
             >
-              <CarouselContent className="">
-                {Array.from({ length: 5 }).map((_, index) => (
-                  <CarouselItem
-                    key={index}
-                    className="xs:basis-auto sm:basis-auto md:basis-auto lg:basis-auto"
-                  >
+              <CarouselContent>
+                {images.map((image, index) => (
+                  <CarouselItem key={index}>
                     <div className="p-1">
                       <Card>
-                        <CardContent className="flex aspect-square flex-col items-center justify-center gap-2 p-3">
-                          <img
-                            className="h-64 w-64 object-cover"
-                            src={images[index]}
-                          />
-                          <div className="flex flex-row items-center gap-2">
-                            <Checkbox
-                              onClick={() => {
-                                setselected((prev) => {
-                                  prev[index] = !prev[index];
-                                  return [...prev];
-                                });
-                              }}
-                            />
-                            <div>{prices[index]}￥</div>
+                        <CardContent className="flex flex-col items-center justify-center gap-2">
+                          <img src={image} className="h-64 w-64 object-cover" />
+                          <p>{names[index]}</p>
+                          <div className="flex items-center gap-2">
+                            <span>单价：{prices[index]}￥</span>
+                            <span>数量：</span>
+                            <button
+                              onClick={() => updateQuantity(index, -1)}
+                              disabled={selected[index] <= 0}
+                            >
+                              -
+                            </button>
+                            <span>{selected[index]}</span>
+                            <button onClick={() => updateQuantity(index, 1)}>
+                              +
+                            </button>
                           </div>
                         </CardContent>
                       </Card>
@@ -124,7 +153,7 @@ export function FoodDrawer() {
             </Carousel>
           </div>
           <DrawerFooter>
-            <Button onClick={onSubmit}>提交：￥{calcPrice(selected)}</Button>
+            <Button onClick={onSubmit}>提交：￥{calcPrice()}</Button>
           </DrawerFooter>
         </div>
       </DrawerContent>

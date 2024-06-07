@@ -239,7 +239,6 @@ const getBillFile = async (req: Request, res: Response) => {
 const getAllRooms = async (req: Request, res: Response) => {
   try {
     const result = await roomService.getAllRooms();
-    // console.log(result);
 
     const response: ReceptionAllRooms = {
       code: "200",
@@ -248,6 +247,49 @@ const getAllRooms = async (req: Request, res: Response) => {
         msg: "",
       },
     };
+
+    res.json(response);
+  } catch (error) {
+    handleErrors(error, res);
+  }
+};
+
+const orderDining = async (req: Request, res: Response) => {
+  try {
+    const userId = res.locals.user.userId;
+    const itemArray = req.body.item as Array<{
+      foodId: string;
+      quantity: number;
+    }>;
+
+    await roomService.orderDining(userId, itemArray);
+
+    const response = responseBase.parse({
+      code: "200",
+      payload: {},
+      error: {
+        msg: "",
+      },
+    });
+
+    res.json(response);
+  } catch (error) {
+    handleErrors(error, res);
+  }
+};
+
+const getDiningFee = async (req: Request, res: Response) => {
+  try {
+    const roomId = req.query.roomId as string;
+    const fee = await roomService.getDiningFee(roomId);
+
+    const response = responseBase.parse({
+      code: "200",
+      payload: { diningTotalFee: fee },
+      error: {
+        msg: "",
+      },
+    });
 
     res.json(response);
   } catch (error) {
@@ -267,6 +309,8 @@ const roomController = {
   getBill,
   getBillFile,
   getAllRooms,
+  orderDining,
+  getDiningFee,
 };
 
 export { roomController };

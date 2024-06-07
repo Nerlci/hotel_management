@@ -1,528 +1,528 @@
 {
-  "info": {
-    "_postman_id": "fff8b5af-1be0-4aaa-8215-9e253cd12358",
-    "name": "系统测试用例 冷",
-    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
-  },
-  "item": [
-    {
-      "name": "用户登录",
-      "request": {
-        "method": "POST",
-        "url": "{{BASE_URL}}/api/user/login",
-        "header": [{ "key": "Content-Type", "value": "application/json" }],
-        "body": {
-          "mode": "raw",
-          "raw": "{\"email\": \"acmanager@bupt.edu.cn\",   \"password\": \"acmanager\"}",
-          "options": { "raw": { "language": "json" } }
-        }
-      },
-      "delay": 0,
-      "events": [],
-      "protocolProfileBehavior": { "disableBodyPruning": true }
-    },
+	"info": {
+		"_postman_id": "fff8b5af-1be0-4aaa-8215-9e253cd12358",
+		"name": "系统测试用例 冷",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "用户登录",
+			"request": {
+				"method": "POST",
+				"url": "{{BASE_URL}}/api/user/login",
+				"header": [{"key": "Content-Type", "value": "application/json"}],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"email\": \"acmanager@bupt.edu.cn\",   \"password\": \"acmanager\"}",
+					"options": {"raw": {"language": "json"}}
+				}
+			},
+			"delay": 0,
+			"events": [],
+			"protocolProfileBehavior": {"disableBodyPruning": true}
+		},
 
-    {
-      "name": "用户控制空调t0",
-      "request": {
-        "method": "POST",
-        "url": "{{BASE_URL}}/api/ac/update",
-        "header": [{ "key": "Content-Type", "value": "application/json" }],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n    \"roomId\": \"8101\",\n    \"mode\": 1,\n    \"target\": 25,\n    \"fanSpeed\": 2,\n    \"on\": true\n}",
-          "options": { "raw": { "language": "json" } }
-        }
-      },
-      "delay": 1000,
-      "events": [],
-      "protocolProfileBehavior": { "disableBodyPruning": true }
-    },
+		{
+			"name": "用户控制空调t0",
+			"request": {
+				"method": "POST",
+				"url": "{{BASE_URL}}/api/ac/update",
+				"header": [{"key": "Content-Type", "value": "application/json"}],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"roomId\": \"8101\",\n    \"mode\": 1,\n    \"target\": 25,\n    \"fanSpeed\": 2,\n    \"on\": true\n}",
+					"options": {"raw": {"language": "json"}}
+				}
+			},
+			"delay": 1000,
+			"events": [],
+			"protocolProfileBehavior": {"disableBodyPruning": true}
+		},
 
-    {
-      "name": "用户控制空调t1",
-      "request": {
-        "method": "POST",
-        "url": "{{BASE_URL}}/api/ac/update",
-        "header": [{ "key": "Content-Type", "value": "application/json" }],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n    \"roomId\": \"8101\",\n    \"mode\": 1,\n    \"target\": 18,\n    \"fanSpeed\": 2,\n    \"on\": true\n}",
-          "options": { "raw": { "language": "json" } }
-        }
-      },
-      "delay": 11000,
-      "events": [],
-      "protocolProfileBehavior": { "disableBodyPruning": true }
-    },
-    {
-      "name": "用户控制空调t1",
-      "request": {
-        "method": "POST",
-        "url": "{{BASE_URL}}/api/ac/update",
-        "header": [{ "key": "Content-Type", "value": "application/json" }],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n    \"roomId\": \"8102\",\n    \"mode\": 1,\n    \"target\": 25,\n    \"fanSpeed\": 2,\n    \"on\": true\n}",
-          "options": { "raw": { "language": "json" } }
-        }
-      },
-      "delay": 10000,
-      "events": [],
-      "protocolProfileBehavior": { "disableBodyPruning": true }
-    },
-    {
-      "name": "用户控制空调t1",
-      "request": {
-        "method": "POST",
-        "url": "{{BASE_URL}}/api/ac/update",
-        "header": [{ "key": "Content-Type", "value": "application/json" }],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n    \"roomId\": \"8105\",\n    \"mode\": 1,\n    \"target\": 25,\n    \"fanSpeed\": 2,\n    \"on\": true\n}",
-          "options": { "raw": { "language": "json" } }
-        }
-      },
-      "delay": 10000,
-      "events": [],
-      "protocolProfileBehavior": { "disableBodyPruning": true }
-    },
+		{
+			"name": "用户控制空调t1",
+			"request": {
+				"method": "POST",
+				"url": "{{BASE_URL}}/api/ac/update",
+				"header": [{"key": "Content-Type", "value": "application/json"}],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"roomId\": \"8101\",\n    \"mode\": 1,\n    \"target\": 18,\n    \"fanSpeed\": 2,\n    \"on\": true\n}",
+					"options": {"raw": {"language": "json"}}
+				}
+			},
+			"delay": 11000,
+			"events": [],
+			"protocolProfileBehavior": {"disableBodyPruning": true}
+		},
+		{
+			"name": "用户控制空调t1",
+			"request": {
+				"method": "POST",
+				"url": "{{BASE_URL}}/api/ac/update",
+				"header": [{"key": "Content-Type", "value": "application/json"}],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"roomId\": \"8102\",\n    \"mode\": 1,\n    \"target\": 25,\n    \"fanSpeed\": 2,\n    \"on\": true\n}",
+					"options": {"raw": {"language": "json"}}
+				}
+			},
+			"delay": 10000,
+			"events": [],
+			"protocolProfileBehavior": {"disableBodyPruning": true}
+		},
+		{
+			"name": "用户控制空调t1",
+			"request": {
+				"method": "POST",
+				"url": "{{BASE_URL}}/api/ac/update",
+				"header": [{"key": "Content-Type", "value": "application/json"}],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"roomId\": \"8105\",\n    \"mode\": 1,\n    \"target\": 25,\n    \"fanSpeed\": 2,\n    \"on\": true\n}",
+					"options": {"raw": {"language": "json"}}
+				}
+			},
+			"delay": 10000,
+			"events": [],
+			"protocolProfileBehavior": {"disableBodyPruning": true}
+		},
 
-    {
-      "name": "用户控制空调t2",
-      "request": {
-        "method": "POST",
-        "url": "{{BASE_URL}}/api/ac/update",
-        "header": [{ "key": "Content-Type", "value": "application/json" }],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n    \"roomId\": \"8103\",\n    \"mode\": 1,\n    \"target\": 25,\n    \"fanSpeed\": 2,\n    \"on\": true\n}",
-          "options": { "raw": { "language": "json" } }
-        }
-      },
-      "delay": 20000,
-      "events": [],
-      "protocolProfileBehavior": { "disableBodyPruning": true }
-    },
+		{
+			"name": "用户控制空调t2",
+			"request": {
+				"method": "POST",
+				"url": "{{BASE_URL}}/api/ac/update",
+				"header": [{"key": "Content-Type", "value": "application/json"}],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"roomId\": \"8103\",\n    \"mode\": 1,\n    \"target\": 25,\n    \"fanSpeed\": 2,\n    \"on\": true\n}",
+					"options": {"raw": {"language": "json"}}
+				}
+			},
+			"delay": 20000,
+			"events": [],
+			"protocolProfileBehavior": {"disableBodyPruning": true}
+		},
 
-    {
-      "name": "用户控制空调t3",
-      "request": {
-        "method": "POST",
-        "url": "{{BASE_URL}}/api/ac/update",
-        "header": [{ "key": "Content-Type", "value": "application/json" }],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n    \"roomId\": \"8102\",\n    \"mode\": 1,\n    \"target\": 19,\n    \"fanSpeed\": 2,\n    \"on\": true\n}",
-          "options": { "raw": { "language": "json" } }
-        }
-      },
-      "delay": 30000,
-      "events": [],
-      "protocolProfileBehavior": { "disableBodyPruning": true }
-    },
-    {
-      "name": "用户控制空调t3",
-      "request": {
-        "method": "POST",
-        "url": "{{BASE_URL}}/api/ac/update",
-        "header": [{ "key": "Content-Type", "value": "application/json" }],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n    \"roomId\": \"8104\",\n    \"mode\": 1,\n    \"target\": 25,\n    \"fanSpeed\": 2,\n    \"on\": true\n}",
-          "options": { "raw": { "language": "json" } }
-        }
-      },
-      "delay": 30000,
-      "events": [],
-      "protocolProfileBehavior": { "disableBodyPruning": true }
-    },
+		{
+			"name": "用户控制空调t3",
+			"request": {
+				"method": "POST",
+				"url": "{{BASE_URL}}/api/ac/update",
+				"header": [{"key": "Content-Type", "value": "application/json"}],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"roomId\": \"8102\",\n    \"mode\": 1,\n    \"target\": 19,\n    \"fanSpeed\": 2,\n    \"on\": true\n}",
+					"options": {"raw": {"language": "json"}}
+				}
+			},
+			"delay": 30000,
+			"events": [],
+			"protocolProfileBehavior": {"disableBodyPruning": true}
+		},
+		{
+			"name": "用户控制空调t3",
+			"request": {
+				"method": "POST",
+				"url": "{{BASE_URL}}/api/ac/update",
+				"header": [{"key": "Content-Type", "value": "application/json"}],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"roomId\": \"8104\",\n    \"mode\": 1,\n    \"target\": 25,\n    \"fanSpeed\": 2,\n    \"on\": true\n}",
+					"options": {"raw": {"language": "json"}}
+				}
+			},
+			"delay": 30000,
+			"events": [],
+			"protocolProfileBehavior": {"disableBodyPruning": true}
+		},
 
-    {
-      "name": "用户控制空调t4",
-      "request": {
-        "method": "POST",
-        "url": "{{BASE_URL}}/api/ac/update",
-        "header": [{ "key": "Content-Type", "value": "application/json" }],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n    \"roomId\": \"8105\",\n    \"mode\": 1,\n    \"target\": 22,\n    \"fanSpeed\": 2,\n    \"on\": true\n}",
-          "options": { "raw": { "language": "json" } }
-        }
-      },
-      "delay": 40000,
-      "events": [],
-      "protocolProfileBehavior": { "disableBodyPruning": true }
-    },
+		{
+			"name": "用户控制空调t4",
+			"request": {
+				"method": "POST",
+				"url": "{{BASE_URL}}/api/ac/update",
+				"header": [{"key": "Content-Type", "value": "application/json"}],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"roomId\": \"8105\",\n    \"mode\": 1,\n    \"target\": 22,\n    \"fanSpeed\": 2,\n    \"on\": true\n}",
+					"options": {"raw": {"language": "json"}}
+				}
+			},
+			"delay": 40000,
+			"events": [],
+			"protocolProfileBehavior": {"disableBodyPruning": true}
+		},
 
-    {
-      "name": "用户控制空调t5",
-      "request": {
-        "method": "POST",
-        "url": "{{BASE_URL}}/api/ac/update",
-        "header": [{ "key": "Content-Type", "value": "application/json" }],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n    \"roomId\": \"8101\",\n    \"mode\": 1,\n    \"target\": 18,\n    \"fanSpeed\": 3,\n    \"on\": true\n}",
-          "options": { "raw": { "language": "json" } }
-        }
-      },
-      "delay": 50000,
-      "events": [],
-      "protocolProfileBehavior": { "disableBodyPruning": true }
-    },
+		{
+			"name": "用户控制空调t5",
+			"request": {
+				"method": "POST",
+				"url": "{{BASE_URL}}/api/ac/update",
+				"header": [{"key": "Content-Type", "value": "application/json"}],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"roomId\": \"8101\",\n    \"mode\": 1,\n    \"target\": 18,\n    \"fanSpeed\": 3,\n    \"on\": true\n}",
+					"options": {"raw": {"language": "json"}}
+				}
+			},
+			"delay": 50000,
+			"events": [],
+			"protocolProfileBehavior": {"disableBodyPruning": true}
+		},
 
-    {
-      "name": "用户控制空调t6",
-      "request": {
-        "method": "POST",
-        "url": "{{BASE_URL}}/api/ac/update",
-        "header": [{ "key": "Content-Type", "value": "application/json" }],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n    \"roomId\": \"8102\",\n    \"mode\": 1,\n    \"target\": 25,\n    \"fanSpeed\": 2,\n    \"on\": false\n}",
-          "options": { "raw": { "language": "json" } }
-        }
-      },
-      "delay": 60000,
-      "events": [],
-      "protocolProfileBehavior": { "disableBodyPruning": true }
-    },
+		{
+			"name": "用户控制空调t6",
+			"request": {
+				"method": "POST",
+				"url": "{{BASE_URL}}/api/ac/update",
+				"header": [{"key": "Content-Type", "value": "application/json"}],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"roomId\": \"8102\",\n    \"mode\": 1,\n    \"target\": 25,\n    \"fanSpeed\": 2,\n    \"on\": false\n}",
+					"options": {"raw": {"language": "json"}}
+				}
+			},
+			"delay": 60000,
+			"events": [],
+			"protocolProfileBehavior": {"disableBodyPruning": true}
+		},
 
-    {
-      "name": "用户控制空调t7",
-      "request": {
-        "method": "POST",
-        "url": "{{BASE_URL}}/api/ac/update",
-        "header": [{ "key": "Content-Type", "value": "application/json" }],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n    \"roomId\": \"8102\",\n    \"mode\": 1,\n    \"target\": 25,\n    \"fanSpeed\": 2,\n    \"on\": true\n}",
-          "options": { "raw": { "language": "json" } }
-        }
-      },
-      "delay": 70000,
-      "events": [],
-      "protocolProfileBehavior": { "disableBodyPruning": true }
-    },
-    {
-      "name": "用户控制空调t7",
-      "request": {
-        "method": "POST",
-        "url": "{{BASE_URL}}/api/ac/update",
-        "header": [{ "key": "Content-Type", "value": "application/json" }],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n    \"roomId\": \"8105\",\n    \"mode\": 1,\n    \"target\": 22,\n    \"fanSpeed\": 3,\n    \"on\": true\n}",
-          "options": { "raw": { "language": "json" } }
-        }
-      },
-      "delay": 70000,
-      "events": [],
-      "protocolProfileBehavior": { "disableBodyPruning": true }
-    },
+		{
+			"name": "用户控制空调t7",
+			"request": {
+				"method": "POST",
+				"url": "{{BASE_URL}}/api/ac/update",
+				"header": [{"key": "Content-Type", "value": "application/json"}],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"roomId\": \"8102\",\n    \"mode\": 1,\n    \"target\": 25,\n    \"fanSpeed\": 2,\n    \"on\": true\n}",
+					"options": {"raw": {"language": "json"}}
+				}
+			},
+			"delay": 70000,
+			"events": [],
+			"protocolProfileBehavior": {"disableBodyPruning": true}
+		},
+		{
+			"name": "用户控制空调t7",
+			"request": {
+				"method": "POST",
+				"url": "{{BASE_URL}}/api/ac/update",
+				"header": [{"key": "Content-Type", "value": "application/json"}],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"roomId\": \"8105\",\n    \"mode\": 1,\n    \"target\": 22,\n    \"fanSpeed\": 3,\n    \"on\": true\n}",
+					"options": {"raw": {"language": "json"}}
+				}
+			},
+			"delay": 70000,
+			"events": [],
+			"protocolProfileBehavior": {"disableBodyPruning": true}
+		},
 
-    {
-      "name": "用户控制空调t9",
-      "request": {
-        "method": "POST",
-        "url": "{{BASE_URL}}/api/ac/update",
-        "header": [{ "key": "Content-Type", "value": "application/json" }],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n    \"roomId\": \"8101\",\n    \"mode\": 1,\n    \"target\": 22,\n    \"fanSpeed\": 3,\n    \"on\": true\n}",
-          "options": { "raw": { "language": "json" } }
-        }
-      },
-      "delay": 90000,
-      "events": [],
-      "protocolProfileBehavior": { "disableBodyPruning": true }
-    },
-    {
-      "name": "用户控制空调t9",
-      "request": {
-        "method": "POST",
-        "url": "{{BASE_URL}}/api/ac/update",
-        "header": [{ "key": "Content-Type", "value": "application/json" }],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n    \"roomId\": \"8104\",\n    \"mode\": 1,\n    \"target\": 18,\n    \"fanSpeed\": 3,\n    \"on\": true\n}",
-          "options": { "raw": { "language": "json" } }
-        }
-      },
-      "delay": 90000,
-      "events": [],
-      "protocolProfileBehavior": { "disableBodyPruning": true }
-    },
+		{
+			"name": "用户控制空调t9",
+			"request": {
+				"method": "POST",
+				"url": "{{BASE_URL}}/api/ac/update",
+				"header": [{"key": "Content-Type", "value": "application/json"}],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"roomId\": \"8101\",\n    \"mode\": 1,\n    \"target\": 22,\n    \"fanSpeed\": 3,\n    \"on\": true\n}",
+					"options": {"raw": {"language": "json"}}
+				}
+			},
+			"delay": 90000,
+			"events": [],
+			"protocolProfileBehavior": {"disableBodyPruning": true}
+		},
+		{
+			"name": "用户控制空调t9",
+			"request": {
+				"method": "POST",
+				"url": "{{BASE_URL}}/api/ac/update",
+				"header": [{"key": "Content-Type", "value": "application/json"}],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"roomId\": \"8104\",\n    \"mode\": 1,\n    \"target\": 18,\n    \"fanSpeed\": 3,\n    \"on\": true\n}",
+					"options": {"raw": {"language": "json"}}
+				}
+			},
+			"delay": 90000,
+			"events": [],
+			"protocolProfileBehavior": {"disableBodyPruning": true}
+		},
 
-    {
-      "name": "用户控制空调",
-      "request": {
-        "method": "POST",
-        "url": "{{BASE_URL}}/api/ac/update",
-        "header": [{ "key": "Content-Type", "value": "application/json" }],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n    \"roomId\": \"8102\",\n    \"mode\": 1,\n    \"target\": 22,\n    \"fanSpeed\": 2,\n    \"on\": true\n}",
-          "options": { "raw": { "language": "json" } }
-        }
-      },
-      "delay": 110000,
-      "events": [],
-      "protocolProfileBehavior": { "disableBodyPruning": true }
-    },
+		{
+			"name": "用户控制空调",
+			"request": {
+				"method": "POST",
+				"url": "{{BASE_URL}}/api/ac/update",
+				"header": [{"key": "Content-Type", "value": "application/json"}],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"roomId\": \"8102\",\n    \"mode\": 1,\n    \"target\": 22,\n    \"fanSpeed\": 2,\n    \"on\": true\n}",
+					"options": {"raw": {"language": "json"}}
+				}
+			},
+			"delay": 110000,
+			"events": [],
+			"protocolProfileBehavior": {"disableBodyPruning": true}
+		},
 
-    {
-      "name": "用户控制空调",
-      "request": {
-        "method": "POST",
-        "url": "{{BASE_URL}}/api/ac/update",
-        "header": [{ "key": "Content-Type", "value": "application/json" }],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n    \"roomId\": \"8105\",\n    \"mode\": 1,\n    \"target\": 22,\n    \"fanSpeed\": 1,\n    \"on\": true\n}",
-          "options": { "raw": { "language": "json" } }
-        }
-      },
-      "delay": 120000,
-      "events": [],
-      "protocolProfileBehavior": { "disableBodyPruning": true }
-    },
+		{
+			"name": "用户控制空调",
+			"request": {
+				"method": "POST",
+				"url": "{{BASE_URL}}/api/ac/update",
+				"header": [{"key": "Content-Type", "value": "application/json"}],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"roomId\": \"8105\",\n    \"mode\": 1,\n    \"target\": 22,\n    \"fanSpeed\": 1,\n    \"on\": true\n}",
+					"options": {"raw": {"language": "json"}}
+				}
+			},
+			"delay": 120000,
+			"events": [],
+			"protocolProfileBehavior": {"disableBodyPruning": true}
+		},
 
-    {
-      "name": "用户控制空调",
-      "request": {
-        "method": "POST",
-        "url": "{{BASE_URL}}/api/ac/update",
-        "header": [{ "key": "Content-Type", "value": "application/json" }],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n    \"roomId\": \"8101\",\n    \"mode\": 1,\n    \"target\": 25,\n    \"fanSpeed\": 2,\n    \"on\": false\n}",
-          "options": { "raw": { "language": "json" } }
-        }
-      },
-      "delay": 140000,
-      "events": [],
-      "protocolProfileBehavior": { "disableBodyPruning": true }
-    },
-    {
-      "name": "用户控制空调",
-      "request": {
-        "method": "POST",
-        "url": "{{BASE_URL}}/api/ac/update",
-        "header": [{ "key": "Content-Type", "value": "application/json" }],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n    \"roomId\": \"8103\",\n    \"mode\": 1,\n    \"target\": 24,\n    \"fanSpeed\": 1,\n    \"on\": true\n}",
-          "options": { "raw": { "language": "json" } }
-        }
-      },
-      "delay": 140000,
-      "events": [],
-      "protocolProfileBehavior": { "disableBodyPruning": true }
-    },
+		{
+			"name": "用户控制空调",
+			"request": {
+				"method": "POST",
+				"url": "{{BASE_URL}}/api/ac/update",
+				"header": [{"key": "Content-Type", "value": "application/json"}],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"roomId\": \"8101\",\n    \"mode\": 1,\n    \"target\": 25,\n    \"fanSpeed\": 2,\n    \"on\": false\n}",
+					"options": {"raw": {"language": "json"}}
+				}
+			},
+			"delay": 140000,
+			"events": [],
+			"protocolProfileBehavior": {"disableBodyPruning": true}
+		},
+		{
+			"name": "用户控制空调",
+			"request": {
+				"method": "POST",
+				"url": "{{BASE_URL}}/api/ac/update",
+				"header": [{"key": "Content-Type", "value": "application/json"}],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"roomId\": \"8103\",\n    \"mode\": 1,\n    \"target\": 24,\n    \"fanSpeed\": 1,\n    \"on\": true\n}",
+					"options": {"raw": {"language": "json"}}
+				}
+			},
+			"delay": 140000,
+			"events": [],
+			"protocolProfileBehavior": {"disableBodyPruning": true}
+		},
 
-    {
-      "name": "用户控制空调",
-      "request": {
-        "method": "POST",
-        "url": "{{BASE_URL}}/api/ac/update",
-        "header": [{ "key": "Content-Type", "value": "application/json" }],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n    \"roomId\": \"8105\",\n    \"mode\": 1,\n    \"target\": 20,\n    \"fanSpeed\": 3,\n    \"on\": true\n}",
-          "options": { "raw": { "language": "json" } }
-        }
-      },
-      "delay": 150000,
-      "events": [],
-      "protocolProfileBehavior": { "disableBodyPruning": true }
-    },
+		{
+			"name": "用户控制空调",
+			"request": {
+				"method": "POST",
+				"url": "{{BASE_URL}}/api/ac/update",
+				"header": [{"key": "Content-Type", "value": "application/json"}],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"roomId\": \"8105\",\n    \"mode\": 1,\n    \"target\": 20,\n    \"fanSpeed\": 3,\n    \"on\": true\n}",
+					"options": {"raw": {"language": "json"}}
+				}
+			},
+			"delay": 150000,
+			"events": [],
+			"protocolProfileBehavior": {"disableBodyPruning": true}
+		},
 
-    {
-      "name": "用户控制空调",
-      "request": {
-        "method": "POST",
-        "url": "{{BASE_URL}}/api/ac/update",
-        "header": [{ "key": "Content-Type", "value": "application/json" }],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n    \"roomId\": \"8102\",\n    \"mode\": 1,\n    \"target\": 25,\n    \"fanSpeed\": 2,\n    \"on\": false\n}",
-          "options": { "raw": { "language": "json" } }
-        }
-      },
-      "delay": 160000,
-      "events": [],
-      "protocolProfileBehavior": { "disableBodyPruning": true }
-    },
+		{
+			"name": "用户控制空调",
+			"request": {
+				"method": "POST",
+				"url": "{{BASE_URL}}/api/ac/update",
+				"header": [{"key": "Content-Type", "value": "application/json"}],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"roomId\": \"8102\",\n    \"mode\": 1,\n    \"target\": 25,\n    \"fanSpeed\": 2,\n    \"on\": false\n}",
+					"options": {"raw": {"language": "json"}}
+				}
+			},
+			"delay": 160000,
+			"events": [],
+			"protocolProfileBehavior": {"disableBodyPruning": true}
+		},
 
-    {
-      "name": "用户控制空调",
-      "request": {
-        "method": "POST",
-        "url": "{{BASE_URL}}/api/ac/update",
-        "header": [{ "key": "Content-Type", "value": "application/json" }],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n    \"roomId\": \"8103\",\n    \"mode\": 1,\n    \"target\": 24,\n    \"fanSpeed\": 3,\n    \"on\": true\n}",
-          "options": { "raw": { "language": "json" } }
-        }
-      },
-      "delay": 170000,
-      "events": [],
-      "protocolProfileBehavior": { "disableBodyPruning": true }
-    },
+		{
+			"name": "用户控制空调",
+			"request": {
+				"method": "POST",
+				"url": "{{BASE_URL}}/api/ac/update",
+				"header": [{"key": "Content-Type", "value": "application/json"}],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"roomId\": \"8103\",\n    \"mode\": 1,\n    \"target\": 24,\n    \"fanSpeed\": 3,\n    \"on\": true\n}",
+					"options": {"raw": {"language": "json"}}
+				}
+			},
+			"delay": 170000,
+			"events": [],
+			"protocolProfileBehavior": {"disableBodyPruning": true}
+		},
 
-    {
-      "name": "用户控制空调",
-      "request": {
-        "method": "POST",
-        "url": "{{BASE_URL}}/api/ac/update",
-        "header": [{ "key": "Content-Type", "value": "application/json" }],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n    \"roomId\": \"8101\",\n    \"mode\": 1,\n    \"target\": 25,\n    \"fanSpeed\": 2,\n    \"on\": true\n}",
-          "options": { "raw": { "language": "json" } }
-        }
-      },
-      "delay": 181000,
-      "events": [],
-      "protocolProfileBehavior": { "disableBodyPruning": true }
-    },
-    {
-      "name": "用户控制空调",
-      "request": {
-        "method": "POST",
-        "url": "{{BASE_URL}}/api/ac/update",
-        "header": [{ "key": "Content-Type", "value": "application/json" }],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n    \"roomId\": \"8104\",\n    \"mode\": 1,\n    \"target\": 20,\n    \"fanSpeed\": 2,\n    \"on\": true\n}",
-          "options": { "raw": { "language": "json" } }
-        }
-      },
-      "delay": 180000,
-      "events": [],
-      "protocolProfileBehavior": { "disableBodyPruning": true }
-    },
+		{
+			"name": "用户控制空调",
+			"request": {
+				"method": "POST",
+				"url": "{{BASE_URL}}/api/ac/update",
+				"header": [{"key": "Content-Type", "value": "application/json"}],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"roomId\": \"8101\",\n    \"mode\": 1,\n    \"target\": 25,\n    \"fanSpeed\": 2,\n    \"on\": true\n}",
+					"options": {"raw": {"language": "json"}}
+				}
+			},
+			"delay": 181000,
+			"events": [],
+			"protocolProfileBehavior": {"disableBodyPruning": true}
+		},
+		{
+			"name": "用户控制空调",
+			"request": {
+				"method": "POST",
+				"url": "{{BASE_URL}}/api/ac/update",
+				"header": [{"key": "Content-Type", "value": "application/json"}],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"roomId\": \"8104\",\n    \"mode\": 1,\n    \"target\": 20,\n    \"fanSpeed\": 2,\n    \"on\": true\n}",
+					"options": {"raw": {"language": "json"}}
+				}
+			},
+			"delay": 180000,
+			"events": [],
+			"protocolProfileBehavior": {"disableBodyPruning": true}
+		},
 
-    {
-      "name": "用户控制空调",
-      "request": {
-        "method": "POST",
-        "url": "{{BASE_URL}}/api/ac/update",
-        "header": [{ "key": "Content-Type", "value": "application/json" }],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n    \"roomId\": \"8102\",\n    \"mode\": 1,\n    \"target\": 25,\n    \"fanSpeed\": 2,\n    \"on\": true\n}",
-          "options": { "raw": { "language": "json" } }
-        }
-      },
-      "delay": 190000,
-      "events": [],
-      "protocolProfileBehavior": { "disableBodyPruning": true }
-    },
+		{
+			"name": "用户控制空调",
+			"request": {
+				"method": "POST",
+				"url": "{{BASE_URL}}/api/ac/update",
+				"header": [{"key": "Content-Type", "value": "application/json"}],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"roomId\": \"8102\",\n    \"mode\": 1,\n    \"target\": 25,\n    \"fanSpeed\": 2,\n    \"on\": true\n}",
+					"options": {"raw": {"language": "json"}}
+				}
+			},
+			"delay": 190000,
+			"events": [],
+			"protocolProfileBehavior": {"disableBodyPruning": true}
+		},
 
-    {
-      "name": "用户控制空调",
-      "request": {
-        "method": "POST",
-        "url": "{{BASE_URL}}/api/ac/update",
-        "header": [{ "key": "Content-Type", "value": "application/json" }],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n    \"roomId\": \"8105\",\n    \"mode\": 1,\n    \"target\": 25,\n    \"fanSpeed\": 3,\n    \"on\": true\n}",
-          "options": { "raw": { "language": "json" } }
-        }
-      },
-      "delay": 200000,
-      "events": [],
-      "protocolProfileBehavior": { "disableBodyPruning": true }
-    },
+		{
+			"name": "用户控制空调",
+			"request": {
+				"method": "POST",
+				"url": "{{BASE_URL}}/api/ac/update",
+				"header": [{"key": "Content-Type", "value": "application/json"}],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"roomId\": \"8105\",\n    \"mode\": 1,\n    \"target\": 25,\n    \"fanSpeed\": 3,\n    \"on\": true\n}",
+					"options": {"raw": {"language": "json"}}
+				}
+			},
+			"delay": 200000,
+			"events": [],
+			"protocolProfileBehavior": {"disableBodyPruning": true}
+		},
 
-    {
-      "name": "用户控制空调",
-      "request": {
-        "method": "POST",
-        "url": "{{BASE_URL}}/api/ac/update",
-        "header": [{ "key": "Content-Type", "value": "application/json" }],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n    \"roomId\": \"8103\",\n    \"mode\": 1,\n    \"target\": 25,\n    \"fanSpeed\": 2,\n    \"on\": false\n}",
-          "options": { "raw": { "language": "json" } }
-        }
-      },
-      "delay": 220000,
-      "events": [],
-      "protocolProfileBehavior": { "disableBodyPruning": true }
-    },
+		{
+			"name": "用户控制空调",
+			"request": {
+				"method": "POST",
+				"url": "{{BASE_URL}}/api/ac/update",
+				"header": [{"key": "Content-Type", "value": "application/json"}],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"roomId\": \"8103\",\n    \"mode\": 1,\n    \"target\": 25,\n    \"fanSpeed\": 2,\n    \"on\": false\n}",
+					"options": {"raw": {"language": "json"}}
+				}
+			},
+			"delay": 220000,
+			"events": [],
+			"protocolProfileBehavior": {"disableBodyPruning": true}
+		},
 
-    {
-      "name": "用户控制空调",
-      "request": {
-        "method": "POST",
-        "url": "{{BASE_URL}}/api/ac/update",
-        "header": [{ "key": "Content-Type", "value": "application/json" }],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n    \"roomId\": \"8105\",\n    \"mode\": 1,\n    \"target\": 25,\n    \"fanSpeed\": 2,\n    \"on\": false\n}",
-          "options": { "raw": { "language": "json" } }
-        }
-      },
-      "delay": 230000,
-      "events": [],
-      "protocolProfileBehavior": { "disableBodyPruning": true }
-    },
+		{
+			"name": "用户控制空调",
+			"request": {
+				"method": "POST",
+				"url": "{{BASE_URL}}/api/ac/update",
+				"header": [{"key": "Content-Type", "value": "application/json"}],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"roomId\": \"8105\",\n    \"mode\": 1,\n    \"target\": 25,\n    \"fanSpeed\": 2,\n    \"on\": false\n}",
+					"options": {"raw": {"language": "json"}}
+				}
+			},
+			"delay": 230000,
+			"events": [],
+			"protocolProfileBehavior": {"disableBodyPruning": true}
+		},
 
-    {
-      "name": "用户控制空调",
-      "request": {
-        "method": "POST",
-        "url": "{{BASE_URL}}/api/ac/update",
-        "header": [{ "key": "Content-Type", "value": "application/json" }],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n    \"roomId\": \"8101\",\n    \"mode\": 1,\n    \"target\": 25,\n    \"fanSpeed\": 2,\n    \"on\": false\n}",
-          "options": { "raw": { "language": "json" } }
-        }
-      },
-      "delay": 240000,
-      "events": [],
-      "protocolProfileBehavior": { "disableBodyPruning": true }
-    },
+		{
+			"name": "用户控制空调",
+			"request": {
+				"method": "POST",
+				"url": "{{BASE_URL}}/api/ac/update",
+				"header": [{"key": "Content-Type", "value": "application/json"}],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"roomId\": \"8101\",\n    \"mode\": 1,\n    \"target\": 25,\n    \"fanSpeed\": 2,\n    \"on\": false\n}",
+					"options": {"raw": {"language": "json"}}
+				}
+			},
+			"delay": 240000,
+			"events": [],
+			"protocolProfileBehavior": {"disableBodyPruning": true}
+		},
 
-    {
-      "name": "用户控制空调",
-      "request": {
-        "method": "POST",
-        "url": "{{BASE_URL}}/api/ac/update",
-        "header": [{ "key": "Content-Type", "value": "application/json" }],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n    \"roomId\": \"8102\",\n    \"mode\": 1,\n    \"target\": 25,\n    \"fanSpeed\": 2,\n    \"on\": false\n}",
-          "options": { "raw": { "language": "json" } }
-        }
-      },
-      "delay": 250000,
-      "events": [],
-      "protocolProfileBehavior": { "disableBodyPruning": true }
-    },
-    {
-      "name": "用户控制空调last",
-      "request": {
-        "method": "POST",
-        "url": "{{BASE_URL}}/api/ac/update",
-        "header": [{ "key": "Content-Type", "value": "application/json" }],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n    \"roomId\": \"8104\",\n    \"mode\": 1,\n    \"target\": 25,\n    \"fanSpeed\": 2,\n    \"on\": false\n}",
-          "options": { "raw": { "language": "json" } }
-        }
-      },
-      "delay": 250000,
-      "events": [],
-      "protocolProfileBehavior": { "disableBodyPruning": true }
-    }
-  ],
-  "variable": [{ "key": "BASE_URL", "value": "https://localhost:8443" }]
+		{
+			"name": "用户控制空调",
+			"request": {
+				"method": "POST",
+				"url": "{{BASE_URL}}/api/ac/update",
+				"header": [{"key": "Content-Type", "value": "application/json"}],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"roomId\": \"8102\",\n    \"mode\": 1,\n    \"target\": 25,\n    \"fanSpeed\": 2,\n    \"on\": false\n}",
+					"options": {"raw": {"language": "json"}}
+				}
+			},
+			"delay": 250000,
+			"events": [],
+			"protocolProfileBehavior": {"disableBodyPruning": true}
+		},
+		{
+			"name": "用户控制空调last",
+			"request": {
+				"method": "POST",
+				"url": "{{BASE_URL}}/api/ac/update",
+				"header": [{"key": "Content-Type", "value": "application/json"}],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"roomId\": \"8104\",\n    \"mode\": 1,\n    \"target\": 25,\n    \"fanSpeed\": 2,\n    \"on\": false\n}",
+					"options": {"raw": {"language": "json"}}
+				}
+			},
+			"delay": 250000,
+			"events": [],
+			"protocolProfileBehavior": {"disableBodyPruning": true}
+		}
+	],
+	"variable": [{"key": "BASE_URL", "value": "https://localhost:8443"}]
 }

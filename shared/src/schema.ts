@@ -209,6 +209,24 @@ export declare const billItem: z.ZodObject<
 >;
 export type BillItem = z.infer<typeof billItem>;
 
+export declare const diningItem: z.ZodObject<
+  {
+    name: z.ZodString;
+    quantity: z.ZodNumber;
+  },
+  "strip",
+  z.ZodTypeAny,
+  {
+    name: string;
+    quantity: number;
+  },
+  {
+    name: string;
+    quantity: number;
+  }
+>;
+export type DiningItem = z.infer<typeof diningItem>;
+
 export const getACDetailResponse = responseBase.extend({
   payload: z.object({
     roomId: z.string(),
@@ -238,6 +256,7 @@ export const getRoomBillResponse = responseBase.extend({
       checkInDate: z.string().datetime(),
       checkOutDate: z.string().datetime(),
       acTotalFee: z.number(),
+      diningTotalFee: z.number(),
       bill: z.array(
         z.object({
           name: z.string(),
