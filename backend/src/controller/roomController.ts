@@ -255,6 +255,30 @@ const getAllRooms = async (req: Request, res: Response) => {
   }
 };
 
+const orderDining = async (req: Request, res: Response) => {
+  try {
+    const userId = res.locals.user.userId;
+    const itemArray = req.body.item as Array<{
+      foodId: string;
+      quantity: number;
+    }>;
+
+    const result = await roomService.orderDining(userId, itemArray);
+
+    const response = responseBase.parse({
+      code: "200",
+      payload: {},
+      error: {
+        msg: "",
+      },
+    });
+
+    res.json(response);
+  } catch (error) {
+    handleErrors(error, res);
+  }
+};
+
 const roomController = {
   bookRoom,
   checkOrder,
@@ -267,6 +291,7 @@ const roomController = {
   getBill,
   getBillFile,
   getAllRooms,
+  orderDining,
 };
 
 export { roomController };

@@ -320,6 +320,29 @@ const getAllRooms = async () => {
   return result;
 };
 
+const orderDining = async (userId: string, itemArray: any) => {
+  const reservation = await findReservationByUserId(userId);
+  if (reservation[0].roomId === null) {
+    throw new Error("You have not checked in");
+  }
+  const roomId = reservation[0].roomId;
+  const room = await findRoom(roomId);
+  if (room.status !== "occupied") {
+    throw new Error("Room is not occupied");
+  }
+  itemArray.forEach(async (item: any) => {
+    await prisma.diningRecord.create({
+      data: {
+        userId: userId,
+        roomId: roomId,
+        foodId: item.name,
+        quantity: item.quantity,
+        timestamp: new Date(),
+      },
+    });
+  });
+};
+
 const roomService = {
   findBusyDays,
   checkRoomAvailability,
@@ -335,6 +358,7 @@ const roomService = {
   getBill,
   getBillFile,
   getAllRooms,
+  orderDining,
 };
 
 export { roomService };
