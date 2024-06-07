@@ -14,8 +14,27 @@ import { dataFetch } from "shared";
 import ReceptionCheckinCheckout from "@/components/ReceptionCheckinCheckout";
 import { HotelStats } from "@/components/HotelStats";
 
-export const Manager = () => {
+const Aircons = () => {
   const aircons = useAirconDataTableData();
+
+  return (
+    <div className="mb-4 hidden h-full flex-1 flex-col md:flex">
+      {aircons === undefined ? (
+        <Skeleton className="h-4 w-20" />
+      ) : (
+        <DataTable
+          data={aircons}
+          columns={columns}
+          getDisplayName={getDisplayName}
+          searchPlaceholder="搜索房间号..."
+          filterableColumns={filterableColumns}
+        />
+      )}
+    </div>
+  );
+};
+
+export const Manager = () => {
   const roomsQuery = useQuery({
     queryKey: ["receptionRooms"],
     queryFn: dataFetch.getReceptionAllRooms,
@@ -38,19 +57,7 @@ export const Manager = () => {
               <HotelStats />
             </TabsContent>
             <TabsContent value="aircons">
-              <div className="mb-4 hidden h-full flex-1 flex-col md:flex">
-                {aircons === undefined ? (
-                  <Skeleton className="h-4 w-20" />
-                ) : (
-                  <DataTable
-                    data={aircons}
-                    columns={columns}
-                    getDisplayName={getDisplayName}
-                    searchPlaceholder="搜索房间号..."
-                    filterableColumns={filterableColumns}
-                  />
-                )}
-              </div>
+              <Aircons />
             </TabsContent>
             <TabsContent value="rooms">
               <div className="mb-4 hidden h-full flex-1 flex-col md:flex">

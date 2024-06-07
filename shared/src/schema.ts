@@ -283,3 +283,9 @@ export const roomStatistic = z.object({
   statistic: z.array(statisticItem),
 });
 export type RoomStatistic = z.infer<typeof roomStatistic>;
+
+export const roomStatisticResponse = responseBase.extend({
+  payload: z.object({
+    statistic: z.array(roomStatistic),
+  }),
+});

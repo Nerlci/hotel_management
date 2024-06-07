@@ -13,6 +13,7 @@ import {
   receptionAvailableResponse,
   receptionCheckinableResponse,
   responseBase,
+  roomStatisticResponse,
   userAvailablityResponse,
   userLoginResponse,
   userRoomOrderResponse,
@@ -574,5 +575,36 @@ export async function getACTargetRange() {
     throw new Error(responseJson.error.msg);
   }
   const json = getTargetRangeResponse.parse(responseJson);
+  return json.payload;
+}
+
+export async function getRoomStatistics(
+  aggregate: "day" | "week",
+  startTime?: Date,
+  endTime?: Date,
+) {
+  const response = await fetch(
+    `${BASE_URL}/api/ac/statistic?aggregate=${aggregate}` +
+      (startTime === undefined ? "" : `&startTime=${startTime.toISOString()}`) +
+      (endTime === undefined ? "" : `&endTime=${endTime.toISOString()}`),
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+    },
+  );
+  if (!response.ok) {
+    throw new Error("Request failed");
+  }
+  const responseJson = await response.json();
+  if (responseJson.code === "401") {
+    throw new Error("401");
+  }
+  if (responseJson.code !== "200") {
+    throw new Error(responseJson.error.msg);
+  }
+  const json = roomStatisticResponse.parse(responseJson);
   return json.payload;
 }

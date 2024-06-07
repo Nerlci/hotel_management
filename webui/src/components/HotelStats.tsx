@@ -1,8 +1,24 @@
-import { Pie, PieChart, ResponsiveContainer, Sector } from "recharts";
+import {
+  Bar,
+  BarChart,
+  Pie,
+  PieChart,
+  ResponsiveContainer,
+  Sector,
+  XAxis,
+  YAxis,
+} from "recharts";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { useState } from "react";
 import { RadioGroup, RadioGroupItem } from "./ui/radio-group";
 import { Label } from "./ui/label";
+import { useQuery } from "@tanstack/react-query";
+import { RoomStatistic, StatisticItem, dataFetch } from "shared";
+import { Skeleton } from "./ui/skeleton";
+import { DatePickerWithRange } from "./DatePickerWithRange";
+import { DateRange } from "react-day-picker";
+import { Switch } from "./ui/switch";
+import { getAWeekAgoStart } from "@/lib/utils";
 
 const dataItems = [
   "开关次数",
@@ -88,60 +104,51 @@ const ActiveShape = (props) => {
   );
 };
 
-const ThePieChart = () => {
-  const data01 = [
-    {
-      name: "Group A",
-      value: 400,
-    },
-    {
-      name: "Group B",
-      value: 300,
-    },
-    {
-      name: "Group C",
-      value: 300,
-    },
-    {
-      name: "Group D",
-      value: 200,
-    },
-    {
-      name: "Group E",
-      value: 278,
-    },
-    {
-      name: "Group F",
-      value: 189,
-    },
-  ];
-  const data02 = [
-    {
-      name: "Group A",
-      value: 2400,
-    },
-    {
-      name: "Group B",
-      value: 4567,
-    },
-    {
-      name: "Group C",
-      value: 1398,
-    },
-    {
-      name: "Group D",
-      value: 9800,
-    },
-    {
-      name: "Group E",
-      value: 3908,
-    },
-    {
-      name: "Group F",
-      value: 4800,
-    },
-  ];
-
+const ThePieChart = (props: { statistics: RoomStatistic[] }) => {
+  const data01 = props.statistics.map((s) => {
+    return {
+      name: s.roomId,
+      value: s.statistic.reduce((acc, cur) => acc + cur.onOffCount, 0),
+    };
+  });
+  const data02 = props.statistics.map((s) => {
+    return {
+      name: s.roomId,
+      value: s.statistic.reduce((acc, cur) => acc + cur.scheduleCount, 0),
+    };
+  });
+  const data03 = props.statistics.map((s) => {
+    return {
+      name: s.roomId,
+      value: s.statistic.reduce((acc, cur) => acc + cur.statementCount, 0),
+    };
+  });
+  const data04 = props.statistics.map((s) => {
+    return {
+      name: s.roomId,
+      value: s.statistic.reduce((acc, cur) => acc + cur.targetCount, 0),
+    };
+  });
+  const data05 = props.statistics.map((s) => {
+    return {
+      name: s.roomId,
+      value: s.statistic.reduce((acc, cur) => acc + cur.fanSpeedCount, 0),
+    };
+  });
+  const data06 = props.statistics.map((s) => {
+    return {
+      name: s.roomId,
+      value: s.statistic.reduce((acc, cur) => acc + cur.requestDuration, 0),
+    };
+  });
+  const data07 = props.statistics.map((s) => {
+    return {
+      name: s.roomId,
+      value: parseFloat(
+        s.statistic.reduce((acc, cur) => acc + cur.totalPrice, 0).toFixed(2),
+      ),
+    };
+  });
   const [displayItem, setDisplayItem] = useState(dataItems[0]);
   const [activeItem, setActiveItem] = useState(0);
 
@@ -153,7 +160,21 @@ const ThePieChart = () => {
     case dataItems[1]:
       pieData = data02;
       break;
-    // TODO
+    case dataItems[2]:
+      pieData = data03;
+      break;
+    case dataItems[3]:
+      pieData = data04;
+      break;
+    case dataItems[4]:
+      pieData = data05;
+      break;
+    case dataItems[5]:
+      pieData = data06;
+      break;
+    case dataItems[6]:
+      pieData = data07;
+      break;
     default:
       pieData = data01;
       break;
@@ -198,23 +219,172 @@ const ThePieChart = () => {
   );
 };
 
+function getDisplayValue(value: StatisticItem, displayItem: string) {
+  switch (displayItem) {
+    case dataItems[0]:
+      return value.onOffCount;
+    case dataItems[1]:
+      return value.scheduleCount;
+    case dataItems[2]:
+      return value.statementCount;
+    case dataItems[3]:
+      return value.targetCount;
+    case dataItems[4]:
+      return value.fanSpeedCount;
+    case dataItems[5]:
+      return value.requestDuration;
+    case dataItems[6]:
+      return value.totalPrice;
+    default:
+      return value.totalPrice;
+  }
+}
+
+const TheBarChart = ({ data }: { data: RoomStatistic[] }) => {
+  const [displayItem, setDisplayItem] = useState(dataItems[0]);
+  const groupByDay: StatisticItem[] = [];
+  const defaultNewDay: StatisticItem = {
+    onOffCount: 0,
+    scheduleCount: 0,
+    statementCount: 0,
+    targetCount: 0,
+    fanSpeedCount: 0,
+    requestDuration: 0,
+    totalPrice: 0,
+    timestamp: "",
+  };
+  for (let i = 0; i < 7; i++) {
+    groupByDay.push({ ...defaultNewDay });
+  }
+  data.forEach((item) => {
+    item.statistic.forEach((value) => {
+      const index =
+        (new Date(value.timestamp).getTime() - getAWeekAgoStart().getTime()) /
+        (24 * 60 * 60 * 1000);
+      console.log("1: " + value.timestamp);
+      console.log("2: " + getAWeekAgoStart().toISOString());
+      groupByDay[7 - index].onOffCount += value.onOffCount;
+      groupByDay[7 - index].scheduleCount += value.scheduleCount;
+      groupByDay[7 - index].statementCount += value.statementCount;
+      groupByDay[7 - index].targetCount += value.targetCount;
+      groupByDay[7 - index].fanSpeedCount += value.fanSpeedCount;
+      groupByDay[7 - index].requestDuration += value.requestDuration;
+      groupByDay[7 - index].totalPrice += value.totalPrice;
+    });
+  });
+  const dat = groupByDay.map((value, index) => {
+    return {
+      x: index,
+      y: getDisplayValue(value, displayItem),
+    };
+  });
+  return (
+    <div className="flex flex-row">
+      <div className="flex w-32">
+        <RadioGroup
+          value={displayItem}
+          onValueChange={setDisplayItem}
+          className="my-auto"
+        >
+          {dataItems.map((i, index) => (
+            <div key={index} className="flex items-center gap-1">
+              <RadioGroupItem value={i} id={i} />
+              <Label>{i}</Label>
+            </div>
+          ))}
+        </RadioGroup>
+      </div>
+      <ResponsiveContainer width="100%" height={250}>
+        <BarChart data={dat}>
+          <XAxis dataKey="x" />
+          <YAxis />
+          <Bar
+            type="linear"
+            dataKey="y"
+            fill="currentColor"
+            radius={[4, 4, 0, 0]}
+            className="fill-primary"
+          />
+        </BarChart>
+      </ResponsiveContainer>
+    </div>
+  );
+};
+
 export const HotelStats = () => {
+  const [date, setDate] = useState<{
+    from: Date;
+    to?: Date;
+  }>({
+    from: new Date(),
+  });
+  const [allDate, setAllDate] = useState(true);
+  const statsQuery = useQuery({
+    queryKey: ["hotel-stats", allDate, date.from, date.to],
+    queryFn: async () =>
+      await dataFetch.getRoomStatistics(
+        "day",
+        allDate ? undefined : date.from,
+        allDate ? undefined : date.to ? date.to : date.from,
+      ),
+    refetchInterval: 5000,
+  });
+  const query = useQuery({
+    queryKey: ["hotel-stats", "day"],
+    queryFn: async () =>
+      await dataFetch.getRoomStatistics(
+        "day",
+        new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000),
+        new Date(),
+      ),
+  });
+  const lastWeek = query.data?.statistic;
+
   return (
     <div className="my-3 flex flex-wrap gap-3">
+      <div className="flex flex-row items-center gap-2">
+        <DatePickerWithRange
+          date={date}
+          // @ts-expect-error newVal is never a function
+          setDate={(newVal: DateRange | undefined) => {
+            setDate({
+              from: newVal?.from ? newVal.from : new Date(),
+              to: newVal?.to,
+            });
+          }}
+          disabledDays={[
+            {
+              before: new Date(),
+            },
+          ]}
+          className="w-[300px]"
+          disabled={allDate}
+        />
+        <Switch checked={allDate} onCheckedChange={setAllDate} />
+        <Label>全部日期</Label>
+      </div>
       <Card className="w-[34rem]">
         <CardHeader>
           <CardTitle>分布占比</CardTitle>
         </CardHeader>
         <CardContent>
-          <ThePieChart />
+          {statsQuery.data ? (
+            <ThePieChart statistics={statsQuery.data.statistic} />
+          ) : (
+            <Skeleton className="w-70 h-10" />
+          )}
         </CardContent>
       </Card>
       <Card className="w-[34rem]">
         <CardHeader>
-          <CardTitle>变化趋势</CardTitle>
+          <CardTitle>变化趋势：周报</CardTitle>
         </CardHeader>
         <CardContent>
-          <ThePieChart />
+          {lastWeek ? (
+            <TheBarChart data={lastWeek} />
+          ) : (
+            <Skeleton className="w-70 h-10" />
+          )}
         </CardContent>
       </Card>
     </div>
