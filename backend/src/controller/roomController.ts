@@ -239,7 +239,6 @@ const getBillFile = async (req: Request, res: Response) => {
 const getAllRooms = async (req: Request, res: Response) => {
   try {
     const result = await roomService.getAllRooms();
-    // console.log(result);
 
     const response: ReceptionAllRooms = {
       code: "200",
@@ -263,7 +262,7 @@ const orderDining = async (req: Request, res: Response) => {
       quantity: number;
     }>;
 
-    const result = await roomService.orderDining(userId, itemArray);
+    await roomService.orderDining(userId, itemArray);
 
     const response = responseBase.parse({
       code: "200",

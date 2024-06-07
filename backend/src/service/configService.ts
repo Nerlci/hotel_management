@@ -1,4 +1,5 @@
 import fs from "fs";
+import { object } from "zod";
 
 type Room = {
   roomId: string;
@@ -17,6 +18,9 @@ type Config = {
     priceRate: number;
   };
   rooms: Room[];
+  dining: {
+    [key: string]: number;
+  };
 };
 
 const defaultConfigFilePath = "./config.default.json";
@@ -102,6 +106,10 @@ const getTargetRange = () => {
   return { min: config.ac.minTarget, max: config.ac.maxTarget };
 };
 
+const getDiningPrice = (name: string) => {
+  return config.dining[name];
+};
+
 const configService = {
   loadConfig,
   getConfig,
@@ -116,6 +124,7 @@ const configService = {
   getPriceRate,
   setTargetRange,
   getTargetRange,
+  getDiningPrice,
 };
 
 export { configService };

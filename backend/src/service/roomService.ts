@@ -224,7 +224,7 @@ const checkOut = async (userId: string) => {
   return result;
 };
 
-const calculateLodgingFee = async (
+const getLodgingDetail = async (
   roomId: string,
   checkInDate: Date,
   checkOutDate: Date,
@@ -242,21 +242,36 @@ const calculateLodgingFee = async (
   return roomBill;
 };
 
+const getDiningBill = async (roomId: string) => {
+  const diningRecords = await prisma.diningRecord.findMany({
+    where: { roomId },
+  });
+  const diningBill = diningRecords.map((record) => {
+    return {
+      name: record.foodId,
+      price: configService.getDiningPrice(record.foodId),
+      quantity: record.quantity,
+      subtotal: configService.getDiningPrice(record.foodId) * record.quantity,
+    };
+  });
+  const diningTotalFee = diningBill.reduce(
+    (total: any, item: { subtotal: any }) => total + item.subtotal,
+    0,
+  );
+  return diningBill;
+};
+
 const getBill = async (roomId: string) => {
   const reservation = await prisma.reservation.findFirst({
     where: { roomId },
   });
-  if (!reservation) throw new Error("No record found.");
+  if (!reservation) throw new Error("No reservation record found.");
   const checkInDate = reservation.checkInDate;
   const checkOutDate = reservation.checkOutDate;
   if (!checkOutDate || !checkInDate) {
     throw new Error("Illegal check in date or check out date");
   }
-  const roomDetail = await calculateLodgingFee(
-    roomId,
-    checkInDate,
-    checkOutDate,
-  );
+  const roomDetail = await getLodgingDetail(roomId, checkInDate, checkOutDate);
   const roomBill = {
     name: "Lodging Fee",
     ...roomDetail,
@@ -271,22 +286,31 @@ const getBill = async (roomId: string) => {
     name: `AC Fee (${item.price} per second)`,
     ...item,
   }));
-  const bill = [roomBill, ...acBill];
+  const acTotalFee = acBill.reduce(
+    (total: any, item: { subtotal: any }) => total + item.subtotal,
+    0,
+  );
+
+  const diningBill = await getDiningBill(roomId);
+  const diningTotalFee = diningBill.reduce(
+    (total: any, item: { subtotal: any }) => total + item.subtotal,
+    0,
+  );
+
+  const bill = [roomBill, ...diningBill, ...acBill];
   const result = {
     roomId: roomId,
     checkInDate: checkInDate.toISOString(),
     checkOutDate: checkOutDate.toISOString(),
-    acTotalFee: acBill.reduce(
-      (total: any, item: { subtotal: any }) => total + item.subtotal,
-      0,
-    ),
+    acTotalFee: acTotalFee,
+    diningTotalFee: diningTotalFee,
     bill,
   };
   return result;
 };
 
 const getBillFile = async (roomId: string) => {
-  const { bill, checkInDate, checkOutDate, acTotalFee } = await getBill(roomId);
+  const { bill, checkInDate, checkOutDate } = await getBill(roomId);
   const headers = ["消费项目", "单价", "数量", "小计"];
   return await renderBill(headers, bill, roomId, checkInDate, checkOutDate);
 };
@@ -330,17 +354,21 @@ const orderDining = async (userId: string, itemArray: any) => {
   if (room.status !== "occupied") {
     throw new Error("Room is not occupied");
   }
-  itemArray.forEach(async (item: any) => {
-    await prisma.diningRecord.create({
-      data: {
-        userId: userId,
-        roomId: roomId,
-        foodId: item.name,
-        quantity: item.quantity,
-        timestamp: new Date(),
-      },
-    });
-  });
+  for (const item of itemArray) {
+    if (configService.getDiningPrice(item.name) !== undefined) {
+      await prisma.diningRecord.create({
+        data: {
+          userId: userId,
+          roomId: roomId,
+          foodId: item.name,
+          quantity: item.quantity,
+          timestamp: new Date(),
+        },
+      });
+    } else {
+      throw new Error(`Invalid food item ${item.name}`);
+    }
+  }
 };
 
 const roomService = {
