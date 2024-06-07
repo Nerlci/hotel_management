@@ -39,9 +39,9 @@ const names = ["sandwich", "salad", "noodles", "soup", "beverage"];
 
 export function FoodDrawer(props: { roomId: string }) {
   console.log(props.roomId);
-  const billQuery = useQuery({
-    queryKey: ["receptionBill"],
-    queryFn: async () => await dataFetch.getBillDetail(props.roomId),
+  const {data, refetch} = useQuery({
+    queryKey: ["diningFee"],
+    queryFn: async () => await dataFetch.getDiningFee(props.roomId),
     enabled: !!props.roomId,
   });
 
@@ -78,6 +78,7 @@ export function FoodDrawer(props: { roomId: string }) {
       console.log(result);
       setSelected(names.map(() => 0)); // 清空选择
       toast.success("订单提交成功!");
+      refetch();
     } catch (error) {
       toast.error("订单提交失败！");
     }
@@ -96,7 +97,7 @@ export function FoodDrawer(props: { roomId: string }) {
                     src={FoodIcon}
                   />
                   <div className="grow" />
-                  <p>共消费：￥{billQuery.data?.statement.diningTotalFee}</p>
+                  <p>共消费：￥{data}</p>
                 </div>
               </TooltipTrigger>
               <TooltipContent className="mb-2">

@@ -27,7 +27,7 @@ export const CustomerDashboard = (props: { roomId: string }) => {
             <AirconDrawer roomId={props.roomId} />
             <div className="my-[-4px] h-0 grow" />
             <FoodDrawer roomId={props.roomId} />
-            <RoomDrawer />
+            {/*<RoomDrawer />*/}
           </div>
         </CardContent>
       </Card>
