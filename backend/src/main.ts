@@ -12,7 +12,14 @@ const app = express();
 
 init();
 
-app.use(cors({ credentials: true, preflightContinue: true, origin: true }));
+app.use(
+  cors({
+    credentials: true,
+    preflightContinue: true,
+    origin: true,
+    exposedHeaders: ["Content-Type", "Content-Disposition"],
+  }),
+);
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

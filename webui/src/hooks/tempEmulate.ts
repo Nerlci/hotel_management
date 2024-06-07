@@ -15,10 +15,11 @@ export const useTempEmulate = (props: {
   useInterval(() => {
     const interval = Math.ceil((Date.now() - timestamp.getTime()) / 1000);
     if (!on) {
+      const theRate = Math.abs(rate);
       if (temp < initTemp) {
-        setCurrentTemp(() => Math.min(initTemp, temp + rate * interval));
+        setCurrentTemp(() => Math.min(initTemp, temp + theRate * interval));
       } else {
-        setCurrentTemp(() => Math.max(initTemp, temp - rate * interval));
+        setCurrentTemp(() => Math.max(initTemp, temp - theRate * interval));
       }
     } else {
       setCurrentTemp(() => temp + rate * interval);

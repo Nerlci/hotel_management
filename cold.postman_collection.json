@@ -21,66 +21,6 @@
 			"events": [],
 			"protocolProfileBehavior": {"disableBodyPruning": true}
 		},
-		{
-			"name": "8101状态",
-			"request": {
-				"method": "GET",
-				"url": "{{BASE_URL}}/api/ac/status?roomId=8101",
-				"header": [],
-				"body": {}
-			},
-			"delay": 20,
-			"events": [],
-			"protocolProfileBehavior": {"disableBodyPruning": true}
-		},
-		{
-			"name": "8102状态",
-			"request": {
-				"method": "GET",
-				"url": "{{BASE_URL}}/api/ac/status?roomId=8102",
-				"header": [],
-				"body": {}
-			},
-			"delay": 20,
-			"events": [],
-			"protocolProfileBehavior": {"disableBodyPruning": true}
-		},
-		{
-			"name": "8103状态",
-			"request": {
-				"method": "GET",
-				"url": "{{BASE_URL}}/api/ac/status?roomId=8103",
-				"header": [],
-				"body": {}
-			},
-			"delay": 20,
-			"events": [],
-			"protocolProfileBehavior": {"disableBodyPruning": true}
-		},
-		{
-			"name": "8104状态",
-			"request": {
-				"method": "GET",
-				"url": "{{BASE_URL}}/api/ac/status?roomId=8104",
-				"header": [],
-				"body": {}
-			},
-			"delay": 20,
-			"events": [],
-			"protocolProfileBehavior": {"disableBodyPruning": true}
-		},
-		{
-			"name": "8105状态",
-			"request": {
-				"method": "GET",
-				"url": "{{BASE_URL}}/api/ac/status?roomId=8105",
-				"header": [],
-				"body": {}
-			},
-			"delay": 20,
-			"events": [],
-			"protocolProfileBehavior": {"disableBodyPruning": true}
-		},
 
 		{
 			"name": "用户控制空调t0",
@@ -94,7 +34,7 @@
 					"options": {"raw": {"language": "json"}}
 				}
 			},
-			"delay": 20,
+			"delay": 1000,
 			"events": [],
 			"protocolProfileBehavior": {"disableBodyPruning": true}
 		},
@@ -111,7 +51,7 @@
 					"options": {"raw": {"language": "json"}}
 				}
 			},
-			"delay": 10000,
+			"delay": 11000,
 			"events": [],
 			"protocolProfileBehavior": {"disableBodyPruning": true}
 		},
@@ -424,7 +364,7 @@
 				"header": [{"key": "Content-Type", "value": "application/json"}],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"roomId\": \"8103\",\n    \"mode\": 1,\n    \"target\": 24,\n    \"fanSpeed\": 3,\n    \"on\": false\n}",
+					"raw": "{\n    \"roomId\": \"8103\",\n    \"mode\": 1,\n    \"target\": 24,\n    \"fanSpeed\": 3,\n    \"on\": true\n}",
 					"options": {"raw": {"language": "json"}}
 				}
 			},
@@ -445,7 +385,7 @@
 					"options": {"raw": {"language": "json"}}
 				}
 			},
-			"delay": 180000,
+			"delay": 181000,
 			"events": [],
 			"protocolProfileBehavior": {"disableBodyPruning": true}
 		},
@@ -584,5 +524,5 @@
 			"protocolProfileBehavior": {"disableBodyPruning": true}
 		}
 	],
-	"variable": [{"key": "BASE_URL", "value": "https://10.129.221.208:8443"}]
+	"variable": [{"key": "BASE_URL", "value": "https://localhost:8443"}]
 }

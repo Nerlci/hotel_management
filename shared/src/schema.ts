@@ -106,6 +106,7 @@ export const acUpdateRequestBody = acUpdateRequest.omit({
 export type ACUpdateRequestBody = z.infer<typeof acUpdateRequestBody>;
 
 export const acStatus = acUpdateRequest.omit({ userId: true }).extend({
+  waiting: z.boolean(),
   temp: z.number(),
   initTemp: z.number(),
   rate: z.number(),
@@ -183,6 +184,30 @@ export const statementItem = z.object({
 });
 export type StatementItem = z.infer<typeof statementItem>;
 
+export declare const billItem: z.ZodObject<
+  {
+    name: z.ZodString;
+    price: z.ZodNumber;
+    quantity: z.ZodNumber;
+    subtotal: z.ZodNumber;
+  },
+  "strip",
+  z.ZodTypeAny,
+  {
+    subtotal: number;
+    price: number;
+    name: string;
+    quantity: number;
+  },
+  {
+    subtotal: number;
+    price: number;
+    name: string;
+    quantity: number;
+  }
+>;
+export type BillItem = z.infer<typeof billItem>;
+
 export const getACDetailResponse = responseBase.extend({
   payload: z.object({
     roomId: z.string(),
@@ -229,6 +254,9 @@ export const getAvailableRoomsResponse = responseBase.extend({
     available: z.array(z.string().min(1, "Room ID can't be empty")),
   }),
 });
+export type GetAvailableRoomsResponse = z.infer<
+  typeof getAvailableRoomsResponse
+>;
 
 export const getTargetRangeResponse = responseBase.extend({
   payload: z.object({

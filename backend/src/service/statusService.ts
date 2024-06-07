@@ -2,7 +2,7 @@ import { prisma } from "../prisma";
 import { Request, Response } from "express";
 import SseChannel from "sse-channel";
 
-import { ACStatus, acStatus } from "shared";
+import { ACStatus } from "shared";
 import { tempService } from "./tempService";
 import { configService } from "./configService";
 
@@ -33,26 +33,33 @@ const getInitialStatus = async (roomId: string) => {
     },
   });
 
-  return status
-    ? acStatus.parse({
-        ...status,
-        rate:
-          configService.getRate(status.fanSpeed * (status.on ? 1 : 0)) *
-          (!status.on || status.mode === 0 ? 1 : -1),
-        initTemp: configService.getRoom(roomId)?.initTemp,
-        timestamp: status.timestamp.toISOString(),
-      })
-    : acStatus.parse({
-        roomId: roomId,
-        target: 25,
-        temp: tempService.getTemp(roomId, new Date()),
-        mode: 0,
-        fanSpeed: 2,
-        on: false,
-        rate: configService.getRate(2),
-        initTemp: configService.getRoom(roomId)?.initTemp,
-        timestamp: new Date().toISOString(),
-      });
+  if (status) {
+    const acstatus: ACStatus = {
+      ...status,
+      mode: status.mode as 0 | 1,
+      rate:
+        configService.getRate(status.fanSpeed * (status.on ? 1 : 0)) *
+        (!status.on || status.mode === 0 ? 1 : -1),
+      initTemp: configService.getRoom(roomId)?.initTemp || 0,
+      timestamp: status.timestamp.toISOString(),
+      waiting: false, // TODO
+    };
+    return acstatus;
+  } else {
+    const acstatus: ACStatus = {
+      roomId: roomId,
+      target: 25,
+      temp: tempService.getTemp(roomId, new Date()),
+      mode: 0,
+      fanSpeed: 2,
+      on: false,
+      rate: configService.getRate(2),
+      initTemp: configService.getRoom(roomId)?.initTemp || 0,
+      timestamp: new Date().toISOString(),
+      waiting: false, // TODO
+    };
+    return acstatus;
+  }
 };
 
 const listenStatus = async (

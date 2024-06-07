@@ -18,7 +18,12 @@ import {
   userRoomOrderResponse,
 } from "./schema";
 
-export const BASE_URL = process.env.VITE_API_URL || "http://localhost:8080";
+export const BASE_URL =
+  typeof window !== "undefined" && localStorage.getItem("API_URL")
+    ? localStorage.getItem("API_URL")
+    : process.env.VITE_API_URL || "https://localhost:8443";
+
+console.log(BASE_URL);
 
 export async function deleteUserBooking() {
   const response = await fetch(`${BASE_URL}/api/room/book`, {
@@ -514,7 +519,15 @@ export async function getACDetailFile(roomId: string) {
   if (!response.ok) {
     throw new Error("Request failed");
   }
-  return response.blob();
+  const blob = await response.blob();
+  const fileName = response.headers.get("Content-Disposition")?.split("=")[1];
+  if (fileName === undefined) {
+    throw new Error("No file name");
+  }
+  return {
+    blob,
+    fileName,
+  };
 }
 
 export async function getBillDetailFile(roomId: string) {
@@ -531,7 +544,15 @@ export async function getBillDetailFile(roomId: string) {
   if (!response.ok) {
     throw new Error("Request failed");
   }
-  return response.blob();
+  const blob = await response.blob();
+  const fileName = response.headers.get("Content-Disposition")?.split("=")[1];
+  if (fileName === undefined) {
+    throw new Error("No file name");
+  }
+  return {
+    blob,
+    fileName,
+  };
 }
 
 export async function getACTargetRange() {

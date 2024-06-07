@@ -1,8 +1,8 @@
-import { parse } from "json2csv";
 import { prisma } from "../prisma";
 import { ACRecord } from "@prisma/client";
-import { StatementItem, statementItem } from "shared";
+import { StatementItem } from "shared";
 import { configService } from "./configService";
+import { renderStatement } from "../utils/renderPdf";
 
 const getDetailByRoomId = async (roomId: string) => {
   const ac = await prisma.aCRecord.findMany({
@@ -42,6 +42,7 @@ const getDetailByRoomId = async (roomId: string) => {
       fanSpeed: item.fanSpeed,
       mode: item.mode,
       on: item.on,
+      waiting: item.waiting,
       timestamp: item.timestamp,
       total: total,
     });
@@ -85,8 +86,8 @@ const getStatement = async (
         (acRecord.timestamp.getTime() - lastStatus.timestamp.getTime()) / 1000,
       );
 
-      statement.push(
-        statementItem.parse({
+      if (duration !== 0) {
+        const newStatementItem: StatementItem = {
           roomId: roomId,
           requestTime: lastRequest?.timestamp
             ? lastRequest?.timestamp.toISOString()
@@ -100,9 +101,9 @@ const getStatement = async (
             lastStatus.priceRate / configService.getRate(lastStatus.fanSpeed),
           target: lastStatus.target,
           temp: acRecord.temp,
-          mode: lastStatus.mode,
-        }),
-      );
+        };
+        statement.push(newStatementItem);
+      }
     }
 
     if (!acRecord.on) {
@@ -124,39 +125,18 @@ const getStatementTable = async (
   endTime: Date | undefined,
 ) => {
   const statement = await getStatement(roomId, startTime, endTime);
-
-  const table = [
-    [
-      "房间号",
-      "请求时间",
-      "开始时间",
-      "结束时间",
-      "持续时长",
-      "风速",
-      "费用",
-      "费率",
-      "目标温度",
-      "结束温度",
-    ],
+  const headers = [
+    "请求时间",
+    "开始时间",
+    "结束时间",
+    "持续时长",
+    "风速",
+    "费用",
+    "费率",
+    "目标温度",
+    "结束温度",
   ];
-  for (const item of statement) {
-    table.push([
-      item.roomId,
-      item.requestTime?.toLocaleString() || "",
-      item.startTime.toLocaleString(),
-      item.endTime.toLocaleString(),
-      item.duration.toString(),
-      item.fanSpeed.toString(),
-      item.price.toString(),
-      item.priceRate.toString(),
-      item.target.toString(),
-      item.temp.toString(),
-    ]);
-  }
-
-  const csv = parse(table, { header: false });
-
-  return csv;
+  return await renderStatement(headers, statement, roomId);
 };
 
 const getInvoice = async (

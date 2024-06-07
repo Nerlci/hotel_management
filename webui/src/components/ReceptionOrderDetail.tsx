@@ -69,11 +69,11 @@ export default function ReceptionOrderDetail({ roomId }: DetailProps) {
       console.log(e.message);
       toast.error("下载失败");
     },
-    onSuccess: (blob) => {
+    onSuccess: ({ blob, fileName }) => {
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `详单_${roomId}.csv`;
+      a.download = fileName;
       document.body.appendChild(a);
       a.click();
       a.remove();
@@ -108,7 +108,7 @@ export default function ReceptionOrderDetail({ roomId }: DetailProps) {
                     fileMutation.mutate(roomId);
                   }}
                 >
-                  导出 csv
+                  导出
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -123,7 +123,7 @@ export default function ReceptionOrderDetail({ roomId }: DetailProps) {
             <div className="overflow-x-auto">
               <table className="w-full table-fixed text-left">
                 <thead>
-                  <tr className="text-white">
+                  <tr>
                     <th className="p-2">请求时间</th>
                     <th className="p-2">服务开始时间</th>
                     <th className="p-2">服务结束时间</th>

@@ -1,11 +1,11 @@
-import { ACUpdateRequest, acStatus } from "shared";
+import { ACStatus, ACUpdateRequest } from "shared";
 import { prisma } from "../prisma";
 import { statusService } from "./statusService";
 import { configService } from "./configService";
 import { tempService } from "./tempService";
-import { acService } from "./acService";
 
 interface SchedulerItem extends ACUpdateRequest {
+  waiting: boolean;
   onTimestamp: Date;
   timestamp: Date;
 }
@@ -19,7 +19,7 @@ const servingList: SchedulerItem[] = [];
 const rrList: { interval: NodeJS.Timeout; item: SchedulerItem }[] = [];
 const shutdownList: { timeout: NodeJS.Timeout; item: SchedulerItem }[] = [];
 
-const modifyTimestamps = (item: ACUpdateRequest, now: Date) => {
+const modifyTimestamps = (item: SchedulerItem, now: Date) => {
   return {
     ...item,
     onTimestamp: now,
@@ -52,10 +52,10 @@ const statusChange = async (status: SchedulerItem) => {
   };
 
   const rate =
-    configService.getRate(data.fanSpeed * (data.on ? 1 : 0)) *
-    (!data.on || data.mode === 0 ? 1 : -1);
+    configService.getRate(data.fanSpeed * (data.on && !data.waiting ? 1 : 0)) *
+    (!data.on || data.waiting || data.mode === 0 ? 1 : -1);
 
-  if (data.on) {
+  if (data.on && !data.waiting) {
     const targetTime =
       ((data.target - data.temp) / rate) * 1000 + data.timestamp.getTime() - 50;
 
@@ -75,6 +75,13 @@ const statusChange = async (status: SchedulerItem) => {
       targetTime - Date.now(),
       data.roomId,
     );
+    const timeoutIdx = shutdownList.findIndex(
+      (item) => item.item.roomId === status.roomId,
+    );
+    if (timeoutIdx !== -1) {
+      clearTimeout(shutdownList[timeoutIdx].timeout);
+      shutdownList.splice(timeoutIdx, 1);
+    }
     shutdownList.push({
       timeout: timeout,
       item: status,
@@ -85,12 +92,12 @@ const statusChange = async (status: SchedulerItem) => {
     data: data,
   });
 
-  const statusMessage = acStatus.parse({
+  const statusMessage: ACStatus = {
     ...data,
     timestamp: status.timestamp.toISOString(),
-    initTemp: configService.getRoom(data.roomId)?.initTemp,
+    initTemp: configService.getRoom(data.roomId)?.initTemp || 0,
     rate,
-  });
+  };
   statusService.updateStatus(statusMessage);
 
   tempService.updateTemp({
@@ -140,16 +147,16 @@ const preemptService = (item: SchedulerItem, preemptedItem: SchedulerItem) => {
     waitingList.splice(waitingIdx, 1);
   }
 
-  const modifiedItem = modifyTimestamps(item, now);
+  const modifiedItem = modifyTimestamps({ ...item, waiting: false }, now);
   statusChange(modifiedItem);
   servingList.push(modifiedItem);
 
   statusChange({
     ...preemptedItem,
-    on: false,
+    waiting: true,
     timestamp: now,
   });
-  waitingList.push(modifyTimestamps(preemptedItem, now));
+  waitingList.push(modifyTimestamps({ ...preemptedItem, waiting: true }, now));
 
   // 如果当前对象在时间片调度中，清除他的定时器
   const rrIdx = rrList.findIndex(
@@ -249,7 +256,7 @@ const shutdownRoom = (roomId: string) => {
   });
 };
 
-const schedulerStep = async (item: SchedulerItem) => {
+const schedulerStep = (item: SchedulerItem) => {
   const now = new Date();
 
   // 如果正在服务
@@ -265,7 +272,7 @@ const schedulerStep = async (item: SchedulerItem) => {
 
     const previousFanSpeed = servingList[servingItemIdx].fanSpeed;
 
-    if (item.fanSpeed < previousFanSpeed) {
+    if (item.on && item.fanSpeed < previousFanSpeed) {
       // 先修改服务列表为新的风速，再检查等待队列
       servingList[servingItemIdx] = modifiedItem;
       checkWaitingList();
@@ -282,6 +289,14 @@ const schedulerStep = async (item: SchedulerItem) => {
     statusChange(modifiedItem);
 
     if (!item.on) {
+      const shutdownIdx = shutdownList.findIndex(
+        (shutdownItem) => shutdownItem.item.roomId === item.roomId,
+      );
+
+      if (shutdownIdx !== -1) {
+        clearTimeout(shutdownList[shutdownIdx].timeout);
+        shutdownList.splice(shutdownIdx, 1);
+      }
       servingList.splice(servingItemIdx, 1);
       checkWaitingList();
 
@@ -298,6 +313,14 @@ const schedulerStep = async (item: SchedulerItem) => {
     (waitingItem) => waitingItem.roomId === item.roomId,
   );
   if (waitingItemIdx !== -1) {
+    const rrIdx = rrList.findIndex(
+      (rrItem) => rrItem.item.roomId === item.roomId,
+    );
+    if (rrIdx !== -1) {
+      clearInterval(rrList[rrIdx].interval);
+      rrList.splice(rrIdx, 1);
+    }
+
     waitingList.splice(waitingItemIdx, 1);
   }
 
@@ -313,8 +336,8 @@ const schedulerStep = async (item: SchedulerItem) => {
   if (servingList.length < SERVE_LIMIT) {
     stopRR(item.roomId);
     const modifiedItem = modifyTimestamps(item, now);
-    statusChange(modifiedItem);
     servingList.push(modifiedItem);
+    statusChange(modifiedItem);
 
     return;
   }
@@ -377,13 +400,13 @@ const schedulerStep = async (item: SchedulerItem) => {
       interval: rrInterval,
       item: modifyTimestamps(item, now),
     });
-    waitingList.push(modifyTimestamps(item, now));
+    waitingList.push(modifyTimestamps({ ...item, waiting: true }, now));
 
     return;
   }
 
   // 如果请求风速小于所有服务对象的风速，请求对象必须等到某个服务对象空闲后才能得到服务
-  waitingList.push(item);
+  waitingList.push({ ...item, waiting: true });
 
   return;
 };
@@ -399,6 +422,7 @@ const addUpdateRequest = async (request: ACUpdateRequest) => {
       },
     },
     ...rest,
+    waiting: false,
     temp: tempService.getTemp(request.roomId, now),
     priceRate: configService.getFanSpeedPriceRate(request.fanSpeed),
     type: 0,
@@ -408,7 +432,12 @@ const addUpdateRequest = async (request: ACUpdateRequest) => {
     data: data,
   });
 
-  schedulerStep(modifyTimestamps(request, now));
+  schedulerStep(
+    modifyTimestamps(
+      { ...request, waiting: false, onTimestamp: now, timestamp: now },
+      now,
+    ),
+  );
 };
 
 const schedulerService = {

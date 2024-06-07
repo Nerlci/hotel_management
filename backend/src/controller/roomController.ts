@@ -6,13 +6,11 @@ import {
   receptionCheckinRequest,
   UserRoomOrderResponse,
   responseBase,
-  userAvailablityResponse,
-  userRoomOrderResponse,
-  receptionAllRooms,
-  getAvailableRoomsResponse,
+  UserAvailablityResponse,
+  ReceptionAllRooms,
+  GetAvailableRoomsResponse,
 } from "shared";
 import { roomService } from "../service/roomService";
-import { prisma } from "../prisma";
 import { handleErrors } from "../utils/utils";
 
 const bookRoom = async (req: Request, res: Response) => {
@@ -72,13 +70,13 @@ const checkDaysAvailability = async (req: Request, res: Response) => {
 
     const result = await roomService.checkDaysAvailability(startDate, endDate);
 
-    const response = userAvailablityResponse.parse({
+    const response: UserAvailablityResponse = {
       error: {
         msg: "",
       },
       code: "200",
       payload: result,
-    });
+    };
 
     res.json(response);
   } catch (e: any) {
@@ -167,13 +165,13 @@ const getRoom = async (req: Request, res: Response) => {
     const userId = String(req.query.userId);
     const result = await roomService.getRoom(userId);
 
-    const response = getAvailableRoomsResponse.parse({
+    const response: GetAvailableRoomsResponse = {
       code: "200",
       payload: { available: result },
       error: {
         msg: "",
       },
-    });
+    };
 
     res.json(response);
   } catch (error: any) {
@@ -225,14 +223,14 @@ const getBillFile = async (req: Request, res: Response) => {
   try {
     const roomId = req.query.roomId as string;
 
-    const csv = await roomService.getBillFile(roomId);
+    const doc = await roomService.getBillFile(roomId);
 
-    res.setHeader("Content-Type", "text/csv");
+    res.setHeader("Content-Type", "application/octet-stream");
     res.setHeader(
       "Content-Disposition",
-      `attachment; filename=bill-${roomId}.csv`,
+      `attachment; filename=bill_${roomId}.pdf`,
     );
-    res.send(csv);
+    doc.pipe(res);
   } catch (error) {
     handleErrors(error, res);
   }
@@ -243,13 +241,13 @@ const getAllRooms = async (req: Request, res: Response) => {
     const result = await roomService.getAllRooms();
     // console.log(result);
 
-    const response = receptionAllRooms.parse({
+    const response: ReceptionAllRooms = {
       code: "200",
       payload: { rooms: result },
       error: {
         msg: "",
       },
-    });
+    };
 
     res.json(response);
   } catch (error) {

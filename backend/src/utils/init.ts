@@ -2,8 +2,6 @@ import { prisma } from "../prisma";
 import { configService } from "../service/configService";
 import { tempService } from "../service/tempService";
 
-const totalRooms = parseInt(process.env.TOTAL_ROOMS || "2");
-
 const initRoom = async () => {
   const rooms = await prisma.room.findMany();
   const roomIdsInDB = new Set(rooms.map((room) => room.roomId));

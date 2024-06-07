@@ -1,4 +1,3 @@
-import { prisma } from "../prisma";
 import { configService } from "./configService";
 
 type Temp = {
@@ -62,6 +61,10 @@ const updateTemp = (temp: Temp) => {
   );
   if (tempIdx === -1) {
     throw new Error("Room not found");
+  }
+
+  if (temp.timestamp.getTime() < roomTemps[tempIdx].timestamp.getTime()) {
+    return;
   }
 
   roomTemps[tempIdx] = {
