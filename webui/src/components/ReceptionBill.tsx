@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useLocalStorage } from "usehooks-ts";
 import { Check, ChevronsUpDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
@@ -27,7 +27,7 @@ export function RoomSelect({
   setSelectedRoom: React.Dispatch<React.SetStateAction<string>>;
   roomIds: { value: string }[];
 }) {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useLocalStorage('roomSelectOpen', false);
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -81,8 +81,8 @@ export function RoomSelect({
 }
 
 export default function ReceptionBill(props: { roomIds: { value: string }[] }) {
-  const [selectedRoom, setSelectedRoom] = useState("");
-  const [selectedTab, setSelectedTab] = useState<"bill" | "detail">("detail");
+  const [selectedRoom, setSelectedRoom] = useLocalStorage('selectedRoom', "");
+  const [selectedTab, setSelectedTab] = useLocalStorage('selectedTab', "detail");
 
   return (
     <div>

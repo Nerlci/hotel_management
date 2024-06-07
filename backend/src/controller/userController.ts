@@ -66,7 +66,7 @@ const loginUser = async (req: Request, res: Response) => {
         case 0:
           return "customer";
         case 1:
-          return "admin";
+          return "manager";
         case 2:
           return "reception";
         case 3:

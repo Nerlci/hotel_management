@@ -1,5 +1,5 @@
 import { FoodDrawer } from "@/components/FoodDrawer";
-import { RoomDrawer } from "@/components/RoomDrawer";
+// import { RoomDrawer } from "@/components/RoomDrawer";
 import {
   Card,
   CardContent,
@@ -27,7 +27,7 @@ export const CustomerDashboard = (props: { roomId: string }) => {
             <AirconDrawer roomId={props.roomId} />
             <div className="my-[-4px] h-0 grow" />
             <FoodDrawer />
-            <RoomDrawer />
+            {/*<RoomDrawer />*/}
           </div>
         </CardContent>
       </Card>
