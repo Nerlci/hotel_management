@@ -16,6 +16,7 @@ import {
   userAvailablityResponse,
   userLoginResponse,
   userRoomOrderResponse,
+  DiningItem,
 } from "./schema";
 
 export const BASE_URL =
@@ -575,4 +576,27 @@ export async function getACTargetRange() {
   }
   const json = getTargetRangeResponse.parse(responseJson);
   return json.payload;
+}
+
+export async function postDining(item: DiningItem[]){
+  const response = await fetch(`${BASE_URL}/api/room/dining`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+    body: JSON.stringify({item}),
+  });
+  if (!response.ok) {
+    throw new Error("Request failed");
+  }
+  const responseJson = await response.json();
+  if (responseJson.code === "401") {
+    throw new Error("401");
+  }
+  if (responseJson.code !== "200") {
+    throw new Error(responseJson.error.msg);
+  }
+  const json = responseBase.parse(responseJson);
+  return json;
 }

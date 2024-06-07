@@ -26,7 +26,7 @@ export const CustomerDashboard = (props: { roomId: string }) => {
           <div className="flex flex-col gap-2 lg:flex-row">
             <AirconDrawer roomId={props.roomId} />
             <div className="my-[-4px] h-0 grow" />
-            <FoodDrawer />
+            <FoodDrawer roomId={props.roomId} />
             <RoomDrawer />
           </div>
         </CardContent>
