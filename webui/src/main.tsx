@@ -14,6 +14,7 @@ import { Aircon } from "./routes/Aircon.tsx";
 import { Customer } from "./routes/Customer.tsx";
 import { Toaster } from "./components/ui/sonner.tsx";
 import Reception from "./routes/Reception.tsx";
+import { Manager } from "./routes/Manager.tsx";
 
 const queryClient = new QueryClient();
 
@@ -49,6 +50,14 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
                 element={
                   <ProtectedRoute roles={["reception"]}>
                     <Reception />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/manager"
+                element={
+                  <ProtectedRoute roles={["manager"]}>
+                    <Manager />
                   </ProtectedRoute>
                 }
               />

@@ -159,6 +159,7 @@ export const userLoginResponse = responseBase.extend({
       z.literal("admin"),
       z.literal("aircon-manager"),
       z.literal("reception"),
+      z.literal("manager"),
     ]),
   }),
 });
@@ -262,5 +263,29 @@ export const getTargetRangeResponse = responseBase.extend({
   payload: z.object({
     minTarget: z.number(),
     maxTarget: z.number(),
+  }),
+});
+
+export const statisticItem = z.object({
+  onOffCount: z.number(),
+  scheduleCount: z.number(),
+  statementCount: z.number(),
+  targetCount: z.number(),
+  fanSpeedCount: z.number(),
+  requestDuration: z.number(),
+  totalPrice: z.number(),
+  timestamp: z.string().datetime(),
+});
+export type StatisticItem = z.infer<typeof statisticItem>;
+
+export const roomStatistic = z.object({
+  roomId: z.string(),
+  statistic: z.array(statisticItem),
+});
+export type RoomStatistic = z.infer<typeof roomStatistic>;
+
+export const roomStatisticResponse = responseBase.extend({
+  payload: z.object({
+    statistic: z.array(roomStatistic),
   }),
 });
