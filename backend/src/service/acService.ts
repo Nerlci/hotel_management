@@ -10,6 +10,9 @@ const getRoundedDuration = (duration: number) => {
 
 const getDetailByRoomId = async (roomId: string) => {
   const ac = await prisma.aCRecord.findMany({
+    orderBy: {
+      timestamp: "asc",
+    },
     where: {
       roomId: roomId,
       type: 1,
@@ -26,30 +29,39 @@ const getDetailByRoomId = async (roomId: string) => {
   const subtotal =
     getRoundedDuration((now.getTime() - current.timestamp.getTime()) / 1000) *
     current.priceRate *
-    (current.on ? 1 : 0);
+    (current.on && !current.waiting ? 1 : 0);
+  let lastStatus: ACRecord | null = null;
   let total = 0;
 
   const details = [];
 
-  for (let i = 0; i < ac.length; i++) {
-    const item = ac[i];
-
-    if (i != 0) {
+  for (const acRecord of ac) {
+    if (lastStatus) {
       const duration = getRoundedDuration(
-        (item.timestamp.getTime() - ac[i - 1].timestamp.getTime()) / 1000,
+        (acRecord.timestamp.getTime() - lastStatus.timestamp.getTime()) / 1000,
       );
-      total += duration * ac[i - 1].priceRate * (ac[i - 1].on ? 1 : 0);
+
+      if (duration !== 0) {
+        total += duration * lastStatus.priceRate * (lastStatus.on && !lastStatus.waiting ? 1 : 0);
+        details.push({
+          target: lastStatus.target,
+          fanSpeed: lastStatus.fanSpeed,
+          mode: lastStatus.mode,
+          on: lastStatus.on,
+          waiting: lastStatus.waiting,
+          timestamp: lastStatus.timestamp,
+          total: total,
+        });
+      }
     }
 
-    details.push({
-      target: item.target,
-      fanSpeed: item.fanSpeed,
-      mode: item.mode,
-      on: item.on,
-      waiting: item.waiting,
-      timestamp: item.timestamp,
-      total: total,
-    });
+    if (!acRecord.on || acRecord.waiting) {
+      lastStatus = null;
+      continue;
+    }
+
+    // 记录新的状态的开始
+    lastStatus = acRecord;
   }
 
   return { roomId, subtotal, details };
