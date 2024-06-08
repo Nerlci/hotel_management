@@ -17,12 +17,37 @@ type RoomsData = {
 }[];
 
 export function useAirconDataTableData() {
-  const { sseData, firstData, sseReadyState, closeSource } = useSSE<
-    ACStatus,
-    RoomsData
-  >(`${dataFetch.BASE_URL}/api/ac/status`, true);
-  useEffect(() => closeSource, [closeSource]);
   const [aircons, setAircons] = useState<AirconType[]>();
+  const { firstData, closeSource } = useSSE<ACStatus, RoomsData>(
+    `${dataFetch.BASE_URL}/api/ac/status`,
+    true,
+    (data) => {
+      setAircons((prevTasks) => {
+        if (prevTasks === undefined || prevTasks.length === 0) {
+          return undefined;
+        }
+        return prevTasks.map((task) => {
+          if (task.id === data.roomId) {
+            task.status = data.on ? "on" : "off";
+            if (data.waiting) {
+              task.status = "waiting";
+            }
+            if (data.on) {
+              task.temperature = `${data.target}`;
+              task.windspeed = `${data.fanSpeed}`;
+              task.mode = data.mode === 1 ? "cool" : "heat";
+            } else {
+              task.temperature = "-";
+              task.windspeed = "-";
+              task.mode = "-";
+            }
+          }
+          return task;
+        });
+      });
+    },
+  );
+  useEffect(() => closeSource, [closeSource]);
   useEffect(() => {
     if (firstData) {
       setAircons(
@@ -38,34 +63,6 @@ export function useAirconDataTableData() {
       );
     }
   }, [firstData]);
-  useEffect(() => {
-    if (sseReadyState.key === 1 && sseData && aircons) {
-      // console.log(JSON.stringify(sseData));
-      setAircons((prevTasks) => {
-        if (prevTasks === undefined || prevTasks.length === 0) {
-          return undefined;
-        }
-        return prevTasks.map((task) => {
-          if (task.id === sseData.roomId) {
-            task.status = sseData.on ? "on" : "off";
-            if (sseData.waiting) {
-              task.status = "waiting";
-            }
-            if (sseData.on) {
-              task.temperature = `${sseData.target}`;
-              task.windspeed = `${sseData.fanSpeed}`;
-              task.mode = sseData.mode === 1 ? "cool" : "heat";
-            } else {
-              task.temperature = "-";
-              task.windspeed = "-";
-              task.mode = "-";
-            }
-          }
-          return task;
-        });
-      });
-    }
-  }, [sseData, sseReadyState, aircons]);
 
   return aircons;
 }
