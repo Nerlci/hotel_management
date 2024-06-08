@@ -92,8 +92,9 @@ const statusChange = async (status: SchedulerItem) => {
     data: data,
   });
 
+  const { user, ...restData } = data;
   const statusMessage: ACStatus = {
-    ...data,
+    ...restData,
     timestamp: status.timestamp.toISOString(),
     initTemp: configService.getRoom(data.roomId)?.initTemp || 0,
     rate,
