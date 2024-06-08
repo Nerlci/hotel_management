@@ -36,6 +36,7 @@ const getInitialStatus = async (roomId: string) => {
   const { id, userId, type, priceRate, ...rest } = status!;
 
   if (status) {
+    const { id, userId, type, priceRate, ...rest } = status;
     const acstatus: ACStatus = {
       ...rest,
       mode: status.mode as 0 | 1,
