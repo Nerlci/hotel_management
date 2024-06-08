@@ -250,7 +250,7 @@ const getStatistic = async (
           if (roomRequest[i].on && !roomRequest[i - 1].on) {
             lastOnRequest = roomRequest[i];
           } else {
-            requestDuration += Math.ceil(
+            requestDuration += getRoundedDuration(
               (roomRequest[i].timestamp.getTime() -
                 lastOnRequest.timestamp.getTime()) /
                 1000,
