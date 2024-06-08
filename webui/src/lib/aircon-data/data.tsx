@@ -2,6 +2,7 @@ import {
   BlendingModeIcon,
   CheckCircledIcon,
   CrossCircledIcon,
+  PaperPlaneIcon,
   SunIcon,
 } from "@radix-ui/react-icons";
 import { ColumnDef } from "@tanstack/react-table";
@@ -29,7 +30,6 @@ import { dataFetch } from "shared";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
 import { Skeleton } from "@/components/ui/skeleton";
-import { BatteryWarningIcon } from "lucide-react";
 
 interface DataTableRowActionsProps<TData> {
   row: Row<TData>;
@@ -293,7 +293,7 @@ export const statuses = [
   {
     value: "waiting",
     label: "等待",
-    icon: BatteryWarningIcon,
+    icon: PaperPlaneIcon,
     iconClassName: "text-orange-500",
   },
 ];

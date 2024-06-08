@@ -6,7 +6,11 @@ const stateArr = [
   { key: 2, value: "连接已关闭或者没有链接成功" },
 ];
 
-export function useSSE<T, I = T>(url: string, specialFirst = false) {
+export function useSSE<T, I = T>(
+  url: string,
+  specialFirst = false,
+  onMessage?: (d: T) => void,
+) {
   const source = useRef<EventSource | null>(null);
   const [sseData, setSseData] = useState<T>();
   const [firstData, setFirstData] = useState<I>();
@@ -25,7 +29,6 @@ export function useSSE<T, I = T>(url: string, specialFirst = false) {
         setSseReadyState(stateArr[source.current?.readyState ?? 0]);
       };
       source.current.onmessage = (e) => {
-        console.log("onMessage", e.data);
         if (isFirst.current) {
           setFirstData(JSON.parse(e.data));
           isFirst.current = false;
@@ -33,7 +36,9 @@ export function useSSE<T, I = T>(url: string, specialFirst = false) {
             return;
           }
         }
-        setSseData(JSON.parse(e.data));
+        const data = JSON.parse(e.data);
+        setSseData(() => data);
+        onMessage && onMessage(data);
       };
     } catch (error) {
       console.log(error);
