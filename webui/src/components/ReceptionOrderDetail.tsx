@@ -23,7 +23,7 @@ import { toast } from "sonner";
 
 export default function ReceptionOrderDetail({ roomId }: DetailProps) {
   const acDetailQuery = useQuery({
-    queryKey: ["acDetail"],
+    queryKey: ["acDetail", roomId],
     queryFn: async () => await dataFetch.getACDetail(roomId),
     enabled: !!roomId,
   });
