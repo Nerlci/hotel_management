@@ -330,6 +330,10 @@ const schedulerStep = (item: SchedulerItem) => {
     // 如果请求关闭服务的对象在时间片等待中，将其移除
     stopRR(item.roomId);
 
+    if (waitingItemIdx) {
+      statusChange(item);
+    }
+
     return;
   }
 
@@ -402,12 +406,14 @@ const schedulerStep = (item: SchedulerItem) => {
       item: modifyTimestamps(item, now),
     });
     waitingList.push(modifyTimestamps({ ...item }, now));
+    statusChange(modifyTimestamps({ ...item, waiting: true }, now));
 
     return;
   }
 
   // 如果请求风速小于所有服务对象的风速，请求对象必须等到某个服务对象空闲后才能得到服务
   waitingList.push({ ...item });
+  statusChange(modifyTimestamps({ ...item, waiting: true }, now));
 
   return;
 };
