@@ -27,7 +27,7 @@ export default function ReceptionBillingDetail({ roomId }: DetailProps) {
     return date.toLocaleString("zh-CN");
   }
   const billQuery = useQuery({
-    queryKey: ["receptionBill"],
+    queryKey: ["receptionBill", roomId],
     queryFn: async () => await dataFetch.getBillDetail(roomId),
     enabled: !!roomId,
   });
