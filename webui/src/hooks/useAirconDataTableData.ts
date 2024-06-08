@@ -39,8 +39,8 @@ export function useAirconDataTableData() {
     }
   }, [firstData]);
   useEffect(() => {
-    if (sseReadyState.key === 1 && sseData && aircons) {
-      // console.log(JSON.stringify(sseData));
+    if (sseReadyState.key === 1 && sseData) {
+      console.log("sseData", sseData);
       setAircons((prevTasks) => {
         if (prevTasks === undefined || prevTasks.length === 0) {
           return undefined;
@@ -65,7 +65,7 @@ export function useAirconDataTableData() {
         });
       });
     }
-  }, [sseData, sseReadyState, aircons]);
+  }, [sseData, sseReadyState]);
 
   return aircons;
 }

@@ -25,6 +25,7 @@ export function useSSE<T, I = T>(url: string, specialFirst = false) {
         setSseReadyState(stateArr[source.current?.readyState ?? 0]);
       };
       source.current.onmessage = (e) => {
+        console.log("onMessage", e.data);
         if (isFirst.current) {
           setFirstData(JSON.parse(e.data));
           isFirst.current = false;
