@@ -104,7 +104,7 @@ const statusChange = async (status: SchedulerItem) => {
     roomId: status.roomId,
     temp: data.temp,
     rate: rate,
-    on: data.on,
+    on: data.on && !data.waiting,
     timestamp: status.timestamp,
   });
 };
@@ -156,7 +156,7 @@ const preemptService = (item: SchedulerItem, preemptedItem: SchedulerItem) => {
     waiting: true,
     timestamp: now,
   });
-  waitingList.push(modifyTimestamps({ ...preemptedItem, waiting: true }, now));
+  waitingList.push(modifyTimestamps({ ...preemptedItem }, now));
 
   // 如果当前对象在时间片调度中，清除他的定时器
   const rrIdx = rrList.findIndex(
@@ -400,13 +400,13 @@ const schedulerStep = (item: SchedulerItem) => {
       interval: rrInterval,
       item: modifyTimestamps(item, now),
     });
-    waitingList.push(modifyTimestamps({ ...item, waiting: true }, now));
+    waitingList.push(modifyTimestamps({ ...item }, now));
 
     return;
   }
 
   // 如果请求风速小于所有服务对象的风速，请求对象必须等到某个服务对象空闲后才能得到服务
-  waitingList.push({ ...item, waiting: true });
+  waitingList.push({ ...item });
 
   return;
 };

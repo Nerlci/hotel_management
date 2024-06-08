@@ -82,9 +82,15 @@ const getStatement = async (
 
     // 结算上一个状态
     if (lastStatus) {
-      const duration = Math.ceil(
-        (acRecord.timestamp.getTime() - lastStatus.timestamp.getTime()) / 1000,
-      );
+      const duration =
+        (Math.round(
+          (((acRecord.timestamp.getTime() - lastStatus.timestamp.getTime()) /
+            1000) *
+            2) /
+            10,
+        ) /
+          2) *
+        10;
 
       if (duration !== 0) {
         const newStatementItem: StatementItem = {
@@ -94,7 +100,7 @@ const getStatement = async (
             : null,
           startTime: lastStatus.timestamp.toISOString(),
           endTime: acRecord.timestamp.toISOString(),
-          duration,
+          duration: duration * 6,
           fanSpeed: lastStatus.fanSpeed,
           price: duration * lastStatus.priceRate,
           priceRate:
@@ -106,7 +112,7 @@ const getStatement = async (
       }
     }
 
-    if (!acRecord.on) {
+    if (!acRecord.on || acRecord.waiting) {
       lastStatus = null;
       continue;
     }

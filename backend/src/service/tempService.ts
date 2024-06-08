@@ -33,9 +33,12 @@ const getTemp = (roomId: string, timestamp: Date) => {
 
   const newTemp = { ...temp };
 
-  const interval = Math.ceil(
-    (timestamp.getTime() - newTemp.timestamp.getTime()) / 1000,
-  );
+  const interval =
+    (Math.round(
+      (((timestamp.getTime() - newTemp.timestamp.getTime()) / 1000) * 2) / 10,
+    ) /
+      2) *
+    10;
 
   const rate = temp.rate;
 
