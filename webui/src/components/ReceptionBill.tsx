@@ -27,7 +27,7 @@ export function RoomSelect({
   setSelectedRoom: React.Dispatch<React.SetStateAction<string>>;
   roomIds: { value: string }[];
 }) {
-  const [open, setOpen] = useLocalStorage('roomSelectOpen', false);
+  const [open, setOpen] = useLocalStorage("roomSelectOpen", false);
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -81,8 +81,11 @@ export function RoomSelect({
 }
 
 export default function ReceptionBill(props: { roomIds: { value: string }[] }) {
-  const [selectedRoom, setSelectedRoom] = useLocalStorage('selectedRoom', "");
-  const [selectedTab, setSelectedTab] = useLocalStorage('selectedTab', "detail");
+  const [selectedRoom, setSelectedRoom] = useLocalStorage("selectedRoom", "");
+  const [selectedTab, setSelectedTab] = useLocalStorage(
+    "selectedTab",
+    "detail",
+  );
 
   return (
     <div>

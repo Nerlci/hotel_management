@@ -610,14 +610,14 @@ export async function getRoomStatistics(
   return json.payload;
 }
 
-export async function postDining(item: DiningItem[]){
+export async function postDining(item: DiningItem[]) {
   const response = await fetch(`${BASE_URL}/api/room/dining`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
     credentials: "include",
-    body: JSON.stringify({item}),
+    body: JSON.stringify({ item }),
   });
   if (!response.ok) {
     throw new Error("Request failed");
@@ -633,7 +633,7 @@ export async function postDining(item: DiningItem[]){
   return json;
 }
 
-export async function getDiningFee(roomId: string){
+export async function getDiningFee(roomId: string) {
   const response = await fetch(`${BASE_URL}/api/room/dining?roomId=${roomId}`, {
     method: "GET",
     headers: {

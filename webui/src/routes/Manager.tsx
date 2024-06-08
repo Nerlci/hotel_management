@@ -13,6 +13,7 @@ import { useQuery } from "@tanstack/react-query";
 import { dataFetch } from "shared";
 import ReceptionCheckinCheckout from "@/components/ReceptionCheckinCheckout";
 import { HotelStats } from "@/components/HotelStats";
+import { useLocalStorage } from "usehooks-ts";
 
 const Aircons = () => {
   const aircons = useAirconDataTableData();
@@ -41,13 +42,18 @@ export const Manager = () => {
     refetchInterval: 5000,
   });
   const rooms = roomsQuery.data;
+  const [tab, setTab] = useLocalStorage("manager-tab", "stats");
 
   return (
     <>
       <NavBar title={<TokensIcon />} />
       <div>
         <div className="mt-3 justify-center">
-          <Tabs defaultValue="stats" className="top-3 mx-auto w-10/12">
+          <Tabs
+            value={tab}
+            onValueChange={setTab}
+            className="top-3 mx-auto w-10/12"
+          >
             <TabsList>
               <TabsTrigger value="stats">报表查看</TabsTrigger>
               <TabsTrigger value="aircons">空调控制</TabsTrigger>

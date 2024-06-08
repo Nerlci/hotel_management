@@ -240,6 +240,27 @@ function getDisplayValue(value: StatisticItem, displayItem: string) {
   }
 }
 
+function getDisplayWeekDay(index: number) {
+  switch (index) {
+    case 0:
+      return "一";
+    case 1:
+      return "二";
+    case 2:
+      return "三";
+    case 3:
+      return "四";
+    case 4:
+      return "五";
+    case 5:
+      return "六";
+    case 6:
+      return "日";
+    default:
+      return "一";
+  }
+}
+
 const TheBarChart = ({ data }: { data: RoomStatistic[] }) => {
   const [displayItem, setDisplayItem] = useState(dataItems[0]);
   const groupByDay: StatisticItem[] = [];
@@ -272,7 +293,7 @@ const TheBarChart = ({ data }: { data: RoomStatistic[] }) => {
   });
   const dat = groupByDay.map((value, index) => {
     return {
-      x: index,
+      x: getDisplayWeekDay(index),
       y: getDisplayValue(value, displayItem),
     };
   });
@@ -339,7 +360,7 @@ export const HotelStats = () => {
   const lastWeek = query.data?.statistic;
 
   return (
-    <div className="my-3 flex flex-wrap gap-3">
+    <>
       <div className="flex flex-row items-center gap-2">
         <DatePickerWithRange
           date={date}
@@ -361,30 +382,32 @@ export const HotelStats = () => {
         <Switch checked={allDate} onCheckedChange={setAllDate} />
         <Label>全部日期</Label>
       </div>
-      <Card className="w-[34rem]">
-        <CardHeader>
-          <CardTitle>分布占比</CardTitle>
-        </CardHeader>
-        <CardContent>
-          {statsQuery.data ? (
-            <ThePieChart statistics={statsQuery.data.statistic} />
-          ) : (
-            <Skeleton className="w-70 h-10" />
-          )}
-        </CardContent>
-      </Card>
-      <Card className="w-[34rem]">
-        <CardHeader>
-          <CardTitle>变化趋势：周报</CardTitle>
-        </CardHeader>
-        <CardContent>
-          {lastWeek ? (
-            <TheBarChart data={lastWeek} />
-          ) : (
-            <Skeleton className="w-70 h-10" />
-          )}
-        </CardContent>
-      </Card>
-    </div>
+      <div className="my-3 flex flex-wrap gap-3">
+        <Card className="w-[34rem]">
+          <CardHeader>
+            <CardTitle>分布占比</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {statsQuery.data ? (
+              <ThePieChart statistics={statsQuery.data.statistic} />
+            ) : (
+              <Skeleton className="w-70 h-10" />
+            )}
+          </CardContent>
+        </Card>
+        <Card className="w-[34rem]">
+          <CardHeader>
+            <CardTitle>变化趋势：周报</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {lastWeek ? (
+              <TheBarChart data={lastWeek} />
+            ) : (
+              <Skeleton className="w-70 h-10" />
+            )}
+          </CardContent>
+        </Card>
+      </div>
+    </>
   );
 };

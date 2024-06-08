@@ -6,6 +6,7 @@ import ReceptionCheckinCheckout from "@/components/ReceptionCheckinCheckout";
 import { useQuery } from "@tanstack/react-query";
 import { dataFetch } from "shared";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useLocalStorage } from "usehooks-ts";
 
 export default function Reception() {
   const roomsQuery = useQuery({
@@ -14,12 +15,17 @@ export default function Reception() {
     refetchInterval: 5000,
   });
   const rooms = roomsQuery.data;
+  const [tab, setTab] = useLocalStorage("reception-tab", "bill");
 
   return (
     <>
       <NavBar title={<PersonIcon />} />
       <div className="mt-3 justify-center">
-        <Tabs defaultValue="bill" className="top-3 mx-auto w-10/12">
+        <Tabs
+          value={tab}
+          onValueChange={setTab}
+          className="top-3 mx-auto w-10/12"
+        >
           <TabsList>
             <TabsTrigger value="checkinout">入住与退房</TabsTrigger>
             <TabsTrigger value="bill">详单与账单</TabsTrigger>
