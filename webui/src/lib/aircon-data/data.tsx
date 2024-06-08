@@ -29,6 +29,7 @@ import { dataFetch } from "shared";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
 import { Skeleton } from "@/components/ui/skeleton";
+import { BatteryWarningIcon } from "lucide-react";
 
 interface DataTableRowActionsProps<TData> {
   row: Row<TData>;
@@ -288,6 +289,12 @@ export const statuses = [
     label: "关闭",
     icon: CrossCircledIcon,
     iconClassName: "text-red-500",
+  },
+  {
+    value: "waiting",
+    label: "等待",
+    icon: BatteryWarningIcon,
+    iconClassName: "text-orange-500",
   },
 ];
 

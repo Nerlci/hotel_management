@@ -1,8 +1,12 @@
 import { prisma } from "../prisma";
 import { ACRecord } from "@prisma/client";
-import { RoomStatistic, StatementItem, StatisticItem } from "shared";
+import { StatementItem } from "shared";
 import { configService } from "./configService";
 import { renderStatement } from "../utils/renderPdf";
+
+const getRoundedDuration = (duration: number) => {
+  return (Math.round((duration * 2) / 10) / 2) * 10;
+};
 
 const getDetailByRoomId = async (roomId: string) => {
   const ac = await prisma.aCRecord.findMany({
@@ -20,7 +24,7 @@ const getDetailByRoomId = async (roomId: string) => {
 
   const current = ac[ac.length - 1];
   const subtotal =
-    Math.ceil((now.getTime() - current.timestamp.getTime()) / 1000) *
+    getRoundedDuration((now.getTime() - current.timestamp.getTime()) / 1000) *
     current.priceRate *
     (current.on ? 1 : 0);
   let total = 0;
@@ -31,7 +35,7 @@ const getDetailByRoomId = async (roomId: string) => {
     const item = ac[i];
 
     if (i != 0) {
-      const duration = Math.ceil(
+      const duration = getRoundedDuration(
         (item.timestamp.getTime() - ac[i - 1].timestamp.getTime()) / 1000,
       );
       total += duration * ac[i - 1].priceRate * (ac[i - 1].on ? 1 : 0);
@@ -82,15 +86,9 @@ const getStatement = async (
 
     // 结算上一个状态
     if (lastStatus) {
-      const duration =
-        (Math.round(
-          (((acRecord.timestamp.getTime() - lastStatus.timestamp.getTime()) /
-            1000) *
-            2) /
-            10,
-        ) /
-          2) *
-        10;
+      const duration = getRoundedDuration(
+        (acRecord.timestamp.getTime() - lastStatus.timestamp.getTime()) / 1000,
+      );
 
       if (duration !== 0) {
         const newStatementItem: StatementItem = {
@@ -178,117 +176,6 @@ const getInvoice = async (
   return invoice;
 };
 
-const getStatistic = async (
-  roomId: string | undefined,
-  startTime: Date | undefined,
-  endTime: Date | undefined,
-  aggregate: string,
-) => {
-  const record = await prisma.aCRecord.findMany({
-    where: {
-      roomId: roomId,
-      timestamp: {
-        gte: startTime,
-        lte: endTime,
-      },
-    },
-  });
-
-  const rooms = roomId
-    ? [roomId]
-    : configService.getRooms().map((room) => room.roomId);
-
-  const statistic = [];
-
-  const aggregateInterval =
-    aggregate === "day" ? 86400000 : aggregate === "week" ? 604800000 : 0;
-
-  for (const room of rooms) {
-    const statement = await getStatement(room, startTime, endTime);
-    const roomRecord = record.filter((item) => item.roomId === room);
-    const roomRequest = roomRecord.filter((item) => item.type === 0);
-    const currentStatistic: StatisticItem[] = [];
-
-    const aggregatedRecord = roomRecord.reduce((map, item) => {
-      const date = new Date(item.timestamp.getTime());
-      date.setHours(0, 0, 0, 0);
-      if (aggregate == "week") {
-        date.setDate(date.getDate() - ((date.getDay() + 6) % 7));
-      }
-
-      const key = new Date(date).toISOString();
-      if (!map.has(key)) {
-        map.set(key, []);
-      }
-      map.get(key)!.push(item);
-      return map;
-    }, new Map<string, ACRecord[]>());
-
-    aggregatedRecord.forEach((value, key) => {
-      const currentStatement = statement.filter(
-        (item) =>
-          new Date(item.startTime).getTime() >= new Date(key).getTime() &&
-          new Date(item.startTime).getTime() <
-            new Date(key).getTime() + aggregateInterval,
-      );
-
-      let onOffCount = 0;
-      const scheduleCount = value.filter((item) => item.type === 1).length;
-      const statementCount = currentStatement.length;
-      let targetCount = 0;
-      let requestDuration = 0;
-      let fanSpeedCount = 0;
-      const totalPrice = currentStatement.reduce(
-        (sum, item) => sum + item.price,
-        0,
-      );
-
-      let lastOnRequest = roomRequest[0];
-
-      for (let i: number = 1; i < roomRequest.length; i++) {
-        if (roomRequest[i].on != roomRequest[i - 1].on) {
-          onOffCount++;
-
-          if (roomRequest[i].on && !roomRequest[i - 1].on) {
-            lastOnRequest = roomRequest[i];
-          } else {
-            requestDuration += Math.ceil(
-              (roomRequest[i].timestamp.getTime() -
-                lastOnRequest.timestamp.getTime()) /
-                1000,
-            );
-          }
-        }
-
-        if (roomRequest[i].target != roomRequest[i - 1].target) {
-          targetCount++;
-        }
-        if (roomRequest[i].fanSpeed != roomRequest[i - 1].fanSpeed) {
-          fanSpeedCount++;
-        }
-      }
-
-      currentStatistic.push({
-        timestamp: key,
-        onOffCount,
-        scheduleCount,
-        statementCount,
-        targetCount,
-        requestDuration,
-        fanSpeedCount,
-        totalPrice,
-      });
-    });
-
-    statistic.push({
-      roomId: room,
-      statistic: currentStatistic,
-    });
-  }
-
-  return statistic;
-};
-
 const getDays = async (
   roomId: string,
   startTime: Date | undefined,
@@ -327,7 +214,6 @@ const acService = {
   getStatement,
   getStatementTable,
   getInvoice,
-  getStatistic,
   getDays,
 };
 export { acService };

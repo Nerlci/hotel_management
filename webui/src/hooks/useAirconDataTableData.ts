@@ -13,6 +13,7 @@ type RoomsData = {
   initTemp: number;
   rate: number;
   timestamp: string;
+  waiting: boolean;
 }[];
 
 export function useAirconDataTableData() {
@@ -31,7 +32,7 @@ export function useAirconDataTableData() {
             temperature: value.on ? `${value.target}` : "-",
             windspeed: value.on ? `${value.fanSpeed}` : "-",
             mode: value.on ? (value.mode === 1 ? "cool" : "heat") : "-",
-            status: value.on ? "on" : "off",
+            status: value.on ? (value.waiting ? "waiting" : "on") : "off",
           };
         }),
       );
@@ -47,6 +48,9 @@ export function useAirconDataTableData() {
         return prevTasks.map((task) => {
           if (task.id === sseData.roomId) {
             task.status = sseData.on ? "on" : "off";
+            if (sseData.waiting) {
+              task.status = "waiting";
+            }
             if (sseData.on) {
               task.temperature = `${sseData.target}`;
               task.windspeed = `${sseData.fanSpeed}`;
