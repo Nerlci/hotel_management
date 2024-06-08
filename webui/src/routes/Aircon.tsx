@@ -11,15 +11,21 @@ import { GearIcon } from "@radix-ui/react-icons";
 import AirconConfig from "@/components/AirconConfig";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAirconDataTableData } from "@/hooks/useAirconDataTableData";
+import { useLocalStorage } from "usehooks-ts";
 
 export const Aircon = () => {
   const aircons = useAirconDataTableData();
+  const [tab, setTab] = useLocalStorage("acmanager-tab", "config");
 
   return (
     <>
       <NavBar title={<GearIcon />} />
       <div className="mt-3 justify-center">
-        <Tabs defaultValue="config" className="top-3 mx-auto w-10/12">
+        <Tabs
+          value={tab}
+          onValueChange={setTab}
+          className="top-3 mx-auto w-10/12"
+        >
           <TabsList>
             <TabsTrigger value="overview">概览</TabsTrigger>
             <TabsTrigger value="aircon">空调管理</TabsTrigger>

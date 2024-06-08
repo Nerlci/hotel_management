@@ -39,7 +39,7 @@ const names = ["sandwich", "salad", "noodles", "soup", "beverage"];
 
 export function FoodDrawer(props: { roomId: string }) {
   console.log(props.roomId);
-  const {data, refetch} = useQuery({
+  const { data, refetch } = useQuery({
     queryKey: ["diningFee"],
     queryFn: async () => await dataFetch.getDiningFee(props.roomId),
     enabled: !!props.roomId,
